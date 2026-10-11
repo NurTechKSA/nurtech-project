@@ -12,7 +12,8 @@
         "@schematics/angular:component": {
           "style": "scss",
           "skipTests": true,
-          "type": "component"
+          "type": "component",
+          "changeDetection": "OnPush"
         },
         "@schematics/angular:class": {
           "skipTests": true
@@ -103,7 +104,10 @@
               "buildTarget": "nurtech-project:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          }
         },
         "test": {
           "builder": "@angular/build:unit-test",
