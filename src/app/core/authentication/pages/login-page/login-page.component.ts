@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import {
   TuiButton,
   TuiError,
@@ -12,6 +13,7 @@ import {
 import { TuiAvatar, TuiPassword } from '@taiga-ui/kit';
 import { TuiCardLarge, TuiForm } from '@taiga-ui/layout';
 
+import { AppPath } from '@core/enums/app-path.enum';
 import { getLengthValidator } from '@shared/validators/length.util';
 import { getRequiredValidator } from '@shared/validators/required.util';
 
@@ -30,7 +32,6 @@ import { LoginPageStore } from './login-page.store';
     TuiInput,
     TuiLoader,
     TuiNotification,
-    TuiNotification,
     TuiPassword,
     TuiTextfield,
   ],
@@ -40,6 +41,7 @@ import { LoginPageStore } from './login-page.store';
   providers: [LoginPageStore],
 })
 export class LoginPageComponent {
+  private readonly router = inject(Router);
   private readonly loginPageStore = inject(LoginPageStore);
 
   readonly errorMessage = this.loginPageStore.errorMessage;
@@ -60,6 +62,9 @@ export class LoginPageComponent {
       return;
     }
 
-    this.loginPageStore.login(this.form.getRawValue());
+    this.loginPageStore.login({
+      body: this.form.getRawValue(),
+      callback: () => void this.router.navigateByUrl(AppPath.ROOT),
+    });
   }
 }

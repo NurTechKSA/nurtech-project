@@ -2,9 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 
+import { User } from '@core/user/interfaces/user.interface';
+
 import { LoginRequest } from '../interfaces/api/login-request.interface';
 import { UserResponse } from '../interfaces/api/user-response.interface';
-import { User } from '../interfaces/user.interface';
 
 @Injectable({ providedIn: 'root' })
 export class ApiAuthService {

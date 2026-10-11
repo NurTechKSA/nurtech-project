@@ -1,0 +1,14 @@
+:host {
+  display: block;
+}
+
+.header {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  block-size: 100%;
+  padding-inline: 1rem;
+  background: var(--tui-background-base);
+  border-block-end: 1px solid var(--tui-border-normal);
+}
