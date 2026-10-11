@@ -56,6 +56,9 @@ export default tseslint.config(
         tsconfigRootDir: import.meta.dirname,
       },
     },
+    settings: {
+      'import-x/internal-regex': '^@(core|shared)/',
+    },
     plugins: {
       '@stylistic': stylistic,
       '@smarttools/rxjs': rxjsPlugin,
@@ -150,7 +153,22 @@ export default tseslint.config(
       '@typescript-eslint/no-non-null-assertion': 'error',
       '@typescript-eslint/no-invalid-void-type': 'off',
       '@typescript-eslint/no-deprecated': 'error',
-      '@typescript-eslint/member-ordering': 'error',
+      '@typescript-eslint/member-ordering': [
+        'error',
+        {
+          default: [
+            'signature',
+            'static-field',
+            'private-instance-field',
+            'public-instance-field',
+            'protected-instance-field',
+            'constructor',
+            'public-instance-method',
+            'protected-instance-method',
+            'private-instance-method',
+          ],
+        },
+      ],
 
       eqeqeq: 'error',
       'no-nested-ternary': 'error',
@@ -222,7 +240,6 @@ export default tseslint.config(
       ...angular.configs.templateAccessibility,
     ],
     rules: {
-      '@angular-eslint/template/no-call-expression': 'error',
       '@angular-eslint/template/prefer-ngsrc': 'error',
       '@angular-eslint/template/button-has-type': 'error',
       '@angular-eslint/template/attributes-order': [
@@ -248,6 +265,7 @@ export default tseslint.config(
       'src/test-setup.ts',
       'src/index.html',
       'src/styles.scss',
+      'src/styles/**',
     ],
     plugins: { 'check-file': checkFile },
     rules: {
@@ -259,8 +277,8 @@ export default tseslint.config(
     },
   },
   {
-    files: ['src/**/*.{html,scss}'],
-    ignores: ['src/index.html', 'src/styles.scss'],
+    files: ['src/**/*.scss'],
+    ignores: ['src/styles.scss', 'src/styles/**'],
     plugins: { 'check-file': checkFile },
     processor: 'check-file/eslint-processor-check-file',
   },
