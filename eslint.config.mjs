@@ -24,6 +24,7 @@ const entityTypes = [
   'interface',
   'store',
   'util',
+  'operator',
   'config',
   'routes',
   'spec',
