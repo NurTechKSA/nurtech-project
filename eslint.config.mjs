@@ -25,6 +25,7 @@ const entityTypes = [
   'store',
   'util',
   'operator',
+  'token',
   'config',
   'routes',
   'spec',
