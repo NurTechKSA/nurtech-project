@@ -4,17 +4,16 @@ import {
   signalStore,
   withComputed,
   withMethods,
+  withProps,
   withState,
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { exhaustMap, pipe, tap } from 'rxjs';
 
-import { catchEffectError } from '../../../shared/store/catch-effect-error.operator';
-import {
-  setLoaded,
-  setLoading,
-} from '../../../shared/store/status-update.util';
-import { withLoadingStatus } from '../../../shared/store/with-loading-status.util';
+import { catchEffectError } from '@shared/store/catch-effect-error.operator';
+import { setLoaded, setLoading } from '@shared/store/status-update.util';
+import { withLoadingStatus } from '@shared/store/with-loading-status.util';
+
 import { User } from '../interfaces/user.interface';
 import { ApiAuthService } from '../services/api-auth.service';
 
@@ -35,6 +34,10 @@ export const UserStore = signalStore(
 
   withState(initialState),
 
+  withProps(() => ({
+    apiAuthService: inject(ApiAuthService),
+  })),
+
   withComputed(({ currentUser }) => ({
     isAuthenticated: computed(() => currentUser() !== null),
   })),
@@ -48,7 +51,7 @@ export const UserStore = signalStore(
     },
   })),
 
-  withMethods((store, apiAuthService = inject(ApiAuthService)) => ({
+  withMethods(({ apiAuthService, ...store }) => ({
     getCurrentUser: rxMethod<void>(
       pipe(
         tap(() => {
