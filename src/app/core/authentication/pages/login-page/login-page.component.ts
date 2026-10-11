@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   TuiButton,
   TuiError,
@@ -13,11 +13,12 @@ import {
 import { TuiAvatar, TuiPassword } from '@taiga-ui/kit';
 import { TuiCardLarge, TuiForm } from '@taiga-ui/layout';
 
-import { AppPath } from '@core/enums/app-path.enum';
+import { QueryParam } from '@core/enums/query-param.enum';
 import { getLengthValidator } from '@shared/validators/length.util';
 import { getRequiredValidator } from '@shared/validators/required.util';
 
 import { LoginPageStore } from './login-page.store';
+import { getSafeReturnUrl } from '../../utils/safe-return-url.util';
 
 @Component({
   selector: 'app-login-page',
@@ -42,7 +43,12 @@ import { LoginPageStore } from './login-page.store';
 })
 export class LoginPageComponent {
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly loginPageStore = inject(LoginPageStore);
+
+  private readonly returnUrl = this.route.snapshot.queryParamMap.get(
+    QueryParam.RETURN_URL
+  );
 
   readonly errorMessage = this.loginPageStore.errorMessage;
   readonly isLoading = this.loginPageStore.isLoading;
@@ -62,9 +68,11 @@ export class LoginPageComponent {
       return;
     }
 
+    const returnUrl = getSafeReturnUrl(this.returnUrl);
+
     this.loginPageStore.login({
       body: this.form.getRawValue(),
-      callback: () => void this.router.navigateByUrl(AppPath.ROOT),
+      callback: () => void this.router.navigateByUrl(returnUrl),
     });
   }
 }
