@@ -148,6 +148,7 @@ export default tseslint.config(
       '@typescript-eslint/explicit-function-return-type': 'error',
       '@typescript-eslint/no-unnecessary-condition': 'error',
       '@typescript-eslint/no-non-null-assertion': 'error',
+      '@typescript-eslint/no-invalid-void-type': 'off',
       '@typescript-eslint/no-deprecated': 'error',
       '@typescript-eslint/member-ordering': 'error',
 
