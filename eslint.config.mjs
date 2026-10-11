@@ -202,6 +202,7 @@ export default tseslint.config(
       '@angular-eslint/prefer-output-emitter-ref': 'error',
       '@angular-eslint/prefer-output-readonly': 'error',
       '@angular-eslint/no-async-lifecycle-method': 'error',
+      '@angular-eslint/prefer-on-push-component-change-detection': 'error',
       '@angular-eslint/component-selector': [
         'error',
         { type: 'element', prefix: 'app', style: 'kebab-case' },
