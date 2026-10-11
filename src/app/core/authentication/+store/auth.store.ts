@@ -33,6 +33,12 @@ export const AuthStore = signalStore(
     isAuth: computed(() => userStore.currentUser() !== null),
   })),
 
+  withMethods(({ userStore }) => ({
+    reset: (): void => {
+      userStore.reset();
+    },
+  })),
+
   withMethods(({ userStore, apiAuthService, ...store }) => ({
     getCurrentUser: rxMethod<void>(
       pipe(
@@ -52,7 +58,7 @@ export const AuthStore = signalStore(
         exhaustMap(({ callback }) =>
           apiAuthService.logout().pipe(
             tap(() => {
-              userStore.reset();
+              store.reset();
               callback?.();
             })
           )

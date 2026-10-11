@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 
@@ -6,6 +6,7 @@ import { User } from '@core/user/interfaces/user.interface';
 
 import { LoginRequest } from '../interfaces/api/login-request.interface';
 import { UserResponse } from '../interfaces/api/user-response.interface';
+import { SKIP_UNAUTHORIZED } from '../tokens/skip-unauthorized.token';
 
 @Injectable({ providedIn: 'root' })
 export class ApiAuthService {
@@ -14,13 +15,17 @@ export class ApiAuthService {
 
   getMe(): Observable<User> {
     return this.http
-      .get<UserResponse>(`${this.endpoint}/me`)
+      .get<UserResponse>(`${this.endpoint}/me`, {
+        context: new HttpContext().set(SKIP_UNAUTHORIZED, true),
+      })
       .pipe(map(({ user }) => user));
   }
 
   login(body: LoginRequest): Observable<User> {
     return this.http
-      .post<UserResponse>(`${this.endpoint}/login`, body)
+      .post<UserResponse>(`${this.endpoint}/login`, body, {
+        context: new HttpContext().set(SKIP_UNAUTHORIZED, true),
+      })
       .pipe(map(({ user }) => user));
   }
 
