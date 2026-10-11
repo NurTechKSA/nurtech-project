@@ -1,0 +1,11 @@
+.user-menu {
+  &__list {
+    min-inline-size: 15rem;
+  }
+
+  &__caption {
+    padding: 0.5rem;
+    font: var(--tui-typography-body-s);
+    color: var(--tui-text-secondary);
+  }
+}

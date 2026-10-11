@@ -1,0 +1,26 @@
+@if (currentUser(); as user) {
+  <button
+    tuiAvatar
+    type="button"
+    size="s"
+    appearance="secondary"
+    tuiDropdownAlign="end"
+    aria-label="Меню пользователя"
+    [tuiDropdown]="menu"
+    [(tuiDropdownOpen)]="isOpen">
+    {{ user.name | initials }}
+  </button>
+
+  <ng-template #menu>
+    <tui-data-list class="user-menu__list" size="l">
+      <p class="user-menu__caption">
+        {{ user.name | shortName }} · &#64;{{ user.username }}
+      </p>
+      <a tuiOption [routerLink]="profilePath" (click)="isOpen.set(false)">
+        Профиль
+      </a>
+      <hr />
+      <button tuiOption type="button" (click)="onLogoutButtonClick()">Выйти</button>
+    </tui-data-list>
+  </ng-template>
+}

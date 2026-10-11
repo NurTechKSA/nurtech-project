@@ -1,0 +1,17 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100dvh;
+  background: var(--tui-background-base-alt);
+}
+
+.layout__header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 1;
+  block-size: 3.5rem;
+}
+
+.layout__content {
+  flex: 1;
+}

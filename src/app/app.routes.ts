@@ -11,4 +11,11 @@ export const routes: Routes = [
         (m) => m.LoginPageComponent
       ),
   },
+  {
+    path: AppPath.ROOT,
+    title: 'Главная',
+    loadComponent: () =>
+      import('@core/layout/layout.component').then((m) => m.LayoutComponent),
+    children: [],
+  },
 ];

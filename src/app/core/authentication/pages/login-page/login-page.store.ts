@@ -4,6 +4,8 @@ import { signalStore, withMethods, withProps, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { catchError, EMPTY, exhaustMap, pipe, tap } from 'rxjs';
 
+import { UserStore } from '@core/user/+store/user.store';
+import { OptionalCallback } from '@shared/interfaces/optional-callback.interface';
 import { catchEffectError } from '@shared/store/catch-effect-error.operator';
 import {
   setError,
@@ -12,10 +14,13 @@ import {
 } from '@shared/store/status-update.util';
 import { withLoadingStatus } from '@shared/store/with-loading-status.util';
 
-import { UserStore } from '../../+store/user.store';
 import { LoginRequest } from '../../interfaces/api/login-request.interface';
 import { ApiAuthService } from '../../services/api-auth.service';
 import { getLoginErrorMessage } from '../../utils/login-error-message.util';
+
+interface LoginParams extends OptionalCallback {
+  body: LoginRequest;
+}
 
 interface LoginPageState {
   errorMessage: string | null;
@@ -39,18 +44,19 @@ export const LoginPageStore = signalStore(
   })),
 
   withMethods(({ userStore, apiAuthService, ...store }) => ({
-    login: rxMethod<LoginRequest>(
+    login: rxMethod<LoginParams>(
       pipe(
         tap(() => {
           updateState(store, '[LoginPageStore] login', setLoading(), {
             errorMessage: null,
           });
         }),
-        exhaustMap((body) =>
+        exhaustMap(({ body, callback }) =>
           apiAuthService.login(body).pipe(
             tap((user) => {
               updateState(store, '[LoginPageStore] loginSuccess', setLoaded());
               userStore.setUser(user);
+              callback?.();
             }),
             catchError((error: unknown) => {
               updateState(store, '[LoginPageStore] loginFailure', setError(), {
