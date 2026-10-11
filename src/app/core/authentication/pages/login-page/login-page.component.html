@@ -1,0 +1,56 @@
+<main class="login-page">
+  <tui-loader
+    class="login-page__loader"
+    size="xxl"
+    [overlay]="true"
+    [loading]="isLoading()">
+    <form
+      tuiCardLarge
+      tuiForm="l"
+      appearance="floating"
+      class="login-page__card"
+      [cleaner]="false"
+      [formGroup]="form"
+      (ngSubmit)="onFormSubmit()">
+      <header class="login-page__header">
+        <span tuiAvatar size="l" appearance="primary" [round]="false">Т</span>
+        <h1 class="login-page__title">Таск-менеджер</h1>
+        <p class="login-page__subtitle">Вход</p>
+      </header>
+
+      @if (errorMessage(); as errorMessage) {
+        <p tuiNotification appearance="negative" size="m" role="alert">
+          {{ errorMessage }}
+        </p>
+      }
+
+      <tui-textfield>
+        <label tuiLabel for="username">Логин *</label>
+        <input
+          id="username"
+          tuiInput
+          autocomplete="username"
+          formControlName="username" />
+      </tui-textfield>
+      <tui-error formControlName="username" />
+
+      <tui-textfield>
+        <label tuiLabel for="password">Пароль *</label>
+        <input
+          id="password"
+          tuiInput
+          type="password"
+          autocomplete="current-password"
+          formControlName="password" />
+        <tui-icon tuiPassword />
+      </tui-textfield>
+      <tui-error formControlName="password" />
+
+      <button tuiButton type="submit" class="login-page__submit">Войти</button>
+
+      <p class="login-page__hint">
+        Забыли пароль? Обратитесь к администратору.
+      </p>
+    </form>
+  </tui-loader>
+</main>

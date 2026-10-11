@@ -32,6 +32,7 @@
     "@ngrx/signals": "~21.1.1",
     "@taiga-ui/cdk": "^5.26.0",
     "@taiga-ui/core": "^5.26.0",
+    "@taiga-ui/i18n": "^5.26.0",
     "@taiga-ui/icons": "^5.26.0",
     "@taiga-ui/kit": "^5.26.0",
     "@taiga-ui/layout": "^5.26.0",

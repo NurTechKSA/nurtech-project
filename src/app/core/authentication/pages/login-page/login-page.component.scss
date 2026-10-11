@@ -1,0 +1,44 @@
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 100dvh;
+  padding: 1rem;
+  background: var(--tui-background-base-alt);
+
+  &__loader {
+    inline-size: 100%;
+    max-inline-size: 31.25rem;
+  }
+
+  &__card {
+    inline-size: 100%;
+  }
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+    margin-block-end: 0.5rem;
+  }
+
+  &__title {
+    font: var(--tui-typography-heading-h5);
+  }
+
+  &__subtitle {
+    font: var(--tui-typography-body-l);
+    color: var(--tui-text-secondary);
+  }
+
+  &__submit {
+    inline-size: 100%;
+  }
+
+  &__hint {
+    font: var(--tui-typography-body-s);
+    color: var(--tui-text-secondary);
+    text-align: center;
+  }
+}
