@@ -9,6 +9,7 @@ import {
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { exhaustMap, pipe, tap } from 'rxjs';
 
+import { PermissionStore } from '@core/permissions/+store/permission.store';
 import { UserStore } from '@core/user/+store/user.store';
 import { OptionalCallback } from '@shared/interfaces/optional-callback.interface';
 import { catchEffectError } from '@shared/store/catch-effect-error.operator';
@@ -26,6 +27,7 @@ export const AuthStore = signalStore(
 
   withProps(() => ({
     userStore: inject(UserStore),
+    permissionStore: inject(PermissionStore),
     apiAuthService: inject(ApiAuthService),
   })),
 
@@ -33,9 +35,10 @@ export const AuthStore = signalStore(
     isAuth: computed(() => userStore.currentUser() !== null),
   })),
 
-  withMethods(({ userStore }) => ({
+  withMethods(({ userStore, permissionStore }) => ({
     reset: (): void => {
       userStore.reset();
+      permissionStore.reset();
     },
   })),
 
