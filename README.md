@@ -26,8 +26,11 @@ npm start
 | `npm run lint` / `lint:fix`               | ESLint для `.ts` и шаблонов                                       |
 | `npm run lint:styles` / `lint:styles:fix` | stylelint для `.scss`, порядок свойств исправляется автоматически |
 | `npm run format` / `format:check`         | Prettier                                                          |
+| `npm run check`                           | все проверки CI, кроме сборки                                     |
 
 CI на каждый PR запускает ESLint, stylelint, Prettier и сборку. PR с красным CI на ревью не берётся.
+
+Перед `git push` хук husky запускает `npm run check` и не даёт запушить код с ошибками. Хук ставится сам при `npm ci`.
 
 Состояние сторов и их экшены видны в расширении браузера [Redux DevTools](https://github.com/reduxjs/redux-devtools).
 
