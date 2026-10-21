@@ -30,13 +30,12 @@ export class BoardController {
     if (input && typeof input === 'object' && typeof (input as { reason?: unknown }).reason === 'string' && !(input as { reason: string }).reason.trim()) {
       delete (input as { reason?: unknown }).reason;
     }
-    const { data } = this.contract.body<MoveInput>('moveTask', input);
+    const { data, raw } = this.contract.body<MoveInput>('moveTask', input);
     const ids = {
       statusId: data.statusId.toLowerCase(),
       prevId: data.prevId?.toLowerCase(),
       nextId: data.nextId?.toLowerCase(),
     };
-    const rawReason = (input as { reason?: string } | undefined)?.reason;
-    return this.board.move(a, a.taskId, { ...data, ...ids }, rawReason);
+    return this.board.move(a, a.taskId, { ...data, ...ids }, raw.reason);
   }
 }

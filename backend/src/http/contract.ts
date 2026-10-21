@@ -25,7 +25,7 @@ interface Operation {
 /** Поля, которые не обрезаются по краям: пароли сравниваются как есть */
 const NO_TRIM = new Set(['password', 'current', 'next']);
 /** Поля, у которых длина проверяется по обрезанному тексту, а хранится исходный (markdown) */
-const KEEP_RAW = new Set(['body']);
+const KEEP_RAW = new Set(['body', 'reason']);
 const REASON_RANK: FieldReason[] = ['required', 'too_long', 'too_many', 'duplicate', 'invalid'];
 
 /**
@@ -130,8 +130,13 @@ export class Contract {
       }
     }
     if (Object.keys(fields).length) throw validation(fields);
+    // Исходный текст (отступы markdown) храним, только если он сам укладывается в лимит ответа
     const rawOut: Record<string, any> = {};
-    for (const k of KEEP_RAW) if (typeof input[k] === 'string') rawOut[k] = input[k];
+    for (const k of KEEP_RAW) {
+      if (typeof input[k] !== 'string') continue;
+      const max = this.deref(props[k] ?? {}).maxLength;
+      rawOut[k] = max !== undefined && input[k].length > max ? data[k] : input[k];
+    }
     return { data: data as T, raw: rawOut };
   }
 
