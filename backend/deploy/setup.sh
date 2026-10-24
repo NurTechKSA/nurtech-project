@@ -8,13 +8,14 @@ ROOT=/opt/tasks-stand
 mkdir -p "$ROOT/www/releases/placeholder"
 cd "$ROOT"
 if [ ! -f .env ]; then
-  umask 077
+  (umask 077
   cat > .env <<ENV
 DOMAIN=$DOMAIN
 DB_PASSWORD=$(openssl rand -hex 24)
 DEV_SEED=true
 DEV_SEED_PASSWORD=demo$(openssl rand -hex 4)
 ENV
+  )
   echo "Создан $ROOT/.env"
 fi
 cat > www/releases/placeholder/index.html <<'HTML'

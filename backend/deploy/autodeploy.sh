@@ -53,7 +53,6 @@ if sha=$(fresh_sha "$ROOT/repo-web" "$WEB_BRANCH" "$ROOT/.deployed-web") && [ -n
     echo "$sha" > "$ROOT/.deployed-web"
     log "web: ok"
   else
-    echo "$sha" > "$ROOT/.deployed-web"
-    log "web: FAILED (сборка фронта упала; следующая попытка - на новом коммите)"
+    log "web: FAILED (сборка фронта упала; следующая попытка - при следующем запуске)"
   fi
 fi
