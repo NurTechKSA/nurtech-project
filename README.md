@@ -1,59 +1,89 @@
-# NurtechProject
+# TaskManager
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.24.
+Управление задачами на Angular 21, Taiga UI 5 и `@ngrx/signals`.
 
-## Development server
+Требования и макеты — в ветке `docs/mvp`, папка [`docs-short/`](https://github.com/RYAZHAPOVILNUR/nurtech-project/blob/docs/mvp/docs-short/README.md). Начните с [границ MVP](https://github.com/RYAZHAPOVILNUR/nurtech-project/blob/docs/mvp/docs-short/01-scope.md) и [правил интерфейса](https://github.com/RYAZHAPOVILNUR/nurtech-project/blob/docs/mvp/docs-short/03-ui-rules.md); роли и ключи прав — в [модели данных](https://github.com/RYAZHAPOVILNUR/nurtech-project/blob/docs/mvp/docs-short/08-data-model-and-permissions.md#4-роли-и-ключи-разрешений).
 
-To start a local development server, run:
+Контракт API — [`openapi.yaml`](https://github.com/RYAZHAPOVILNUR/nurtech-project/blob/feat/backend-mvp/docs-short/backend/openapi/openapi.yaml) в ветке бэкенда, его же показывает [Swagger](https://tasks.45.77.66.108.sslip.io/api/docs/). Где бэкенд выбрал одно из двух прочтений ТЗ — [решения бэкенда](https://github.com/RYAZHAPOVILNUR/nurtech-project/blob/feat/backend-mvp/backend/README.md#решения-там-где-тз-и-контракт-расходятся). Нашли расхождение с контрактом — сообщите.
 
-```bash
-ng serve
-```
+## Запуск
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Нужны Node.js `^20.19 || ^22.12 || >=24` и npm `>=11`.
 
 ```bash
-ng generate component component-name
+npm ci
+npm start
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Приложение откроется на `http://localhost:4200`. Запросы на `/api` dev-сервер проксирует на стенд — адрес задан в `proxy.conf.json`.
 
-```bash
-ng generate --help
+Сессия хранится в httpOnly-cookie, поэтому фронт и `/api` всегда открываются с одного адреса: в разработке это делает прокси, на проде — веб-сервер.
+
+| Команда                                   | Что делает                                                        |
+| ----------------------------------------- | ----------------------------------------------------------------- |
+| `npm start`                               | dev-сервер с прокси                                               |
+| `npm run build`                           | продакшен-сборка                                                  |
+| `npm run lint` / `lint:fix`               | ESLint для `.ts` и шаблонов                                       |
+| `npm run lint:styles` / `lint:styles:fix` | stylelint для `.scss`, порядок свойств исправляется автоматически |
+| `npm run format` / `format:check`         | Prettier                                                          |
+| `npm run check`                           | все проверки CI, кроме сборки                                     |
+
+## Код-стайл и проверки
+
+Форматирование не обсуждаем — его делает Prettier. Правила кода проверяют ESLint (`.ts` и шаблоны) и stylelint (`.scss`). В VS Code поставьте рекомендованные расширения из `.vscode/extensions.json`: ошибки будут видны сразу, а форматирование — по сохранению.
+
+Что проверяет линтер и на чём чаще всего спотыкаются:
+
+- Имена файлов `kebab-case.<тип>.ts`: `task-card.component.ts`, `board.store.ts`.
+- Компоненты с `OnPush`, на сигналах; `output()` вместо `@Output()`.
+- Порядок в классе: приватные поля → публичные → конструктор → методы.
+- Булевы переменные с префиксом `is`, `has`, `can` …; у интерфейсов нет префикса `I`.
+- `Observable` — с суффиксом `$`, `Subject` — с `$$`. Обработчики в `subscribe()` не передаём — логика уходит в операторы (`tap`, `switchMap` …).
+
+Чего линтер не ловит, но на ревью попросят:
+
+- Импорты из `core` и `shared` — через `@core/…` и `@shared/…`, внутри домена — относительные.
+- Один файл — одна экспортируемая сущность. Тип или константа, нужные только одному файлу, остаются в нём без экспорта.
+- В шаблоне читаем сигналы, а не вызываем методы и геттеры: вычисления — в `computed`, форматирование значений — пайпом.
+- В шаблоне нет логики: события идут в обработчики `onXxx()` — `(click)="onSaveClick()"`, а не `(click)="isOpen.set(true)"`.
+- Типы полей — из модели контракта, а не примитивом: `id: Task['id']`, `input.required<Task['priority']>()`.
+- Имена функций — с глагола, без самодельных сокращений.
+- Комментарии — только к неочевидному; JSDoc — для действительно ценного описания.
+
+Проверки работают в три слоя:
+
+1. **Редактор** подсвечивает ошибки, пока пишете код.
+2. **`git push`** — хук husky запускает `npm run check` (ESLint, stylelint, Prettier) и не пускает код с ошибками. Упал — запустите `npm run lint:fix`, `npm run lint:styles:fix`, `npm run format`, остальное поправьте руками.
+3. **CI** на каждый PR повторяет те же проверки и добавляет сборку. PR с красным CI на ревью не берётся.
+
+## Стенд
+
+[tasks.45.77.66.108.sslip.io](https://tasks.45.77.66.108.sslip.io) — временный адрес до переезда на `tasks.nurtech.dev`. Раз в минуту стенд забирает свежий `main`, собирает фронт и выкладывает его.
+
+Аккаунты и проекты заводит ментор — в интерфейсе их не создать. Тестовые логины и роли — в [README бэкенда](https://github.com/RYAZHAPOVILNUR/nurtech-project/blob/feat/backend-mvp/backend/README.md#тестовые-данные-dev_seedtrue), пароль — у ментора.
+
+## Отладка
+
+Состояние сторов и их экшены видны в расширении браузера [Redux DevTools](https://github.com/reduxjs/redux-devtools).
+
+## Архитектура
+
+```
+core/       то, без чего приложение не стартует: аутентификация, layout, права, текущий пользователь
+shared/     переиспользуемый код без доменной логики
+<домен>/    экраны и логика одной предметной области: board/, task/, profile/ …
 ```
 
-## Building
+- Внутри домена файлы раскладываются по типу сущности. Как именно — видно по `core`.
+- `shared` ни от чего не зависит, `core` — только от `shared`, домены — от `core` и `shared`. Страницы и компоненты чужого домена не импортируем.
+- Состояние живёт в сторах: общее для приложения — в глобальных, состояние экрана — в сторе страницы. В сторе только состояние и работа с ним; навигация, диалоги и прочий UI остаются в компонентах или сервисах.
+- Сетевые ошибки (401, 409, 5xx, нет сети) обрабатывают перехватчики. Страница отвечает только за ошибки, которые касаются её самой: 404, ошибки полей формы.
 
-To build the project run:
+## Ветки и PR
 
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- Ветка от `dev`: `feat/board-columns`, `fix/card-dialog-close`. PR — в `dev`; в `main` ментор вливает готовые релизы, они и попадают на стенд.
+- Одна задача — один PR, задача не больше 6 часов. Чем меньше строк, тем быстрее ревью.
+- Не правим «заодно» то, что к задаче не относится: рефакторинг и чужой код — отдельным PR.
+- Коммит — одна строка: `feat: Добавлен переключатель досок`, `fix: Исправлено закрытие карточки`.
+- В описании PR — ссылка на задачу и скриншот/видео результата.
+- Сначала перекрестное ревью (cross-review), потом финальное.
