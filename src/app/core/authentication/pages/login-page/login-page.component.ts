@@ -55,10 +55,7 @@ export class LoginPageComponent {
 
   readonly form = inject(FormBuilder).nonNullable.group({
     username: ['', getRequiredValidator()],
-    password: [
-      '',
-      [getRequiredValidator(), getLengthValidator({ min: 8, max: 128 })],
-    ],
+    password: ['', [getRequiredValidator(), getLengthValidator({ max: 128 })]],
   });
 
   onFormSubmit(): void {
