@@ -1,5 +1,5 @@
 import { User } from '@core/user/interfaces/user.interface';
 
-export interface MeResponse {
+export interface UserResponse {
   user: User;
 }
