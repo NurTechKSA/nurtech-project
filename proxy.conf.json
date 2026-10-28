@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "http://localhost:3000",
+    "target": "https://tasks.45.77.66.108.sslip.io",
     "secure": true,
     "changeOrigin": true
   }

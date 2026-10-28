@@ -9,8 +9,10 @@ import { SKIP_ERROR_NOTIFICATION } from '../tokens/skip-error-notification.token
 
 const GENERIC_ERROR_MESSAGE =
   'Не удалось выполнить действие. Повторите попытку';
+const FORBIDDEN_MESSAGE = 'Недостаточно прав';
 const NETWORK_ERROR_STATUS = 0;
 const BAD_REQUEST_STATUS = 400;
+const FORBIDDEN_STATUS = 403;
 const CONFLICT_STATUS = 409;
 const SERVER_ERROR_MIN_STATUS = 500;
 
@@ -30,9 +32,15 @@ export const errorNotificationInterceptor: HttpInterceptorFn = (
         return throwError(() => error);
       }
 
-      if (error.status === CONFLICT_STATUS) {
-        const response = error.error as ErrorResponse | null;
+      const response = error.error as ErrorResponse | null;
 
+      if (error.status === FORBIDDEN_STATUS) {
+        notificationService.showError(
+          response?.error.message ?? FORBIDDEN_MESSAGE
+        );
+      }
+
+      if (error.status === CONFLICT_STATUS) {
         notificationService.showError(
           response?.error.message ?? GENERIC_ERROR_MESSAGE
         );
