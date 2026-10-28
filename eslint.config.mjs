@@ -26,7 +26,6 @@ const entityTypes = [
   'util',
   'operator',
   'token',
-  'fixture',
   'config',
   'routes',
   'spec',
