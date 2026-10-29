@@ -18,6 +18,15 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () =>
       import('@core/layout/layout.component').then((m) => m.LayoutComponent),
-    children: [],
+    children: [
+      {
+        path: AppPath.NOT_FOUND,
+        title: 'Не найдено',
+        loadComponent: () =>
+          import('@shared/pages/not-found-page/not-found-page.component').then(
+            (m) => m.NotFoundPageComponent
+          ),
+      },
+    ],
   },
 ];
