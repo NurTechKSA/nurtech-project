@@ -4,7 +4,7 @@
 # .env рядом (только на сервере): DOMAIN, DB_PASSWORD, DEV_SEED_PASSWORD.
 services:
   db:
-    logging: {driver: json-file, options: {max-size: "50m", max-file: "3"}}
+    logging: {driver: json-file, options: {max-size: "20m", max-file: "3"}}
     image: postgres:16-alpine
     container_name: tasks-db
     environment:
@@ -17,7 +17,7 @@ services:
     restart: always
 
   api:
-    logging: {driver: json-file, options: {max-size: "50m", max-file: "3"}}
+    logging: {driver: json-file, options: {max-size: "20m", max-file: "3"}}
     build:
       context: ./repo-api
       dockerfile: backend/Dockerfile
@@ -37,7 +37,7 @@ services:
     restart: always
 
   web:
-    logging: {driver: json-file, options: {max-size: "50m", max-file: "3"}}
+    logging: {driver: json-file, options: {max-size: "20m", max-file: "3"}}
     image: nginx:1.27-alpine
     container_name: tasks-web
     environment:
