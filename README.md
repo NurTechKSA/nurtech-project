@@ -1,10 +1,51 @@
 # TaskManager
 
-Управление задачами на Angular 21, Taiga UI 5 и `@ngrx/signals`.
+Учебный таск-менеджер в духе Jira: проекты, доски с колонками, карточки задач с комментариями, связями и учётом времени. Фронтенд — Angular 21, Taiga UI 5 и `@ngrx/signals`; бэкенд уже готов и работает на стенде.
 
-Требования и макеты — в ветке `docs/mvp`, папка [`docs-short/`](https://github.com/RYAZHAPOVILNUR/nurtech-project/blob/docs/mvp/docs-short/README.md). Начните с [границ MVP](https://github.com/RYAZHAPOVILNUR/nurtech-project/blob/docs/mvp/docs-short/01-scope.md) и [правил интерфейса](https://github.com/RYAZHAPOVILNUR/nurtech-project/blob/docs/mvp/docs-short/03-ui-rules.md); роли и ключи прав — в [модели данных](https://github.com/RYAZHAPOVILNUR/nurtech-project/blob/docs/mvp/docs-short/08-data-model-and-permissions.md#4-роли-и-ключи-разрешений).
+## С чего начать
 
-Контракт API — [`openapi.yaml`](https://github.com/RYAZHAPOVILNUR/nurtech-project/blob/feat/backend-mvp/docs-short/backend/openapi/openapi.yaml) в ветке бэкенда, его же показывает [Swagger](https://tasks.45.77.66.108.sslip.io/api/docs/). Где бэкенд выбрал одно из двух прочтений ТЗ — [решения бэкенда](https://github.com/RYAZHAPOVILNUR/nurtech-project/blob/feat/backend-mvp/backend/README.md#решения-там-где-тз-и-контракт-расходятся). Нашли расхождение с контрактом — сообщите.
+1. **Посмотрите на продукт.** Откройте [стенд](https://tasks.45.77.66.108.sslip.io) — там то, что уже сделано. Каким продукт должен стать, показывают [макеты](https://github.com/NurTechKSA/nurtech-project/tree/docs/mvp/docs-short/wireframes): доска, карточка задачи, создание задачи, вход и профиль, верхняя панель.
+2. **Узнайте границы MVP.** [01-scope](https://github.com/NurTechKSA/nurtech-project/blob/docs/mvp/docs-short/01-scope.md) — что делаем сейчас, что отложено, какие есть роли и адреса страниц. Остальные документы читайте, когда возьмёте задачу по ним.
+3. **Запустите проект локально** — раздел [Запуск](#запуск) ниже. Войти можно тестовым пользователем, пароль даст ментор.
+4. **Осмотрите код.** Раздел [Архитектура](#архитектура) объясняет, где что лежит; готовые примеры — вход, верхняя панель, права в `src/app/core`.
+5. **Возьмите задачу** из бэклога Taiga, создайте ветку и откройте PR — как в разделе [Ветки и PR](#ветки-и-pr). Перед первым PR прочитайте [Код-стайл и проверки](#код-стайл-и-проверки).
+
+## Документация
+
+Требования лежат в ветке `docs/mvp`, папка [`docs-short/`](https://github.com/NurTechKSA/nurtech-project/blob/docs/mvp/docs-short/README.md); контракт API — в ветке бэкенда.
+
+### Продукт
+
+| Тема                              | Документ                                                                                                                                                                                                                                                     |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Границы MVP, роли, адреса страниц | **[01-scope](https://github.com/NurTechKSA/nurtech-project/blob/docs/mvp/docs-short/01-scope.md)**                                                                                                                                                           |
+| Макеты экранов                    | [wireframes](https://github.com/NurTechKSA/nurtech-project/tree/docs/mvp/docs-short/wireframes)                                                                                                                                                              |
+| Сущности и связи между ними       | [08: сущности](https://github.com/NurTechKSA/nurtech-project/blob/docs/mvp/docs-short/08-data-model-and-permissions.md#2-сущности), [связи](https://github.com/NurTechKSA/nurtech-project/blob/docs/mvp/docs-short/08-data-model-and-permissions.md#3-связи) |
+| Роли и ключи разрешений           | **[08: роли и ключи](https://github.com/NurTechKSA/nurtech-project/blob/docs/mvp/docs-short/08-data-model-and-permissions.md#4-роли-и-ключи-разрешений)**                                                                                                    |
+
+### Интерфейс
+
+| Тема                                        | Документ                                                                                                                                               |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Доска                                       | [04-board](https://github.com/NurTechKSA/nurtech-project/blob/docs/mvp/docs-short/04-board.md)                                                         |
+| Карточка задачи                             | [05-task-card](https://github.com/NurTechKSA/nurtech-project/blob/docs/mvp/docs-short/05-task-card.md)                                                 |
+| Создание задачи                             | [06-create-task-dialog](https://github.com/NurTechKSA/nurtech-project/blob/docs/mvp/docs-short/06-create-task-dialog.md)                               |
+| Вход, профиль, верхняя панель               | [07-account-and-shell](https://github.com/NurTechKSA/nurtech-project/blob/docs/mvp/docs-short/07-account-and-shell.md)                                 |
+| Формы, состояния экранов, реакция на ошибки | [03-ui-rules](https://github.com/NurTechKSA/nurtech-project/blob/docs/mvp/docs-short/03-ui-rules.md)                                                   |
+| Видимость элементов по правам               | [08: видимость](https://github.com/NurTechKSA/nurtech-project/blob/docs/mvp/docs-short/08-data-model-and-permissions.md#видимость-элементов-по-ключам) |
+
+### API и данные
+
+| Тема                                 | Документ                                                                                                                                                                                                                                                         |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Пути, поля, коды ошибок              | [`openapi.yaml`](https://github.com/NurTechKSA/nurtech-project/blob/feat/backend-mvp/docs-short/backend/openapi/openapi.yaml), [Swagger](https://tasks.45.77.66.108.sslip.io/api/docs/)                                                                          |
+| Права, которых требует каждый запрос | [08: ключ → ручки](https://github.com/NurTechKSA/nurtech-project/blob/docs/mvp/docs-short/08-data-model-and-permissions.md#5-ключ--ручки)                                                                                                                        |
+| Принципы и решения модели данных     | [08: принципы](https://github.com/NurTechKSA/nurtech-project/blob/docs/mvp/docs-short/08-data-model-and-permissions.md#1-принципы), [решения](https://github.com/NurTechKSA/nurtech-project/blob/docs/mvp/docs-short/08-data-model-and-permissions.md#6-решения) |
+| Отступления бэкенда от ТЗ            | [README бэкенда](https://github.com/NurTechKSA/nurtech-project/blob/feat/backend-mvp/backend/README.md#решения-там-где-тз-и-контракт-расходятся)                                                                                                                 |
+
+Расхождения между требованиями, макетами и контрактом не решаем сами — сообщаем ментору.
+
+План по неделям и разбивка на задачи — [02-plan](https://github.com/NurTechKSA/nurtech-project/blob/docs/mvp/docs-short/02-plan.md).
 
 ## Запуск
 
@@ -49,18 +90,21 @@ npm start
 - Типы полей — из модели контракта, а не примитивом: `id: Task['id']`, `input.required<Task['priority']>()`.
 - Имена функций — с глагола, без самодельных сокращений.
 - Комментарии — только к неочевидному; JSDoc — для действительно ценного описания.
+- У компонентов страниц, которые подключает роутер, нет `selector`.
+- Сначала ищем готовый компонент Taiga UI, свою вёрстку пишем, только если готового нет: пустые экраны и ошибки — `tui-block-status`, карточки — `tuiCardLarge`, и так далее.
+- Размер и положение компонента задаёт родитель, сам компонент оформляет только своё содержимое. Исключение — страница, которую вставляет роутер: она сама растягивается на свободное место через `:host { flex: 1 }`.
 
 Проверки работают в три слоя:
 
 1. **Редактор** подсвечивает ошибки, пока пишете код.
-2. **`git push`** — хук husky запускает `npm run check` (ESLint, stylelint, Prettier) и не пускает код с ошибками. Упал — запустите `npm run lint:fix`, `npm run lint:styles:fix`, `npm run format`, остальное поправьте руками.
+2. **При пуше** husky запускает `npm run check` и не пускает код с ошибками. Упал — запустите `npm run *:fix`, остальное поправьте руками.
 3. **CI** на каждый PR повторяет те же проверки и добавляет сборку. PR с красным CI на ревью не берётся.
 
 ## Стенд
 
 [tasks.45.77.66.108.sslip.io](https://tasks.45.77.66.108.sslip.io) — временный адрес до переезда на `tasks.nurtech.dev`. Раз в минуту стенд забирает свежий `main`, собирает фронт и выкладывает его.
 
-Аккаунты и проекты заводит ментор — в интерфейсе их не создать. Тестовые логины и роли — в [README бэкенда](https://github.com/RYAZHAPOVILNUR/nurtech-project/blob/feat/backend-mvp/backend/README.md#тестовые-данные-dev_seedtrue), пароль — у ментора.
+Аккаунты и проекты заводит ментор — в интерфейсе их не создать. Тестовые логины и роли — в [README бэкенда](https://github.com/NurTechKSA/nurtech-project/blob/feat/backend-mvp/backend/README.md#тестовые-данные-dev_seedtrue), пароль — у ментора.
 
 ## Отладка
 
@@ -69,7 +113,7 @@ npm start
 ## Архитектура
 
 ```
-core/       то, без чего приложение не стартует: аутентификация, layout, права, текущий пользователь
+core/       то, без чего приложение не стартует: аутентификация, layout, права, текущий пользователь и проект
 shared/     переиспользуемый код без доменной логики
 <домен>/    экраны и логика одной предметной области: board/, task/, profile/ …
 ```
@@ -77,11 +121,21 @@ shared/     переиспользуемый код без доменной ло
 - Внутри домена файлы раскладываются по типу сущности. Как именно — видно по `core`.
 - `shared` ни от чего не зависит, `core` — только от `shared`, домены — от `core` и `shared`. Страницы и компоненты чужого домена не импортируем.
 - Состояние живёт в сторах: общее для приложения — в глобальных, состояние экрана — в сторе страницы. В сторе только состояние и работа с ним; навигация, диалоги и прочий UI остаются в компонентах или сервисах.
-- Сетевые ошибки (401, 409, 5xx, нет сети) обрабатывают перехватчики. Страница отвечает только за ошибки, которые касаются её самой: 404, ошибки полей формы.
+- Сторы зависят друг от друга в одну сторону, без циклов: `ProjectStore` вызывает `PermissionStore`, но не наоборот.
+- Guard только проверяет доступ и ждёт данные, но не меняет состояние под адрес: переход могут отменить, и в сторе останется чужое значение. Состояние под адрес выставляет компонент маршрута.
+- Сетевые ошибки (401, 403, 409, 5xx, нет сети) обрабатывают перехватчики. Страница отвечает только за ошибки, которые касаются её самой: 404, ошибки полей формы.
 
 ## Ветки и PR
 
-- Ветка от `dev`: `feat/board-columns`, `fix/card-dialog-close`. PR — в `dev`; в `main` ментор вливает готовые релизы, они и попадают на стенд.
+- Ветка от свежего `main`: `feat/board-columns`, `fix/card-dialog-close`. PR — в `main`, после мержа стенд сам забирает изменения.
+
+  ```bash
+  git fetch
+  git switch -c feat/board-columns --no-track origin/main
+  ```
+
+  Без `--no-track` git сделает upstream-веткой `main`, и `git push` уйдёт прямо в него, мимо PR. Первый пуш — `git push -u origin feat/board-columns`.
+
 - Одна задача — один PR, задача не больше 6 часов. Чем меньше строк, тем быстрее ревью.
 - Не правим «заодно» то, что к задаче не относится: рефакторинг и чужой код — отдельным PR.
 - Коммит — одна строка: `feat: Добавлен переключатель досок`, `fix: Исправлено закрытие карточки`.

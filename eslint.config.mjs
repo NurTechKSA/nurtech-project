@@ -78,6 +78,7 @@ export default tseslint.config(
           alphabetize: { order: 'asc' },
         },
       ],
+      'import-x/no-cycle': 'error',
       'import-x/no-duplicates': 'error',
       'import-x/no-mutable-exports': 'error',
 
