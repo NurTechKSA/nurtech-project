@@ -22,6 +22,7 @@
     <tui-data-list class="project-switcher__list" size="l">
       <p class="project-switcher__caption">Проекты</p>
       @for (project of projects(); track project.id) {
+        <!-- TODO: открывать последнюю использованную доску проекта -->
         <a
           tuiOption
           [routerLink]="[projectPath, project.key]"

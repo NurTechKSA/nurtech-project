@@ -1,0 +1,17 @@
+<section class="test-user-login">
+  <p class="test-user-login__caption">Войти тестовым пользователем</p>
+  <div class="test-user-login__users">
+    @for (user of testUsers; track user.username) {
+      <button
+        tuiCell="s"
+        type="button"
+        class="test-user-login__user"
+        (click)="onUserClick(user.username)">
+        <span tuiTitle>
+          {{ user.username }}
+          <span tuiSubtitle>{{ user.description }}</span>
+        </span>
+      </button>
+    }
+  </div>
+</section>

@@ -1,0 +1,74 @@
+<header class="project-data-page__header">
+  <h1 class="project-data-page__heading">
+    Данные проекта {{ currentProject()?.key }}
+  </h1>
+  <p class="project-data-page__hint">
+    Временная страница: что отдаёт бэкенд и где это понадобится в интерфейсе.
+    Запрос уходит, когда вы открываете ответ.
+  </p>
+  <p class="project-data-page__hint">
+    Те же запросы можно выполнить в Swagger: он открыт через dev-прокси и
+    работает с вашей сессией. Нажмите «Try it out» и подставьте projectId
+    <code class="project-data-page__source">{{ currentProject()?.id }}</code>
+  </p>
+
+  <div class="project-data-page__scheme">
+    <div class="project-data-page__scheme-row">
+      <span class="project-data-page__node">Проект</span>
+      →
+      <span class="project-data-page__node">Доски</span>
+      →
+      <span class="project-data-page__node">Колонки = статусы</span>
+      →
+      <span class="project-data-page__node">Задачи (карточки)</span>
+    </div>
+    <div class="project-data-page__scheme-row">
+      <span class="project-data-page__node">Проект</span>
+      →
+      <span class="project-data-page__node">Участники</span>
+      →
+      <span class="project-data-page__node">Исполнитель, ревьюер, фильтры</span>
+    </div>
+    <div class="project-data-page__scheme-row">
+      <span class="project-data-page__node">Проект</span>
+      →
+      <span class="project-data-page__node">Права</span>
+      →
+      <span class="project-data-page__node">Какие кнопки видны</span>
+    </div>
+  </div>
+</header>
+
+@for (block of blocks; track block.title) {
+  <section class="project-data-page__block">
+    <div class="project-data-page__block-head">
+      <h2 class="project-data-page__title">{{ block.title }}</h2>
+      <code class="project-data-page__source">{{ block.source }}</code>
+      <a
+        tuiButton
+        class="project-data-page__swagger"
+        appearance="flat"
+        size="xs"
+        iconEnd="@tui.external-link"
+        target="_blank"
+        rel="noopener"
+        [href]="swaggerPath + block.swaggerOperation">
+        Swagger
+      </a>
+      <button
+        tuiButton
+        type="button"
+        appearance="secondary"
+        size="xs"
+        [iconEnd]="block.isOpen() ? '@tui.chevron-up' : '@tui.chevron-down'"
+        [loading]="block.isLoading()"
+        (click)="onBlockToggle(block)">
+        {{ block.isOpen() ? 'Скрыть ответ' : 'Показать ответ' }}
+      </button>
+    </div>
+    <p class="project-data-page__usage">{{ block.usage }}</p>
+    <tui-expand [expanded]="block.isExpanded()">
+      <pre class="project-data-page__json">{{ block.data() | json }}</pre>
+    </tui-expand>
+  </section>
+}

@@ -14,6 +14,7 @@ import { InitialsPipe } from '@shared/pipes/initials.pipe';
 import { ShortNamePipe } from '@shared/pipes/short-name.pipe';
 
 import { UserStore } from '../../+store/user.store';
+import { TestUserSwitchComponent } from '../../../../../temp/test-users/components/test-user-switch/test-user-switch.component';
 
 @Component({
   selector: 'app-user-menu',
@@ -24,6 +25,7 @@ import { UserStore } from '../../+store/user.store';
     TuiAvatar,
     TuiDataList,
     TuiDropdown,
+    TestUserSwitchComponent,
   ],
   templateUrl: './user-menu.component.html',
   styleUrl: './user-menu.component.scss',
@@ -39,6 +41,10 @@ export class UserMenuComponent {
   readonly currentUser = this.userStore.currentUser;
 
   readonly profilePath = `/${AppPath.PROFILE}`;
+
+  onProfileClick(): void {
+    this.isOpen.set(false);
+  }
 
   onLogoutButtonClick(): void {
     this.isOpen.set(false);

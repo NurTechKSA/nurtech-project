@@ -14,6 +14,17 @@ export const projectRoutes: Routes = [
       import('./components/project-shell/project-shell.component').then(
         (m) => m.ProjectShellComponent
       ),
-    children: [],
+    children: [
+      // TODO: доска `board/:boardId` и задача `tasks/:taskKey`
+      {
+        // TODO: временные данные
+        path: AppPath.PROJECT_DATA,
+        title: 'Данные API',
+        loadComponent: () =>
+          import('../../../temp/project-data/pages/project-data-page/project-data-page.component').then(
+            (m) => m.ProjectDataPageComponent
+          ),
+      },
+    ],
   },
 ];
