@@ -12,3 +12,7 @@
   background: var(--tui-background-base);
   border-block-end: 1px solid var(--tui-border-normal);
 }
+
+.header__project-switcher {
+  min-inline-size: 0;
+}
