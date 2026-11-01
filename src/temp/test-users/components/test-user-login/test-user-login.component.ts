@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, output } from '@angular/core';
-import { TuiCell, TuiTitle } from '@taiga-ui/core';
+import { TuiTitle } from '@taiga-ui/core';
 
 import { User } from '@core/user/interfaces/user.interface';
 
@@ -7,7 +7,7 @@ import { TEST_USERS } from '../../config/test-users.config';
 
 @Component({
   selector: 'app-test-user-login',
-  imports: [TuiCell, TuiTitle],
+  imports: [TuiTitle],
   templateUrl: './test-user-login.component.html',
   styleUrl: './test-user-login.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

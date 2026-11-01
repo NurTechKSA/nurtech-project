@@ -18,8 +18,21 @@
   }
 
   &__user {
+    padding: 0.5rem 0.75rem;
     text-align: start;
+    cursor: pointer;
+    background: none;
     border: 1px solid var(--tui-border-normal);
     border-radius: var(--tui-radius-m);
+    transition: background-color var(--tui-duration);
+
+    &:hover {
+      background: var(--tui-background-neutral-1-hover);
+    }
+  }
+
+  &__description {
+    font: var(--tui-typography-body-xs);
+    color: var(--tui-text-secondary);
   }
 }
