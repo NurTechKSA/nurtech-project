@@ -1,0 +1,15 @@
+<hr />
+<p class="test-user-switch__caption">Войти как</p>
+@for (user of testUsers; track user.username) {
+  <button tuiOption type="button" (click)="onUserClick(user.username)">
+    <span class="test-user-switch__option">
+      {{ user.username }}
+      <span class="test-user-switch__description">
+        {{ user.description }}
+      </span>
+    </span>
+    @if (user.username === currentUsername()) {
+      <tui-icon icon="@tui.check" />
+    }
+  </button>
+}

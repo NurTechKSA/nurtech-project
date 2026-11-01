@@ -1,0 +1,18 @@
+.test-user-switch {
+  &__caption {
+    padding: 0.5rem;
+    font: var(--tui-typography-body-s);
+    color: var(--tui-text-secondary);
+  }
+
+  &__option {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+  }
+
+  &__description {
+    font: var(--tui-typography-body-s);
+    color: var(--tui-text-secondary);
+  }
+}

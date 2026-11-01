@@ -66,6 +66,7 @@ export default tseslint.config(
       'import-x': importXPlugin,
     },
     rules: {
+      'sonarjs/todo-tag': 'warn',
       'import-x/order': [
         'error',
         {

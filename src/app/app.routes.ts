@@ -17,6 +17,7 @@ export const routes: Routes = [
         (m) => m.LoginPageComponent
       ),
   },
+  // TODO: страница приглашения `invite/:token` — пока все работают под тестовыми пользователями
   {
     path: AppPath.ROOT,
     title: 'Главная',
@@ -25,11 +26,11 @@ export const routes: Routes = [
       import('@core/layout/layout.component').then((m) => m.LayoutComponent),
     children: [
       {
-        path: AppPath.ROOT,
+        path: '',
         canActivate: [projectsGuard],
         children: [
           {
-            path: AppPath.ROOT,
+            path: '',
             pathMatch: 'full',
             title: 'Нет проектов',
             canActivate: [homeGuard],
@@ -41,6 +42,7 @@ export const routes: Routes = [
           ...projectRoutes,
         ],
       },
+      // TODO: страница профиля `AppPath.PROFILE`
       {
         path: AppPath.NOT_FOUND,
         title: 'Не найдено',

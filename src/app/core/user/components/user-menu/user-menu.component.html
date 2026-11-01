@@ -16,13 +16,15 @@
       <p class="user-menu__caption">
         {{ user.name | shortName }} · &#64;{{ user.username }}
       </p>
-      <a tuiOption [routerLink]="profilePath" (click)="isOpen.set(false)">
+      <a tuiOption [routerLink]="profilePath" (click)="onProfileClick()">
         Профиль
       </a>
       <hr />
       <button tuiOption type="button" (click)="onLogoutButtonClick()">
         Выйти
       </button>
+      <!-- TODO: временные данные -->
+      <app-test-user-switch />
     </tui-data-list>
   </ng-template>
 }

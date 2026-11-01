@@ -18,10 +18,13 @@ import {
 import { TuiAvatar, TuiPassword } from '@taiga-ui/kit';
 import { TuiCardLarge, TuiForm } from '@taiga-ui/layout';
 
+import { User } from '@core/user/interfaces/user.interface';
 import { getLengthValidator } from '@shared/validators/length.util';
 import { getRequiredValidator } from '@shared/validators/required.util';
 
 import { LoginPageStore } from './login-page.store';
+import { TestUserLoginComponent } from '../../../../../temp/test-users/components/test-user-login/test-user-login.component';
+import { TEST_USERS_PASSWORD } from '../../../../../temp/test-users/config/test-users-password.config';
 import { getSafeReturnUrl } from '../../utils/safe-return-url.util';
 
 @Component({
@@ -38,6 +41,7 @@ import { getSafeReturnUrl } from '../../utils/safe-return-url.util';
     TuiNotification,
     TuiPassword,
     TuiTextfield,
+    TestUserLoginComponent,
   ],
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.scss',
@@ -55,8 +59,18 @@ export class LoginPageComponent {
 
   readonly form = inject(FormBuilder).nonNullable.group({
     username: ['', getRequiredValidator()],
-    password: ['', [getRequiredValidator(), getLengthValidator({ max: 128 })]],
+    password: [
+      // TODO: временные данные
+      TEST_USERS_PASSWORD,
+      [getRequiredValidator(), getLengthValidator({ max: 128 })],
+    ],
   });
+
+  // TODO: временные данные
+  onTestUserSelect(username: User['username']): void {
+    this.form.setValue({ username, password: TEST_USERS_PASSWORD });
+    this.onFormSubmit();
+  }
 
   onFormSubmit(): void {
     if (this.form.invalid) {
