@@ -1,0 +1,14 @@
+<section tuiCardLarge appearance="floating">
+  <tui-block-status size="m">
+    <span
+      tuiSlot="top"
+      appearance="secondary"
+      size="xl"
+      [tuiAvatar]="icon()"></span>
+    <h1>{{ heading() }}</h1>
+    {{ description() }}
+    <ng-container ngProjectAs="button">
+      <ng-content />
+    </ng-container>
+  </tui-block-status>
+</section>
