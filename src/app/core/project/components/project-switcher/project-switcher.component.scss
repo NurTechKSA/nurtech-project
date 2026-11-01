@@ -1,0 +1,41 @@
+:host {
+  display: flex;
+}
+
+.project-switcher {
+  &__button {
+    max-inline-size: 100%;
+  }
+
+  &__label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__list {
+    min-inline-size: 15rem;
+  }
+
+  &__caption {
+    padding: 0.5rem;
+    font: var(--tui-typography-body-s);
+    color: var(--tui-text-secondary);
+  }
+
+  &__option {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+  }
+
+  &__key {
+    font: var(--tui-typography-body-s);
+    color: var(--tui-text-secondary);
+  }
+
+  &__empty {
+    font: var(--tui-typography-body-m);
+    color: var(--tui-text-secondary);
+  }
+}

@@ -1,0 +1,42 @@
+@if (projects().length) {
+  <button
+    tuiButton
+    class="project-switcher__button"
+    type="button"
+    appearance="flat"
+    size="s"
+    iconEnd="@tui.chevron-down"
+    tuiDropdownAlign="start"
+    [tuiDropdown]="list"
+    [(tuiDropdownOpen)]="isOpen">
+    <span class="project-switcher__label">
+      @if (currentProject(); as project) {
+        {{ project.key }} · {{ project.name }}
+      } @else {
+        Проекты
+      }
+    </span>
+  </button>
+
+  <ng-template #list>
+    <tui-data-list class="project-switcher__list" size="l">
+      <p class="project-switcher__caption">Проекты</p>
+      @for (project of projects(); track project.id) {
+        <a
+          tuiOption
+          [routerLink]="[projectPath, project.key]"
+          (click)="onProjectClick()">
+          <span class="project-switcher__option">
+            {{ project.name }}
+            <span class="project-switcher__key">{{ project.key }}</span>
+          </span>
+          @if (project.key === currentProjectKey()) {
+            <tui-icon icon="@tui.check" />
+          }
+        </a>
+      }
+    </tui-data-list>
+  </ng-template>
+} @else if (isLoaded()) {
+  <span class="project-switcher__empty">Проектов пока нет</span>
+}
