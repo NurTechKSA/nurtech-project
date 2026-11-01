@@ -47,7 +47,7 @@ Task ──> User (reporter, assignee, reviewer), Status, Subsystem
 ```
 
 ## 4. Роли и ключи разрешений
-Бэкенд отдаёт список ключей проекта в `GET /projects/:projectId/me` вместе с ролью. Ключ повторяет действие (`сущность-действие`); у каждой ручки в OpenAPI указан `x-permission`. На фронте ключи — enum `ProjectPermission` (`core/permissions/enums`) со значениями из OpenAPI; в каркасе только часть ключей, остальные добавляются задачей E0. Права текущего проекта хранит `PermissionStore`; директива `*appRestrictByPermission="permission.TASK_CREATE"` скрывает недоступные элементы (варианты — в JSDoc директивы).
+Бэкенд отдаёт список ключей проекта в `GET /projects/:projectId/me` вместе с ролью. Ключ повторяет действие (`сущность-действие`); у каждой ручки в OpenAPI указан `x-permission`. На фронте ключи — enum `ProjectPermission` (`core/permissions/enums`) со значениями из OpenAPI; в каркасе только часть ключей, остальные добавляются задачей Э0. Права текущего проекта хранит `PermissionStore`; директива `*appRestrictByPermission="permission.TASK_CREATE"` скрывает недоступные элементы (варианты — в JSDoc директивы).
 
 | Ключ | viewer | member | admin | owner |
 |---|---|---|---|---|
