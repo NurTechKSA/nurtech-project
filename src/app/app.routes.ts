@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 import { authGuard } from '@core/authentication/guards/auth.guard';
 import { AppPath } from '@core/enums/app-path.enum';
+import { projectRoutes } from '@core/project/project.routes';
 
 export const routes: Routes = [
   {
@@ -19,6 +20,7 @@ export const routes: Routes = [
     loadComponent: () =>
       import('@core/layout/layout.component').then((m) => m.LayoutComponent),
     children: [
+      ...projectRoutes,
       {
         path: AppPath.NOT_FOUND,
         title: 'Не найдено',
