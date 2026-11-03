@@ -1,15 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
-import { profileStore } from '../../store/profile.store';
+import { ProfileStore } from '../../+store/profile.store';
 
 @Component({
-  selector: 'app-profile-page',
-  imports: [],
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [profileStore],
+  providers: [ProfileStore],
 })
 export class ProfilePageComponent {
-  store: InstanceType<typeof profileStore> = inject(profileStore);
+  private readonly store = inject(ProfileStore);
 }

@@ -7,6 +7,8 @@ import { homeGuard } from '@core/project/guards/home.guard';
 import { projectsGuard } from '@core/project/guards/projects.guard';
 import { projectRoutes } from '@core/project/project.routes';
 
+import { profileRoutes } from './profile/profile.routes';
+
 export const routes: Routes = [
   {
     path: AppPath.LOGIN,
@@ -45,8 +47,7 @@ export const routes: Routes = [
       {
         path: AppPath.PROFILE,
         title: 'Профиль',
-        loadChildren: () =>
-          import('./profile/profile.routes').then((m) => m.profileRoutes),
+        children: [...profileRoutes],
       },
       {
         path: AppPath.NOT_FOUND,
