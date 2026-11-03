@@ -12,4 +12,10 @@ export class NotificationService {
       .open(message, { appearance: 'negative', autoClose: AUTO_CLOSE_MS })
       .subscribe();
   }
+  
+  showSuccess(message: string): void {
+    this.tuiNotificationService
+      .open(message, { appearance: 'positive', autoClose: AUTO_CLOSE_MS })
+      .subscribe();
+  }
 }

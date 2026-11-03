@@ -8,7 +8,17 @@
     <h1>{{ heading() }}</h1>
     {{ description() }}
     <ng-container ngProjectAs="button">
-      <ng-content />
+      <button 
+        tuiButton
+        type="button"
+        size="m"
+        appearance="secondary"
+        aria-label="Копировать ссылку"
+        title="Копировать ссылку"
+        (click)="copyLink()"
+      >
+        <tui-icon icon="@tui.copy"></tui-icon>
+      </button>
     </ng-container>
   </tui-block-status>
 </section>
