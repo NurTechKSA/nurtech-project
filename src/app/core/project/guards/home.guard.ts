@@ -5,15 +5,14 @@ import { AppPath } from '@core/enums/app-path.enum';
 
 import { ProjectStore } from '../+store/project.store';
 
-// TODO: вести в последний открытый проект (хранить на устройстве), пока — в первый;
-//  страница данных API — временно, пока в проекте нет доски
+// TODO: страница данных API — временно, пока в проекте нет доски
 export const homeGuard: CanActivateFn = () => {
-  const firstProject = inject(ProjectStore).entities().at(0);
+  const project = inject(ProjectStore).getLastProject();
 
-  return firstProject
+  return project
     ? inject(Router).createUrlTree([
         AppPath.PROJECT,
-        firstProject.key,
+        project.key,
         AppPath.PROJECT_DATA,
       ])
     : true;

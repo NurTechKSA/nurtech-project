@@ -27,6 +27,8 @@ import { withLoadingStatus } from '@shared/store/with-loading-status.util';
 import { Project } from '../interfaces/project.interface';
 import { ApiProjectService } from '../services/api-project.service';
 
+const LAST_PROJECT_KEY = 'lastProjectKey';
+
 interface ProjectState {
   currentProjectKey: Project['key'] | null;
 }
@@ -89,9 +91,16 @@ export const ProjectStore = signalStore(
       const project = store.currentProject();
 
       if (project) {
+        localStorage.setItem(LAST_PROJECT_KEY, project.key);
         permissionStore.loadPermissions(project.id);
       }
     }),
+    getLastProject: (): Project | undefined => {
+      const savedKey = localStorage.getItem(LAST_PROJECT_KEY);
+      const savedProject = savedKey ? store.entityMap()[savedKey] : null;
+
+      return savedProject ?? store.entities().at(0);
+    },
     closeProject: (): void => {
       permissionStore.reset();
       updateState(store, '[ProjectStore] closeProject', initialState);
