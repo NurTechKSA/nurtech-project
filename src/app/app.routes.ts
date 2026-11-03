@@ -42,7 +42,12 @@ export const routes: Routes = [
           ...projectRoutes,
         ],
       },
-      // TODO: страница профиля `AppPath.PROFILE`
+      {
+        path: AppPath.PROFILE,
+        title: 'Профиль',
+        loadChildren: () =>
+          import('./profile/profile.routes').then((m) => m.profileRoutes),
+      },
       {
         path: AppPath.NOT_FOUND,
         title: 'Не найдено',
