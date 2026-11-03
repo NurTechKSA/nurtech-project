@@ -1,13 +1,21 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Signal,
+} from '@angular/core';
 
-import { ProfileStore } from '../../+store/profile.store';
+import { UserStore } from '@core/user/+store/user.store';
+import { User } from '@core/user/interfaces/user.interface';
 
 @Component({
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [ProfileStore],
+  providers: [UserStore],
 })
 export class ProfilePageComponent {
-  private readonly store = inject(ProfileStore);
+  private readonly userStore = inject(UserStore);
+
+  public readonly user: Signal<User | null> = this.userStore.currentUser;
 }

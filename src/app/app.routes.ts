@@ -44,11 +44,7 @@ export const routes: Routes = [
           ...projectRoutes,
         ],
       },
-      {
-        path: AppPath.PROFILE,
-        title: 'Профиль',
-        children: [...profileRoutes],
-      },
+      ...profileRoutes,
       {
         path: AppPath.NOT_FOUND,
         title: 'Не найдено',

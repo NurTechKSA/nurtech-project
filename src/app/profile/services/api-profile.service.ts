@@ -2,9 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 
-import { User } from '@core/user/interfaces/user.interface';
+import { MeResponse } from '@core/authentication/interfaces/api/me-response.interface';
 
 import { ChangePasswordRequest } from '../interfaces/api/change-password-request.interface';
+
+import { User } from '@core/user/interfaces/user.interface';
+
 import { UpdateProfileRequest } from '../interfaces/api/update-profile-request.interface';
 
 @Injectable({
@@ -16,8 +19,8 @@ export class ApiProfileService {
 
   updateName(name: UpdateProfileRequest): Observable<User> {
     return this.http
-      .patch<User>(this.endpoint, { name })
-      .pipe(map((user: User) => user));
+      .patch<MeResponse>(this.endpoint, name)
+      .pipe(map(({ user }) => user));
   }
 
   updatePassword(payload: ChangePasswordRequest): Observable<void> {
