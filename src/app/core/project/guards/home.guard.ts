@@ -7,7 +7,9 @@ import { ProjectStore } from '../+store/project.store';
 
 // TODO: страница данных API — временно, пока в проекте нет доски
 export const homeGuard: CanActivateFn = () => {
-  const project = inject(ProjectStore).getLastProject();
+  const projectStore = inject(ProjectStore);
+  const project =
+    projectStore.currentProject() ?? projectStore.entities().at(0);
 
   return project
     ? inject(Router).createUrlTree([
