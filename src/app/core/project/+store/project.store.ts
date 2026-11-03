@@ -1,5 +1,9 @@
 import { computed, inject } from '@angular/core';
-import { updateState, withDevtools } from '@angular-architects/ngrx-toolkit';
+import {
+  updateState,
+  withDevtools,
+  withStorageSync,
+} from '@angular-architects/ngrx-toolkit';
 import {
   signalMethod,
   signalStore,
@@ -20,6 +24,7 @@ import { exhaustMap, filter, pipe, tap } from 'rxjs';
 
 import { PermissionStore } from '@core/permissions/+store/permission.store';
 import { LoadingStatus } from '@shared/enums/loading-status.enum';
+import { StorageKey } from '@shared/enums/storage-key.enum';
 import { catchEffectError } from '@shared/store/catch-effect-error.operator';
 import { setLoaded, setLoading } from '@shared/store/status-update.util';
 import { withLoadingStatus } from '@shared/store/with-loading-status.util';
@@ -49,6 +54,10 @@ export const ProjectStore = signalStore(
   withLoadingStatus(),
 
   withState(initialState),
+  withStorageSync({
+    key: StorageKey.PROJECT,
+    select: ({ currentProjectKey }) => ({ currentProjectKey }),
+  }),
   withEntities(projectConfig),
 
   withComputed(({ entityMap, currentProjectKey }) => ({
@@ -94,16 +103,11 @@ export const ProjectStore = signalStore(
     }),
     closeProject: (): void => {
       permissionStore.reset();
-      updateState(store, '[ProjectStore] closeProject', initialState);
     },
     reset: (): void => {
-      updateState(
-        store,
-        '[ProjectStore] reset',
-        initialState,
-        removeAllEntities(),
-        { status: LoadingStatus.INIT }
-      );
+      updateState(store, '[ProjectStore] reset', removeAllEntities(), {
+        status: LoadingStatus.INIT,
+      });
     },
   }))
 );
