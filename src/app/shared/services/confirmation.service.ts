@@ -3,23 +3,23 @@ import { TuiDialogService } from '@taiga-ui/core';
 import { TUI_CONFIRM, type TuiConfirmData } from '@taiga-ui/kit';
 import { defaultIfEmpty, Observable } from 'rxjs';
 
+const DELETE_CONFIRM_DATA: TuiConfirmData = {
+  yes: 'Удалить',
+  no: 'Отмена',
+  appearance: 'primary-destructive',
+};
+
 @Injectable({ providedIn: 'root' })
 export class ConfirmationService {
-  private readonly dialogs = inject(TuiDialogService);
+  private readonly tuiDialogService = inject(TuiDialogService);
 
-  confirm(question: string): Observable<boolean> {
-    const data: TuiConfirmData = {
-      yes: 'Удалить',
-      no: 'Отмена',
-      appearance: 'primary-destructive',
-    };
-
-    return this.dialogs
+  confirmDelete(question: string): Observable<boolean> {
+    return this.tuiDialogService
       .open<boolean>(TUI_CONFIRM, {
         label: question,
         size: 's',
         required: false,
-        data,
+        data: DELETE_CONFIRM_DATA,
       })
       .pipe(defaultIfEmpty(false));
   }
