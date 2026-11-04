@@ -2,10 +2,9 @@ import { inject } from '@angular/core';
 import { updateState, withDevtools } from '@angular-architects/ngrx-toolkit';
 import { signalStore, withMethods, withProps } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { exhaustMap, pipe, tap } from 'rxjs';
+import { exhaustMap, pipe, switchMap, tap } from 'rxjs';
 
 import { UserStore } from '@core/user/+store/user.store';
-import { User } from '@core/user/interfaces/user.interface';
 import { catchEffectError } from '@shared/store/catch-effect-error.operator';
 import { setLoaded, setLoading } from '@shared/store/status-update.util';
 import { withLoadingStatus } from '@shared/store/with-loading-status.util';
@@ -19,19 +18,17 @@ export const ProfileStore = signalStore(
   withDevtools('profile'),
   withLoadingStatus(),
   withProps(() => ({
-    profileService: inject(ApiProfileService),
+    apiProfileService: inject(ApiProfileService),
     userStore: inject(UserStore),
   })),
-  withMethods(({ profileService, userStore, ...store }) => ({
+  withMethods(({ apiProfileService, userStore, ...store }) => ({
     updateName: rxMethod<UpdateProfileRequest>(
       pipe(
         tap(() => {
           updateState(store, '[ProfileStore] updateName', setLoading());
         }),
-        exhaustMap((payload: UpdateProfileRequest) =>
-          profileService.updateName(payload)
-        ),
-        tap((user: User) => {
+        switchMap((payload) => apiProfileService.updateName(payload)),
+        tap((user) => {
           userStore.setUser(user);
           updateState(store, '[ProfileStore] updateNameSuccess', setLoaded());
         }),
@@ -43,9 +40,7 @@ export const ProfileStore = signalStore(
         tap(() => {
           updateState(store, '[ProfileStore] changePassword', setLoading());
         }),
-        exhaustMap((passwords: ChangePasswordRequest) =>
-          profileService.changePassword(passwords)
-        ),
+        exhaustMap((passwords) => apiProfileService.changePassword(passwords)),
         tap(() => {
           updateState(
             store,

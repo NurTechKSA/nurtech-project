@@ -3,7 +3,6 @@ import { Routes } from '@angular/router';
 import { authGuard } from '@core/authentication/guards/auth.guard';
 import { guestGuard } from '@core/authentication/guards/guest.guard';
 import { AppPath } from '@core/enums/app-path.enum';
-import { projectsGuard } from '@core/project/guards/projects.guard';
 import { projectRoutes } from '@core/project/project.routes';
 
 import { profileRoutes } from './profile/profile.routes';
@@ -26,11 +25,7 @@ export const routes: Routes = [
     loadComponent: () =>
       import('@core/layout/layout.component').then((m) => m.LayoutComponent),
     children: [
-      {
-        path: '',
-        canActivate: [projectsGuard],
-        children: [...projectRoutes],
-      },
+      ...projectRoutes,
       ...profileRoutes,
       {
         path: AppPath.NOT_FOUND,
