@@ -7,17 +7,6 @@
       [tuiAvatar]="icon()"></span>
     <h1>{{ heading() }}</h1>
     {{ description() }}
-    <ng-container ngProjectAs="button">
-      <button
-        tuiButton
-        type="button"
-        size="m"
-        appearance="secondary"
-        aria-label="Копировать ссылку"
-        title="Копировать ссылку"
-        (click)="copyLink()">
-        <tui-icon icon="@tui.copy"></tui-icon>
-      </button>
-    </ng-container>
+    <ng-container ngProjectAs="button"> </ng-container>
   </tui-block-status>
 </section>
