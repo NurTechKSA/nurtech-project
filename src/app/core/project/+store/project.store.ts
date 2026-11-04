@@ -59,6 +59,10 @@ export const ProjectStore = signalStore(
     }),
   })),
 
+  withComputed(({ currentProject }) => ({
+    currentProjectId: computed(() => currentProject()?.id ?? null),
+  })),
+
   withProps(() => ({
     permissionStore: inject(PermissionStore),
     apiProjectService: inject(ApiProjectService),

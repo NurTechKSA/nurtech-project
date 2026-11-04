@@ -15,7 +15,15 @@ export const projectRoutes: Routes = [
         (m) => m.ProjectShellComponent
       ),
     children: [
-      // TODO: доска `board/:boardId` и задача `tasks/:taskKey`
+      {
+        path: `${AppPath.BOARD}/:${RouteParam.BOARD_ID}`,
+        title: 'Доска',
+        loadComponent: () =>
+          import('../../board/pages/board-page/board-page.component').then(
+            (m) => m.BoardPageComponent
+          ),
+      },
+      // TODO: задача `tasks/:taskKey`
       {
         // TODO: временные данные
         path: AppPath.PROJECT_DATA,
