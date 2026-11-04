@@ -15,13 +15,13 @@ export class ApiProfileService {
   private readonly http = inject(HttpClient);
   private readonly endpoint = 'profile';
 
-  updateName(name: UpdateProfileRequest): Observable<User> {
+  updateName(payload: UpdateProfileRequest): Observable<User> {
     return this.http
-      .patch<MeResponse>(this.endpoint, name)
+      .patch<MeResponse>(this.endpoint, payload)
       .pipe(map(({ user }) => user));
   }
 
-  updatePassword(payload: ChangePasswordRequest): Observable<void> {
+  changePassword(payload: ChangePasswordRequest): Observable<void> {
     return this.http.post<void>(`${this.endpoint}/password`, payload);
   }
 }

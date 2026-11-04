@@ -3,7 +3,6 @@ import { Routes } from '@angular/router';
 import { authGuard } from '@core/authentication/guards/auth.guard';
 import { guestGuard } from '@core/authentication/guards/guest.guard';
 import { AppPath } from '@core/enums/app-path.enum';
-import { homeGuard } from '@core/project/guards/home.guard';
 import { projectsGuard } from '@core/project/guards/projects.guard';
 import { projectRoutes } from '@core/project/project.routes';
 
@@ -30,19 +29,7 @@ export const routes: Routes = [
       {
         path: '',
         canActivate: [projectsGuard],
-        children: [
-          {
-            path: '',
-            pathMatch: 'full',
-            title: 'Нет проектов',
-            canActivate: [homeGuard],
-            loadComponent: () =>
-              import('@core/project/pages/no-projects-page/no-projects-page.component').then(
-                (m) => m.NoProjectsPageComponent
-              ),
-          },
-          ...projectRoutes,
-        ],
+        children: [...projectRoutes],
       },
       ...profileRoutes,
       {

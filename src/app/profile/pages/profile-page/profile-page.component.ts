@@ -8,7 +8,7 @@ import { UserStore } from '@core/user/+store/user.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfilePageComponent {
-  private readonly userStore = inject(UserStore);
+  private readonly store = inject(UserStore);
 
-  public readonly user = this.userStore.currentUser;
+  public readonly user = this.store.currentUser;
 }

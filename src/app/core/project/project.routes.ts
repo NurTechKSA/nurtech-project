@@ -3,9 +3,20 @@ import { Routes } from '@angular/router';
 import { AppPath } from '@core/enums/app-path.enum';
 import { RouteParam } from '@core/enums/route-param.enum';
 
+import { homeGuard } from './guards/home.guard';
 import { projectGuard } from './guards/project.guard';
 
 export const projectRoutes: Routes = [
+  {
+    path: '',
+    pathMatch: 'full',
+    title: 'Нет проектов',
+    canActivate: [homeGuard],
+    loadComponent: () =>
+      import('@core/project/pages/no-projects-page/no-projects-page.component').then(
+        (m) => m.NoProjectsPageComponent
+      ),
+  },
   { path: AppPath.PROJECT, pathMatch: 'full', redirectTo: `/${AppPath.ROOT}` },
   {
     path: `${AppPath.PROJECT}/:${RouteParam.PROJECT_KEY}`,
