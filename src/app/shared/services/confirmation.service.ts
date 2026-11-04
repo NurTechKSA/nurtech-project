@@ -17,6 +17,14 @@ export class ConfirmationService {
     return this.openConfirmation(question, DELETE_CONFIRM_DATA);
   }
 
+  confirmUnsavedChanges(): Observable<boolean> {
+    return this.openConfirmation('Закрыть без сохранения?', {
+      content: 'Введённые данные будут потеряны.',
+      yes: 'Закрыть без сохранения',
+      no: 'Остаться',
+    });
+  }
+
   private openConfirmation(
     question: string,
     data: TuiConfirmData
