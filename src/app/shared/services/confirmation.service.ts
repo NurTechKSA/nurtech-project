@@ -11,15 +11,22 @@ const DELETE_CONFIRM_DATA: TuiConfirmData = {
 
 @Injectable({ providedIn: 'root' })
 export class ConfirmationService {
-  private readonly tuiDialogService = inject(TuiDialogService);
+  private readonly dialogService = inject(TuiDialogService);
 
   confirmDelete(question: string): Observable<boolean> {
-    return this.tuiDialogService
+    return this.openConfirmation(question, DELETE_CONFIRM_DATA);
+  }
+
+  private openConfirmation(
+    question: string,
+    data: TuiConfirmData
+  ): Observable<boolean> {
+    return this.dialogService
       .open<boolean>(TUI_CONFIRM, {
         label: question,
         size: 's',
         required: false,
-        data: DELETE_CONFIRM_DATA,
+        data,
       })
       .pipe(defaultIfEmpty(false));
   }
