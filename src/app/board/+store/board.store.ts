@@ -9,8 +9,8 @@ import { catchEffectError } from '@shared/store/catch-effect-error.operator';
 import { setLoaded, setLoading } from '@shared/store/status-update.util';
 import { withLoadingStatus } from '@shared/store/with-loading-status.util';
 
+import { Status } from '../../task/interfaces/status.interface';
 import { Board } from '../interfaces/board.interface';
-import { Status } from '../interfaces/status.interface';
 import { ApiBoardService } from '../services/api-board.service';
 
 interface BoardState {

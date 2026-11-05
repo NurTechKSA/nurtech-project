@@ -1,4 +1,4 @@
-import { Status } from './status.interface';
+import { Status } from '../../task/interfaces/status.interface';
 
 export interface BoardColumn {
   statusId: Status['id'];
