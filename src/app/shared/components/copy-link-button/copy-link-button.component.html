@@ -4,7 +4,7 @@
   size="m"
   appearance="secondary"
   iconStart="@tui.copy"
-  tuiHint="Копировать ссылку"
+  [tuiHint]="label()"
   (click)="onCopyLink()">
-  Копировать ссылку
+  {{ label() }}
 </button>

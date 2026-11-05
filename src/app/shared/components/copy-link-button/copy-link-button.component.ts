@@ -17,11 +17,12 @@ import { NotificationService } from '@shared/services/notification.service';
 export class CopyLinkButtonComponent {
   private readonly notificationService: NotificationService =
     inject(NotificationService);
-  readonly url = input.required<string>();
+  readonly text = input.required<string>();
+  readonly label = input<string>();
 
   onCopyLink(): void {
     navigator.clipboard
-      .writeText(this.url())
+      .writeText(this.text())
       .then(() => {
         this.notificationService.showSuccess('Ссылка скопирована');
       })
