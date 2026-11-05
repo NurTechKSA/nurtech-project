@@ -1,35 +1,26 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
   inject,
   input,
 } from '@angular/core';
 
-import { BoardStore } from '../../+store/board.store';
+import { BoardCardsStore } from '../../+store/board-cards.store';
 import { Board } from '../../interfaces/board.interface';
 
 @Component({
+  providers: [BoardCardsStore],
   templateUrl: './board-page.component.html',
   styleUrl: './board-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BoardPageComponent {
-  private readonly boardStore = inject(BoardStore);
+  private readonly boardCardsStore = inject(BoardCardsStore);
 
   readonly boardId = input.required<Board['id']>();
-  readonly columns = computed(() => {
-    const statusNames = new Map(
-      this.boardStore.statuses().map(({ id, name }) => [id, name])
-    );
-
-    return this.boardStore.columns().map((column) => ({
-      ...column,
-      name: statusNames.get(column.statusId) ?? column.statusId,
-    }));
-  });
+  readonly columns = this.boardCardsStore.columnsWithNames;
 
   constructor() {
-    this.boardStore.loadBoardCards(this.boardId);
+    this.boardCardsStore.loadBoardCards(this.boardId);
   }
 }

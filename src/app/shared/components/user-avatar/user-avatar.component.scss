@@ -1,0 +1,13 @@
+:host {
+  display: inline-flex;
+}
+
+// У secondary-аватара Taiga UI инициалы синие, контраст ниже 4,5:1 (03-ui-rules §5)
+.user-avatar {
+  color: var(--tui-text-primary);
+
+  // В размере s у Taiga UI шрифт 11px, а текст не мельче 12px
+  &[data-size='s'] {
+    font-size: 0.75rem;
+  }
+}

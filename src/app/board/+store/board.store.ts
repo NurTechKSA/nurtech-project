@@ -5,12 +5,10 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { filter, forkJoin, pipe, switchMap, tap } from 'rxjs';
 
 import { Project } from '@core/project/interfaces/project.interface';
-import { LoadingStatus } from '@shared/enums/loading-status.enum';
 import { catchEffectError } from '@shared/store/catch-effect-error.operator';
 import { setLoaded, setLoading } from '@shared/store/status-update.util';
 import { withLoadingStatus } from '@shared/store/with-loading-status.util';
 
-import { BoardColumnCards } from '../interfaces/board-column-cards.interface';
 import { Board } from '../interfaces/board.interface';
 import { Status } from '../interfaces/status.interface';
 import { ApiBoardService } from '../services/api-board.service';
@@ -18,19 +16,15 @@ import { ApiBoardService } from '../services/api-board.service';
 interface BoardState {
   boards: Board[];
   statuses: Status[];
-  columns: BoardColumnCards[];
 }
 
 const initialState: BoardState = {
   boards: [],
   statuses: [],
-  columns: [],
 };
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const BoardStore = signalStore(
-  { providedIn: 'root' },
-
   withDevtools('board'),
 
   withLoadingStatus(),
@@ -73,35 +67,5 @@ export const BoardStore = signalStore(
         })
       )
     ),
-    loadBoardCards: rxMethod<Board['id']>(
-      pipe(
-        tap(() => {
-          updateState(
-            store,
-            '[BoardStore] loadBoardCards',
-            { columns: [] },
-            setLoading()
-          );
-        }),
-        switchMap((boardId) => apiBoardService.getBoardCards(boardId)),
-        tap(({ columns }) => {
-          updateState(
-            store,
-            '[BoardStore] loadBoardCardsSuccess',
-            { columns },
-            setLoaded()
-          );
-        }),
-        catchEffectError({
-          store,
-          methodName: '[BoardStore] loadBoardCards',
-        })
-      )
-    ),
-    reset: (): void => {
-      updateState(store, '[BoardStore] reset', initialState, {
-        status: LoadingStatus.INIT,
-      });
-    },
   }))
 );

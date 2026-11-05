@@ -3,35 +3,51 @@ import { Routes } from '@angular/router';
 import { AppPath } from '@core/enums/app-path.enum';
 import { RouteParam } from '@core/enums/route-param.enum';
 
+import { homeGuard } from './guards/home.guard';
 import { projectGuard } from './guards/project.guard';
+import { projectsGuard } from './guards/projects.guard';
+import { boardRoutes } from '../../board/board.routes';
 
 export const projectRoutes: Routes = [
-  { path: AppPath.PROJECT, pathMatch: 'full', redirectTo: `/${AppPath.ROOT}` },
   {
-    path: `${AppPath.PROJECT}/:${RouteParam.PROJECT_KEY}`,
-    canActivate: [projectGuard],
-    loadComponent: () =>
-      import('./components/project-shell/project-shell.component').then(
-        (m) => m.ProjectShellComponent
-      ),
+    path: '',
+    canActivate: [projectsGuard],
     children: [
       {
-        path: `${AppPath.BOARD}/:${RouteParam.BOARD_ID}`,
-        title: 'Доска',
+        path: '',
+        pathMatch: 'full',
+        title: 'Нет проектов',
+        canActivate: [homeGuard],
         loadComponent: () =>
-          import('../../board/pages/board-page/board-page.component').then(
-            (m) => m.BoardPageComponent
+          import('@core/project/pages/no-projects-page/no-projects-page.component').then(
+            (m) => m.NoProjectsPageComponent
           ),
       },
-      // TODO: задача `tasks/:taskKey`
       {
-        // TODO: временные данные
-        path: AppPath.PROJECT_DATA,
-        title: 'Данные API',
+        path: AppPath.PROJECT,
+        pathMatch: 'full',
+        redirectTo: `/${AppPath.ROOT}`,
+      },
+      {
+        path: `${AppPath.PROJECT}/:${RouteParam.PROJECT_KEY}`,
+        canActivate: [projectGuard],
         loadComponent: () =>
-          import('../../../temp/project-data/pages/project-data-page/project-data-page.component').then(
-            (m) => m.ProjectDataPageComponent
+          import('./components/project-shell/project-shell.component').then(
+            (m) => m.ProjectShellComponent
           ),
+        children: [
+          ...boardRoutes,
+          // TODO: задача `tasks/:taskKey`
+          {
+            // TODO: временные данные
+            path: AppPath.PROJECT_DATA,
+            title: 'Данные API',
+            loadComponent: () =>
+              import('../../../temp/project-data/pages/project-data-page/project-data-page.component').then(
+                (m) => m.ProjectDataPageComponent
+              ),
+          },
+        ],
       },
     ],
   },

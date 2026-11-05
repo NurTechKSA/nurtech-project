@@ -15,6 +15,7 @@ import { Project } from '../../interfaces/project.interface';
 
 @Component({
   imports: [RouterOutlet],
+  providers: [BoardStore],
   templateUrl: './project-shell.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -33,7 +34,6 @@ export class ProjectShellComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.boardStore.reset();
     this.projectStore.closeProject();
   }
 }

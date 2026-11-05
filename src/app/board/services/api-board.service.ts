@@ -5,6 +5,7 @@ import { map, Observable } from 'rxjs';
 import { BoardCardsResponse } from '../interfaces/api/board-cards-response.interface';
 import { BoardListResponse } from '../interfaces/api/board-list-response.interface';
 import { StatusListResponse } from '../interfaces/api/status-list-response.interface';
+import { BoardColumnCards } from '../interfaces/board-column-cards.interface';
 import { Board } from '../interfaces/board.interface';
 import { Status } from '../interfaces/status.interface';
 
@@ -25,7 +26,9 @@ export class ApiBoardService {
       .pipe(map(({ items }) => items));
   }
 
-  getBoardCards(boardId: string): Observable<BoardCardsResponse> {
-    return this.http.get<BoardCardsResponse>(`boards/${boardId}/cards`);
+  getBoardCards(boardId: string): Observable<BoardColumnCards[]> {
+    return this.http
+      .get<BoardCardsResponse>(`boards/${boardId}/cards`)
+      .pipe(map(({ columns }) => columns));
   }
 }

@@ -1,3 +1,7 @@
+import { BoardCardAssignee } from './board-card-assignee.interface';
+import { BoardCardParent } from './board-card-parent.interface';
+import { BoardCardTag } from './board-card-tag.interface';
+
 export interface BoardCard {
   id: string;
   key: string;
@@ -6,19 +10,9 @@ export interface BoardCard {
   priority: 'low' | 'medium' | 'high' | 'critical';
   dueDate: string | null;
   isOverdue: boolean;
-  assignee: {
-    userId: string;
-    name: string;
-    username: string;
-  } | null;
-  tags: {
-    id: string;
-    name: string;
-  }[];
-  parent: {
-    id: string;
-    key: string;
-  } | null;
+  assignee: BoardCardAssignee | null;
+  tags: BoardCardTag[];
+  parent: BoardCardParent | null;
   blocked: boolean;
   rank: string;
 }
