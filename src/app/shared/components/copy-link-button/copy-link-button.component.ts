@@ -4,12 +4,12 @@ import {
   inject,
   input,
 } from '@angular/core';
-import { TuiIcon, TuiButton } from '@taiga-ui/core';
+import { TuiButton, TuiHint } from '@taiga-ui/core';
 
 import { NotificationService } from '@shared/services/notification.service';
 @Component({
   selector: 'app-copy-link-button',
-  imports: [TuiButton, TuiIcon],
+  imports: [TuiButton, TuiHint],
   templateUrl: './copy-link-button.component.html',
   styleUrl: './copy-link-button.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
