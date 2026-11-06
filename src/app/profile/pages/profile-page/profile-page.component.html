@@ -1,2 +1,10 @@
 <p>{{ user()?.name }}</p>
 <p>{{ user()?.username }}</p>
+<button
+  appearance="primary"
+  size="m"
+  tuiButton
+  type="button"
+  (click)="openChangePasswordDialog()">
+  Сменить пароль
+</button>
