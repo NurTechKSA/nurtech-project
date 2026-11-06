@@ -4,7 +4,7 @@ import {
   inject,
   input,
 } from '@angular/core';
-import { TuiButton, TuiHint, TuiSizeL } from '@taiga-ui/core';
+import { TuiButton, TuiHint } from '@taiga-ui/core';
 
 import { NotificationService } from '@shared/services/notification.service';
 
@@ -19,8 +19,6 @@ export class CopyButtonComponent {
   private readonly notificationService = inject(NotificationService);
   readonly text = input.required<string>();
   readonly label = input('Копировать');
-  readonly size = input<TuiSizeL>('m');
-  readonly appearance = input('secondary');
 
   onCopyButtonClick(): void {
     navigator.clipboard
