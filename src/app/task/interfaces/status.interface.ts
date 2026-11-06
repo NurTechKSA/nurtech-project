@@ -1,10 +1,5 @@
-import { StatusCategory } from '../enums/status-category.enum';
-import { StatusColor } from '../enums/status-color.enum';
+import { StatusRef } from './status-ref.interface';
 
-export interface Status {
-  id: string;
-  name: string;
-  color: StatusColor;
-  category: StatusCategory;
+export interface Status extends StatusRef {
   requiresReason: boolean;
 }
