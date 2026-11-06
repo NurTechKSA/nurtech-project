@@ -4,9 +4,10 @@ import {
   inject,
   input,
 } from '@angular/core';
-import { TuiButton, TuiHint } from '@taiga-ui/core';
+import { TuiButton, TuiHint, TuiSizeL } from '@taiga-ui/core';
 
 import { NotificationService } from '@shared/services/notification.service';
+
 @Component({
   selector: 'app-copy-button',
   imports: [TuiButton, TuiHint],
@@ -17,9 +18,11 @@ import { NotificationService } from '@shared/services/notification.service';
 export class CopyButtonComponent {
   private readonly notificationService = inject(NotificationService);
   readonly text = input.required<string>();
-  readonly label = input<string>('Копировать');
+  readonly label = input('Копировать');
+  readonly size = input<TuiSizeL>('m');
+  readonly appearance = input('secondary');
 
-  onCopy(): void {
+  onCopyButtonClick(): void {
     navigator.clipboard
       .writeText(this.text())
       .then(() => {

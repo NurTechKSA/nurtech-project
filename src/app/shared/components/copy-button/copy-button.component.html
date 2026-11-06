@@ -1,10 +1,10 @@
 <button
   tuiIconButton
   type="button"
-  size="m"
-  appearance="secondary"
   iconStart="@tui.copy"
+  [size]="size()"
+  [appearance]="appearance()"
   [tuiHint]="label()"
-  (click)="onCopy()">
+  (click)="onCopyButtonClick()">
   {{ label() }}
 </button>
