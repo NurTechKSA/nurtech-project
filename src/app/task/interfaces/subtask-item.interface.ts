@@ -1,6 +1,11 @@
-import { LinkedTask } from './linked-task.interface';
-import { UserRef } from './user-ref.interface';
+import { UserRef } from '@core/user/interfaces/user-ref.interface';
 
-export interface SubtaskItem extends LinkedTask {
+import { StatusRef } from './status-ref.interface';
+
+export interface SubtaskItem {
+  id: string;
+  key: string;
+  title: string;
+  status: StatusRef;
   assignee: UserRef | null;
 }

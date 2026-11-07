@@ -1,3 +1,8 @@
-import { TaskSearchItem } from './task-search-item.interface';
+import { StatusRef } from './status-ref.interface';
 
-export type LinkedTask = Omit<TaskSearchItem, 'type'>;
+export interface LinkedTask {
+  id: string;
+  key: string;
+  title: string;
+  status: StatusRef;
+}

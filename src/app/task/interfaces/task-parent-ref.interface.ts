@@ -1,3 +1,5 @@
-import { LinkedTask } from './linked-task.interface';
-
-export type TaskParentRef = Omit<LinkedTask, 'status'>;
+export interface TaskParentRef {
+  id: string;
+  key: string;
+  title: string;
+}

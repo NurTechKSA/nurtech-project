@@ -1,13 +1,20 @@
+import { UserRef } from '@core/user/interfaces/user-ref.interface';
+
 import { IdName } from './id-name.interface';
+import { StatusRef } from './status-ref.interface';
 import { SubtaskItem } from './subtask-item.interface';
 import { TaskLink } from './task-link.interface';
 import { TaskParentRef } from './task-parent-ref.interface';
-import { TaskSearchItem } from './task-search-item.interface';
 import { TaskUrl } from './task-url.interface';
-import { UserRef } from './user-ref.interface';
 import { Priority } from '../enums/priority.enum';
+import { TaskType } from '../enums/task-type.enum';
 
-export interface TaskDetail extends TaskSearchItem {
+export interface TaskDetail {
+  id: string;
+  key: string;
+  type: TaskType;
+  title: string;
+  status: StatusRef;
   description: string | null;
   priority: Priority;
   assignee: UserRef | null;
