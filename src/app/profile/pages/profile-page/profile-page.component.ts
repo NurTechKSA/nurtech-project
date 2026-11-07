@@ -1,14 +1,25 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { TuiButton, TuiTitle } from '@taiga-ui/core';
 
-import { UserStore } from '@core/user/+store/user.store';
+import { AuthStore } from '@core/authentication/+store/auth.store';
+import { AppPath } from '@core/enums/app-path.enum';
+
+import { ProfileInfoComponent } from '../../components/profile-info/profile-info.component';
 
 @Component({
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [ProfileInfoComponent, TuiTitle, TuiButton],
 })
 export class ProfilePageComponent {
-  private readonly store = inject(UserStore);
+  private readonly authStore = inject(AuthStore);
+  private readonly router = inject(Router);
 
-  public readonly user = this.store.currentUser;
+  onLogout(): void {
+    this.authStore.logout({
+      callback: () => void this.router.navigateByUrl(`/${AppPath.LOGIN}`),
+    });
+  }
 }

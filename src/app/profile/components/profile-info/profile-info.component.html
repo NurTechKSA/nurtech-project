@@ -1,0 +1,33 @@
+<div class="profile-info-wrapper">
+  <tui-loader
+    class="profile-page__loader"
+    size="xxl"
+    [overlay]="true"
+    [loading]="isLoading()">
+    <form class="profile-fields" [formGroup]="form">
+      <tui-textfield>
+        <label for="name" tuiLabel>Имя *</label>
+        <input formControlName="name" tuiInput />
+      </tui-textfield>
+      <tui-error formControlName="name" />
+
+      <div class="login-field">
+        <tui-textfield>
+          <label tuiLabel for="login">Логин</label>
+          <input formControlName="login" tuiInput />
+        </tui-textfield>
+      </div>
+
+      <span class="login-hint">Логин нельзя изменить</span>
+
+      <button
+        tuiButton
+        type="button"
+        size="m"
+        [disabled]="isSaveDisabled()"
+        (click)="onSubmit()">
+        Сохранить
+      </button>
+    </form>
+  </tui-loader>
+</div>
