@@ -1,6 +1,7 @@
-<tui-icon
+<span
   role="img"
   [attr.aria-label]="data().label"
   [class]="'task-type-icon task-type-icon_' + type()"
-  [icon]="data().icon"
-  [tuiHint]="data().label" />
+  [tuiHint]="data().label">
+  {{ data().letter }}
+</span>
