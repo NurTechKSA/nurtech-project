@@ -4,7 +4,7 @@ import stylistic from '@stylistic/eslint-plugin';
 import angular from 'angular-eslint';
 import checkFile from 'eslint-plugin-check-file';
 import eslintConfigPrettier from 'eslint-config-prettier';
-import importXPlugin from 'eslint-plugin-import-x';
+import importXPlugin, { createNodeResolver } from 'eslint-plugin-import-x';
 import sonarjs from 'eslint-plugin-sonarjs';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
@@ -59,6 +59,12 @@ export default tseslint.config(
     },
     settings: {
       'import-x/internal-regex': '^@(core|shared)/',
+      'import-x/resolver-next': [
+        createNodeResolver({
+          extensions: ['.ts'],
+          tsconfig: { configFile: `${import.meta.dirname}/tsconfig.json` },
+        }),
+      ],
     },
     plugins: {
       '@stylistic': stylistic,
@@ -82,6 +88,55 @@ export default tseslint.config(
       'import-x/no-cycle': 'error',
       'import-x/no-duplicates': 'error',
       'import-x/no-mutable-exports': 'error',
+      'import-x/no-restricted-paths': [
+        'error',
+        {
+          zones: [
+            {
+              target: './src/app/shared',
+              from: './src/app',
+              except: ['./shared'],
+              message:
+                'Слой shared содержит переиспользуемый код без доменной логики и не должен зависеть от core или доменов.',
+            },
+            {
+              target: './src/app/core/**/!(project.routes).ts',
+              from: './src/app',
+              except: ['./core', './shared'],
+              message:
+                'Слой core может импортировать только из shared и самого core (зависимости от доменов запрещены).',
+            },
+            {
+              target: './src/app/task',
+              from: './src/app',
+              except: ['./task', './core', './shared'],
+              message:
+                'Домен task может импортировать только core и shared (импорт других доменов, включая board, запрещён).',
+            },
+            {
+              target: './src/app/board',
+              from: './src/app',
+              except: ['./board', './task', './core', './shared'],
+              message:
+                'Домен board может импортировать только task, core и shared (импорт других доменов запрещён).',
+            },
+            {
+              target: './src/app/profile',
+              from: './src/app',
+              except: ['./profile', './core', './shared'],
+              message:
+                'Домен profile может импортировать только core и shared (импорт других доменов запрещён).',
+            },
+            {
+              target:
+                './src/app/**/!(login-page.component|user-menu.component|project.routes).ts',
+              from: './src/temp',
+              message:
+                'Код из src/temp предназначен только для временных данных во время разработки и может подключаться только в уже отмеченных местах.',
+            },
+          ],
+        },
+      ],
 
       '@typescript-eslint/naming-convention': [
         'error',
