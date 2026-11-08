@@ -1,9 +1,8 @@
+import { BoardCard } from './board-card.interface';
 import { Status } from '../../task/interfaces/status.interface';
 
 export interface BoardColumn {
   statusId: Status['id'];
-  name: Status['name'];
-  color: Status['color'];
-  category: Status['category'];
-  requiresReason: Status['requiresReason'];
+  count: number;
+  cards: BoardCard[];
 }

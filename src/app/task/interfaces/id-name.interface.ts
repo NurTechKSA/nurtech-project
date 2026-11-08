@@ -1,4 +1,4 @@
-export interface BoardCardTag {
+export interface IdName {
   id: string;
   name: string;
 }

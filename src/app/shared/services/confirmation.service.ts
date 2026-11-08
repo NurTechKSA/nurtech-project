@@ -9,12 +9,25 @@ const DELETE_CONFIRM_DATA: TuiConfirmData = {
   appearance: 'primary-destructive',
 };
 
+const UNSAVED_CHANGES_CONFIRM_DATA: TuiConfirmData = {
+  content: 'Введённые данные будут потеряны.',
+  yes: 'Закрыть без сохранения',
+  no: 'Остаться',
+};
+
 @Injectable({ providedIn: 'root' })
 export class ConfirmationService {
   private readonly dialogService = inject(TuiDialogService);
 
   confirmDelete(question: string): Observable<boolean> {
     return this.openConfirmation(question, DELETE_CONFIRM_DATA);
+  }
+
+  confirmUnsavedChanges(): Observable<boolean> {
+    return this.openConfirmation(
+      'Закрыть без сохранения?',
+      UNSAVED_CHANGES_CONFIRM_DATA
+    );
   }
 
   private openConfirmation(

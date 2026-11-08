@@ -1,5 +1,5 @@
-import { BoardColumnCards } from '../board-column-cards.interface';
+import { BoardColumn } from '../board-column.interface';
 
 export interface BoardCardsResponse {
-  columns: BoardColumnCards[];
+  columns: BoardColumn[];
 }

@@ -1,10 +1,6 @@
-import { StatusRef } from './status-ref.interface';
-import { TaskType } from '../enums/task-type.enum';
+import { TaskDetail } from './task-detail.interface';
 
-export interface TaskSearchItem {
-  id: string;
-  key: string;
-  type: TaskType;
-  title: string;
-  status: StatusRef;
-}
+export type TaskSearchItem = Pick<
+  TaskDetail,
+  'id' | 'key' | 'type' | 'title' | 'status'
+>;

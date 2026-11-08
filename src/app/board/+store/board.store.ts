@@ -2,25 +2,22 @@ import { inject } from '@angular/core';
 import { updateState, withDevtools } from '@angular-architects/ngrx-toolkit';
 import { signalStore, withMethods, withProps, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { filter, forkJoin, pipe, switchMap, tap } from 'rxjs';
+import { filter, pipe, switchMap, tap } from 'rxjs';
 
 import { Project } from '@core/project/interfaces/project.interface';
 import { catchEffectError } from '@shared/store/catch-effect-error.operator';
 import { setLoaded, setLoading } from '@shared/store/status-update.util';
 import { withLoadingStatus } from '@shared/store/with-loading-status.util';
 
-import { Status } from '../../task/interfaces/status.interface';
 import { Board } from '../interfaces/board.interface';
 import { ApiBoardService } from '../services/api-board.service';
 
-interface BoardState {
+interface State {
   boards: Board[];
-  statuses: Status[];
 }
 
-const initialState: BoardState = {
+const initialState: State = {
   boards: [],
-  statuses: [],
 };
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -36,34 +33,29 @@ export const BoardStore = signalStore(
   })),
 
   withMethods(({ apiBoardService, ...store }) => ({
-    loadProjectData: rxMethod<Project['id'] | null>(
+    loadBoards: rxMethod<Project['id'] | null>(
       pipe(
         filter((projectId): projectId is Project['id'] => projectId !== null),
         tap(() => {
           updateState(
             store,
-            '[BoardStore] loadProjectData',
+            '[BoardStore] loadBoards',
             initialState,
             setLoading()
           );
         }),
-        switchMap((projectId) =>
-          forkJoin([
-            apiBoardService.getBoards(projectId),
-            apiBoardService.getStatuses(projectId),
-          ])
-        ),
-        tap(([boards, statuses]) => {
+        switchMap((projectId) => apiBoardService.getBoards(projectId)),
+        tap((boards) => {
           updateState(
             store,
-            '[BoardStore] loadProjectDataSuccess',
-            { boards, statuses },
+            '[BoardStore] loadBoardsSuccess',
+            { boards },
             setLoaded()
           );
         }),
         catchEffectError({
           store,
-          methodName: '[BoardStore] loadProjectData',
+          methodName: '[BoardStore] loadBoards',
         })
       )
     ),

@@ -6,7 +6,6 @@ import { RouteParam } from '@core/enums/route-param.enum';
 import { homeGuard } from './guards/home.guard';
 import { projectGuard } from './guards/project.guard';
 import { projectsGuard } from './guards/projects.guard';
-import { boardRoutes } from '../../board/board.routes';
 
 export const projectRoutes: Routes = [
   {
@@ -36,7 +35,6 @@ export const projectRoutes: Routes = [
             (m) => m.ProjectShellComponent
           ),
         children: [
-          ...boardRoutes,
           // TODO: задача `tasks/:taskKey`
           {
             // TODO: временные данные

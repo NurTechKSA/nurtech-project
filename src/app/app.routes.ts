@@ -5,6 +5,7 @@ import { guestGuard } from '@core/authentication/guards/guest.guard';
 import { AppPath } from '@core/enums/app-path.enum';
 import { projectRoutes } from '@core/project/project.routes';
 
+import { boardRoutes } from './board/board.routes';
 import { profileRoutes } from './profile/profile.routes';
 
 export const routes: Routes = [
@@ -25,6 +26,7 @@ export const routes: Routes = [
     loadComponent: () =>
       import('@core/layout/layout.component').then((m) => m.LayoutComponent),
     children: [
+      ...boardRoutes,
       ...projectRoutes,
       ...profileRoutes,
       {

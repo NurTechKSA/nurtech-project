@@ -1,9 +1,3 @@
-import { StatusCategory } from '../enums/status-category.enum';
-import { StatusColor } from '../enums/status-color.enum';
+import { Status } from './status.interface';
 
-export interface StatusRef {
-  id: string;
-  name: string;
-  color: StatusColor;
-  category: StatusCategory;
-}
+export type StatusRef = Pick<Status, 'id' | 'name' | 'color' | 'category'>;
