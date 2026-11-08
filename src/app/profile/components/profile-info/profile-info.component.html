@@ -1,3 +1,4 @@
+<!-- eslint-disable @angular-eslint/template/label-has-associated-control -->
 <div class="profile-info-wrapper">
   <tui-loader
     class="profile-page__loader"
@@ -6,14 +7,14 @@
     [loading]="isLoading()">
     <form class="profile-fields" [formGroup]="form">
       <tui-textfield>
-        <label for="name" tuiLabel>Имя *</label>
+        <label tuiLabel>Имя *</label>
         <input formControlName="name" tuiInput />
       </tui-textfield>
       <tui-error formControlName="name" />
 
       <div class="login-field">
         <tui-textfield>
-          <label tuiLabel for="login">Логин</label>
+          <label tuiLabel>Логин</label>
           <input formControlName="login" tuiInput />
         </tui-textfield>
       </div>
