@@ -36,7 +36,7 @@ export class ApiTaskService {
     payload: TaskCreateRequest
   ): Observable<TaskDetail> {
     return this.http.post<TaskDetail>(
-      `${this.projectEndpoint}/${projectId}/tasks`,
+      `${this.projectEndpoint}/${projectId}/${this.taskEndpoint}`,
       payload
     );
   }
@@ -81,7 +81,7 @@ export class ApiTaskService {
 
     return this.http
       .get<TaskSearchResult>(
-        `${this.projectEndpoint}/${projectId}/tasks/search`,
+        `${this.projectEndpoint}/${projectId}/${this.taskEndpoint}/search`,
         { params }
       )
       .pipe(map(({ items }) => items));
