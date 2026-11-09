@@ -9,6 +9,13 @@ import sonarjs from 'eslint-plugin-sonarjs';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
+const getDomainExceptions = (domain, ...extra) => [
+  `./${domain}`,
+  './core',
+  './shared',
+  ...extra,
+];
+
 const forbiddenUppercaseAbbreviations = 'ID|URL|HTTP|JSON|XML';
 const underscoreTemplate = '^_';
 const entityTypes = [
@@ -100,36 +107,35 @@ export default tseslint.config(
                 'Слой shared содержит переиспользуемый код без доменной логики и не должен зависеть от core или доменов.',
             },
             {
-              target: './src/app/core/**/!(project.routes).ts',
+              target: './src/app/core',
               from: './src/app',
-              except: ['./core', './shared'],
+              except: getDomainExceptions(),
               message:
                 'Слой core может импортировать только из shared и самого core (зависимости от доменов запрещены).',
             },
             {
               target: './src/app/task',
               from: './src/app',
-              except: ['./task', './core', './shared'],
+              except: getDomainExceptions('task'),
               message:
                 'Домен task может импортировать только core и shared (импорт других доменов, включая board, запрещён).',
             },
             {
               target: './src/app/board',
               from: './src/app',
-              except: ['./board', './task', './core', './shared'],
+              except: getDomainExceptions('board', 'task'),
               message:
                 'Домен board может импортировать только task, core и shared (импорт других доменов запрещён).',
             },
             {
               target: './src/app/profile',
               from: './src/app',
-              except: ['./profile', './core', './shared'],
+              except: getDomainExceptions('profile'),
               message:
                 'Домен profile может импортировать только core и shared (импорт других доменов запрещён).',
             },
             {
-              target:
-                './src/app/**/!(login-page.component|user-menu.component|project.routes).ts',
+              target: './src/app/',
               from: './src/temp',
               message:
                 'Код из src/temp предназначен только для временных данных во время разработки и может подключаться только в уже отмеченных местах.',

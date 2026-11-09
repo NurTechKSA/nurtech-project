@@ -41,6 +41,7 @@ export const projectRoutes: Routes = [
             path: AppPath.PROJECT_DATA,
             title: 'Данные API',
             loadComponent: () =>
+              // eslint-disable-next-line import-x/no-restricted-paths
               import('../../../temp/project-data/pages/project-data-page/project-data-page.component').then(
                 (m) => m.ProjectDataPageComponent
               ),
