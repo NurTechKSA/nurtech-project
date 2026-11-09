@@ -6,8 +6,10 @@ import { TaskType } from '../../enums/task-type.enum';
 interface TaskTypeIcon {
   label: string;
   letter: string;
-  // todo вычленить корректный тип без string
-  appearance: Extract<TuiBadgeOptions['appearance'], string>;
+  appearance: Extract<
+    'positive' | 'negative' | 'warning',
+    TuiBadgeOptions['appearance']
+  >;
 }
 
 const TASK_TYPE_DATA: Record<TaskType, TaskTypeIcon> = {
