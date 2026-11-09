@@ -4,27 +4,5 @@
 }
 
 .task-type-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  inline-size: 1.25rem;
-  block-size: 1.25rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  line-height: 1;
-  color: #fff;
-  user-select: none;
   border-radius: var(--tui-radius-xs);
-
-  &_task {
-    background-color: #1e7e34;
-  }
-
-  &_bug {
-    background-color: #c92a2a;
-  }
-
-  &_subtask {
-    background-color: #c2410c;
-  }
 }

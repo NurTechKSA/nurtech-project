@@ -4,13 +4,13 @@ import {
   computed,
   input,
 } from '@angular/core';
-import { TuiHint } from '@taiga-ui/core';
+import { TuiBadge } from '@taiga-ui/kit';
 
 import { TaskType } from '../../enums/task-type.enum';
 
 @Component({
   selector: 'app-task-type-icon',
-  imports: [TuiHint],
+  imports: [TuiBadge],
   templateUrl: './task-type-icon.component.html',
   styleUrl: './task-type-icon.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,11 +21,23 @@ export class TaskTypeIconComponent {
   readonly data = computed(() => {
     switch (this.type()) {
       case TaskType.TASK:
-        return { letter: 'T', label: 'Task' };
+        return {
+          letter: 'T',
+          appearance: 'positive',
+          label: 'Task',
+        };
       case TaskType.BUG:
-        return { letter: 'B', label: 'Bug' };
+        return {
+          letter: 'B',
+          appearance: 'negative',
+          label: 'Bug',
+        };
       case TaskType.SUBTASK:
-        return { letter: 'S', label: 'Subtask' };
+        return {
+          letter: 'S',
+          appearance: 'warning',
+          label: 'Subtask',
+        };
     }
   });
 }

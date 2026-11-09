@@ -1,7 +1,8 @@
 <span
+  class="task-type-icon"
+  tuiBadge
   role="img"
-  [attr.aria-label]="data().label"
-  [class]="'task-type-icon task-type-icon_' + type()"
-  [tuiHint]="data().label">
+  [appearance]="data().appearance"
+  [attr.aria-label]="data().label">
   {{ data().letter }}
 </span>
