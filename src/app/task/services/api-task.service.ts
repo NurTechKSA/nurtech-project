@@ -1,8 +1,9 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 
 import { Project } from '@core/project/interfaces/project.interface';
+import { buildHttpParams } from '@shared/utils/build-http-params.util';
 
 import { TaskCreateRequest } from '../interfaces/api/task-create-request.interface';
 import { TaskMoveRequest } from '../interfaces/api/task-move-request.interface';
@@ -71,13 +72,7 @@ export class ApiTaskService {
     projectId: Project['id'],
     payload: TaskSearchRequest
   ): Observable<TaskSearchItem[]> {
-    let params = new HttpParams();
-
-    Object.entries(payload).forEach(([key, value]) => {
-      if (value !== null && value !== undefined && value !== '') {
-        params = params.set(key, String(value));
-      }
-    });
+    const params = buildHttpParams(payload);
 
     return this.http
       .get<TaskSearchResult>(
