@@ -1,12 +1,32 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  input,
-} from '@angular/core';
-import { TuiBadge } from '@taiga-ui/kit';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { TuiBadge, TuiBadgeOptions } from '@taiga-ui/kit';
 
 import { TaskType } from '../../enums/task-type.enum';
+
+interface TaskTypeIcon {
+  label: string;
+  letter: string;
+  // todo вычленить корректный тип без string
+  appearance: Extract<TuiBadgeOptions['appearance'], string>;
+}
+
+const TASK_TYPE_DATA: Record<TaskType, TaskTypeIcon> = {
+  [TaskType.TASK]: {
+    letter: 'T',
+    appearance: 'positive',
+    label: 'Task',
+  },
+  [TaskType.BUG]: {
+    letter: 'B',
+    appearance: 'negative',
+    label: 'Bug',
+  },
+  [TaskType.SUBTASK]: {
+    letter: 'S',
+    appearance: 'warning',
+    label: 'Subtask',
+  },
+};
 
 @Component({
   selector: 'app-task-type-icon',
@@ -18,26 +38,5 @@ import { TaskType } from '../../enums/task-type.enum';
 export class TaskTypeIconComponent {
   readonly type = input.required<TaskType>();
 
-  readonly data = computed(() => {
-    switch (this.type()) {
-      case TaskType.TASK:
-        return {
-          letter: 'T',
-          appearance: 'positive',
-          label: 'Task',
-        };
-      case TaskType.BUG:
-        return {
-          letter: 'B',
-          appearance: 'negative',
-          label: 'Bug',
-        };
-      case TaskType.SUBTASK:
-        return {
-          letter: 'S',
-          appearance: 'warning',
-          label: 'Subtask',
-        };
-    }
-  });
+  readonly data = TASK_TYPE_DATA;
 }
