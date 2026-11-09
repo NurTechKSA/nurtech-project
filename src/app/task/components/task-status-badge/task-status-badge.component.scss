@@ -1,0 +1,16 @@
+:host {
+  display: inline-flex;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+.task-status-badge {
+  color: var(--tui-text-primary);
+  background: color-mix(in srgb, var(--t-status) 16%, transparent);
+
+  &__label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
