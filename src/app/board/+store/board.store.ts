@@ -2,11 +2,12 @@ import { inject } from '@angular/core';
 import { updateState, withDevtools } from '@angular-architects/ngrx-toolkit';
 import { signalStore, withMethods, withProps, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { filter, pipe, switchMap, tap } from 'rxjs';
+import { EMPTY, pipe, switchMap, tap } from 'rxjs';
 
 import { Project } from '@core/project/interfaces/project.interface';
+import { LoadingStatus } from '@shared/enums/loading-status.enum';
 import { catchEffectError } from '@shared/store/catch-effect-error.operator';
-import { setLoaded, setLoading } from '@shared/store/status-update.util';
+import { setLoaded } from '@shared/store/status-update.util';
 import { withLoadingStatus } from '@shared/store/with-loading-status.util';
 
 import { Board } from '../interfaces/board.interface';
@@ -35,16 +36,15 @@ export const BoardStore = signalStore(
   withMethods(({ apiBoardService, ...store }) => ({
     loadBoards: rxMethod<Project['id'] | null>(
       pipe(
-        filter((projectId): projectId is Project['id'] => projectId !== null),
-        tap(() => {
-          updateState(
-            store,
-            '[BoardStore] loadBoards',
-            initialState,
-            setLoading()
-          );
+        tap((projectId) => {
+          updateState(store, '[BoardStore] loadBoards', initialState, {
+            status:
+              projectId === null ? LoadingStatus.INIT : LoadingStatus.LOADING,
+          });
         }),
-        switchMap((projectId) => apiBoardService.getBoards(projectId)),
+        switchMap((projectId) =>
+          projectId === null ? EMPTY : apiBoardService.getBoards(projectId)
+        ),
         tap((boards) => {
           updateState(
             store,

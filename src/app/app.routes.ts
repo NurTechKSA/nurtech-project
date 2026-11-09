@@ -26,8 +26,28 @@ export const routes: Routes = [
     loadComponent: () =>
       import('@core/layout/layout.component').then((m) => m.LayoutComponent),
     children: [
-      ...boardRoutes,
-      ...projectRoutes,
+      ...projectRoutes([
+        {
+          path: '',
+          loadComponent: () =>
+            import('./board/components/board-data-shell/board-data-shell.component').then(
+              (m) => m.BoardDataShellComponent
+            ),
+          children: [
+            ...boardRoutes,
+            // TODO: задача `tasks/:taskKey`
+            {
+              // TODO: временные данные
+              path: AppPath.PROJECT_DATA,
+              title: 'Данные API',
+              loadComponent: () =>
+                import('../temp/project-data/pages/project-data-page/project-data-page.component').then(
+                  (m) => m.ProjectDataPageComponent
+                ),
+            },
+          ],
+        },
+      ]),
       ...profileRoutes,
       {
         path: AppPath.NOT_FOUND,

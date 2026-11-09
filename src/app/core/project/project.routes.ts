@@ -7,7 +7,7 @@ import { homeGuard } from './guards/home.guard';
 import { projectGuard } from './guards/project.guard';
 import { projectsGuard } from './guards/projects.guard';
 
-export const projectRoutes: Routes = [
+export const projectRoutes = (projectChildren: Routes): Routes => [
   {
     path: '',
     canActivate: [projectsGuard],
@@ -34,18 +34,7 @@ export const projectRoutes: Routes = [
           import('./components/project-shell/project-shell.component').then(
             (m) => m.ProjectShellComponent
           ),
-        children: [
-          // TODO: задача `tasks/:taskKey`
-          {
-            // TODO: временные данные
-            path: AppPath.PROJECT_DATA,
-            title: 'Данные API',
-            loadComponent: () =>
-              import('../../../temp/project-data/pages/project-data-page/project-data-page.component').then(
-                (m) => m.ProjectDataPageComponent
-              ),
-          },
-        ],
+        children: projectChildren,
       },
     ],
   },
