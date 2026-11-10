@@ -9,11 +9,13 @@
     "test": "ng test",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "format:fix": "prettier --write .",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "lint:styles": "stylelint \"src/**/*.scss\"",
     "lint:styles:fix": "stylelint \"src/**/*.scss\" --fix",
     "check": "npm run lint && npm run lint:styles && npm run format:check",
+    "check:fix": "npm run lint:fix && npm run lint:styles:fix && npm run format:fix",
     "prepare": "husky"
   },
   "private": true,
