@@ -1,8 +1,5 @@
+import type { ApiError } from './api-error.interface';
+
 export interface ErrorResponse {
-  error: {
-    code: string;
-    message: string;
-    fields?: Record<string, string>;
-    requestId?: string;
-  };
+  error: ApiError;
 }
