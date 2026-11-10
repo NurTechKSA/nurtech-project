@@ -3,7 +3,6 @@ import {
   Component,
   effect,
   inject,
-  Signal,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -18,8 +17,7 @@ import { TuiPassword } from '@taiga-ui/kit';
 import { injectContext } from '@taiga-ui/polymorpheus';
 
 import { NotificationService } from '@shared/services/notification.service';
-import { getLengthValidator } from '@shared/validators/length.util';
-import { getPasswordPatternValidator } from '@shared/validators/password-pattern.util';
+import { applyFormServerError } from '@shared/validators/form-error.util';
 import { getPasswordsMatchValidator } from '@shared/validators/passwords-match.util';
 import { getRequiredValidator } from '@shared/validators/required.util';
 
@@ -43,24 +41,15 @@ import { ProfileStore } from '../../+store/profile.store';
 })
 export class ChangePasswordDialogComponent {
   private readonly profileStore = inject(ProfileStore);
-  private readonly notificationService: NotificationService =
-    inject(NotificationService);
-  private readonly context: TuiDialogContext =
-    injectContext<TuiDialogContext>();
+  private readonly notificationService = inject(NotificationService);
+  private readonly context = injectContext<TuiDialogContext>();
 
-  readonly isLoading: Signal<boolean> = this.profileStore.isLoading;
+  readonly isLoading = this.profileStore.isLoading;
 
   readonly changePasswordForm = inject(FormBuilder).nonNullable.group(
     {
       currentPassword: ['', getRequiredValidator()],
-      newPassword: [
-        '',
-        [
-          getRequiredValidator(),
-          getLengthValidator({ min: 8, max: 20 }),
-          getPasswordPatternValidator(),
-        ],
-      ],
+      newPassword: ['', getRequiredValidator()],
       confirmPassword: ['', getRequiredValidator()],
     },
     {
@@ -82,9 +71,12 @@ export class ChangePasswordDialogComponent {
       }
 
       if (this.profileStore.isError()) {
-        this.changePasswordForm.controls.currentPassword.setErrors({
-          other: 'Неверный текущий пароль',
-        });
+        applyFormServerError(
+          this.changePasswordForm,
+          this.profileStore.error(),
+          { current: 'currentPassword', next: 'newPassword' },
+          this.changePasswordForm.controls.currentPassword
+        );
       }
     });
   }
