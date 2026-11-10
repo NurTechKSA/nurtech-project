@@ -34,21 +34,23 @@ export class ProfileInfoComponent {
   private readonly userStore = inject(UserStore);
   private readonly profileStore = inject(ProfileStore);
 
+  private readonly currentUser = this.userStore.currentUser;
   readonly isLoading = this.profileStore.isLoading;
 
   readonly form = inject(FormBuilder).nonNullable.group({
     name: [
-      this.userStore.currentUser()?.name ?? '',
+      this.currentUser()?.name ?? '',
       [getLengthValidator({ min: 1, max: 100 }), getRequiredValidator()],
     ],
-    login: [{ value: this.userStore.currentUser()?.username, disabled: true }],
+    login: [{ value: this.currentUser()?.username, disabled: true }],
   });
+
   readonly currentName = toSignal(this.form.controls.name.valueChanges, {
     initialValue: this.form.controls.name.value,
   });
   readonly isSaveDisabled: Signal<boolean> = computed(() => {
     const name = this.currentName();
-    const initialName = this.userStore.currentUser()?.name;
+    const initialName = this.currentUser()?.name;
 
     return !name || name === initialName || this.form.invalid;
   });

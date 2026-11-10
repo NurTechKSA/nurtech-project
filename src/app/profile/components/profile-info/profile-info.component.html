@@ -1,34 +1,34 @@
 <!-- eslint-disable @angular-eslint/template/label-has-associated-control -->
 <div class="profile-info-wrapper">
-  <tui-loader
-    class="profile-page__loader"
-    size="xxl"
-    [overlay]="true"
-    [loading]="isLoading()">
-    <form class="profile-fields" [formGroup]="form">
+  <form class="profile-fields" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <tui-textfield>
+      <label tuiLabel>Имя *</label>
+      <input formControlName="name" tuiInput />
+    </tui-textfield>
+    <tui-error formControlName="name" />
+
+    <div class="login-field">
       <tui-textfield>
-        <label tuiLabel>Имя *</label>
-        <input formControlName="name" tuiInput />
+        <label tuiLabel>Логин</label>
+        <input formControlName="login" tuiInput />
       </tui-textfield>
-      <tui-error formControlName="name" />
+    </div>
 
-      <div class="login-field">
-        <tui-textfield>
-          <label tuiLabel>Логин</label>
-          <input formControlName="login" tuiInput />
-        </tui-textfield>
-      </div>
-
-      <span class="login-hint">Логин нельзя изменить</span>
-
+    <span class="login-hint">Логин нельзя изменить</span>
+    <div class="button-wrapper">
       <button
+        class="profile-page__save-button"
         tuiButton
-        type="button"
+        type="submit"
         size="m"
-        [disabled]="isSaveDisabled()"
-        (click)="onSubmit()">
+        [disabled]="isSaveDisabled()">
         Сохранить
       </button>
-    </form>
-  </tui-loader>
+      <tui-loader
+        class="profile-page__loader"
+        [style.--tui-diameter.rem]="2"
+        [loading]="isLoading()">
+      </tui-loader>
+    </div>
+  </form>
 </div>

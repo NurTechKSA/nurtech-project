@@ -17,7 +17,7 @@ export class ProfilePageComponent {
   private readonly authStore = inject(AuthStore);
   private readonly router = inject(Router);
 
-  onLogout(): void {
+  onLogoutButtonClick(): void {
     this.authStore.logout({
       callback: () => void this.router.navigateByUrl(`/${AppPath.LOGIN}`),
     });
