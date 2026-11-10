@@ -14,6 +14,7 @@ import { InitialsPipe } from '@shared/pipes/initials.pipe';
 import { ShortNamePipe } from '@shared/pipes/short-name.pipe';
 
 import { UserStore } from '../../+store/user.store';
+// eslint-disable-next-line
 import { TestUserSwitchComponent } from '../../../../../temp/test-users/components/test-user-switch/test-user-switch.component';
 
 @Component({
