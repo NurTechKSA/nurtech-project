@@ -2,24 +2,22 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({ name: 'duration' })
 export class DurationPipe implements PipeTransform {
-  transform(minutes: number | null | undefined): string {
-    if (minutes === null || minutes === undefined) {
+  transform(minutes: number | null): string {
+    if (minutes === null) {
       return '—';
     }
 
-    if (minutes === 0) {
-      return '0m';
-    }
-
     const hours = Math.floor(minutes / 60);
-
     const mins = minutes % 60;
 
-    const parts = [
-      hours > 0 ? `${String(hours)}h` : '',
-      mins > 0 ? `${String(mins)}m` : '',
-    ];
+    if (hours === 0) {
+      return `${String(mins)}m`;
+    }
 
-    return parts.filter((part) => part !== '').join(' ');
+    if (mins === 0) {
+      return `${String(hours)}h`;
+    }
+
+    return `${String(hours)}h ${String(mins)}m`;
   }
 }
