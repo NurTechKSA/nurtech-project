@@ -9,13 +9,6 @@ import sonarjs from 'eslint-plugin-sonarjs';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
-const getDomainExceptions = (domain, ...extra) => [
-  `./${domain}`,
-  './core',
-  './shared',
-  ...extra,
-];
-
 const forbiddenUppercaseAbbreviations = 'ID|URL|HTTP|JSON|XML';
 const underscoreTemplate = '^_';
 const entityTypes = [
@@ -109,28 +102,28 @@ export default tseslint.config(
             {
               target: './src/app/core',
               from: './src/app',
-              except: getDomainExceptions(),
+              except: ['./core', './shared'],
               message:
                 'Слой core может импортировать только из shared и самого core (зависимости от доменов запрещены).',
             },
             {
               target: './src/app/task',
               from: './src/app',
-              except: getDomainExceptions('task'),
+              except: ['./task', './core', './shared'],
               message:
                 'Домен task может импортировать только core и shared (импорт других доменов, включая board, запрещён).',
             },
             {
               target: './src/app/board',
               from: './src/app',
-              except: getDomainExceptions('board', 'task'),
+              except: ['./task', './board', './core', './shared'],
               message:
                 'Домен board может импортировать только task, core и shared (импорт других доменов запрещён).',
             },
             {
               target: './src/app/profile',
               from: './src/app',
-              except: getDomainExceptions('profile'),
+              except: ['./profile', './core', './shared'],
               message:
                 'Домен profile может импортировать только core и shared (импорт других доменов запрещён).',
             },
