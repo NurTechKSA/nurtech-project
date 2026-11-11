@@ -1,0 +1,26 @@
+.badge {
+  display: inline-flex;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #1b1f3b;
+  border-radius: 4px;
+
+  &.badge-low {
+    background-color: #4dd269;
+  }
+
+  &.badge-medium {
+    background-color: #e0a100;
+  }
+
+  &.badge-high {
+    background-color: #e07b00;
+  }
+
+  &.badge-critical {
+    background-color: #f45d48;
+  }
+}
