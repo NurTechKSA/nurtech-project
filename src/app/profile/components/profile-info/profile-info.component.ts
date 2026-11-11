@@ -1,13 +1,7 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  Signal,
-} from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TuiButton, TuiError, TuiInput, TuiLoader } from '@taiga-ui/core';
+import { TuiForm } from '@taiga-ui/layout';
 
 import { UserStore } from '@core/user/+store/user.store';
 import { getLengthValidator } from '@shared/validators/length.util';
@@ -24,6 +18,7 @@ import { ProfileStore } from '../../+store/profile.store';
     TuiError,
     TuiLoader,
     ReactiveFormsModule,
+    TuiForm,
   ],
   templateUrl: './profile-info.component.html',
   styleUrl: './profile-info.component.scss',
@@ -34,28 +29,19 @@ export class ProfileInfoComponent {
   private readonly userStore = inject(UserStore);
   private readonly profileStore = inject(ProfileStore);
 
-  private readonly currentUser = this.userStore.currentUser;
+  readonly currentUser = this.userStore.currentUser;
   readonly isLoading = this.profileStore.isLoading;
 
   readonly form = inject(FormBuilder).nonNullable.group({
     name: [
-      this.currentUser()?.name ?? '',
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.currentUser()!.name,
       [getLengthValidator({ min: 1, max: 100 }), getRequiredValidator()],
     ],
     login: [{ value: this.currentUser()?.username, disabled: true }],
   });
 
-  readonly currentName = toSignal(this.form.controls.name.valueChanges, {
-    initialValue: this.form.controls.name.value,
-  });
-  readonly isSaveDisabled: Signal<boolean> = computed(() => {
-    const name = this.currentName();
-    const initialName = this.currentUser()?.name;
-
-    return !name || name === initialName || this.form.invalid;
-  });
-
   onSubmit(): void {
-    this.profileStore.updateName({ name: this.currentName() });
+    this.profileStore.updateName({ name: this.form.controls.name.value });
   }
 }

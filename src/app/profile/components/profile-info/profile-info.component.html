@@ -1,6 +1,6 @@
 <!-- eslint-disable @angular-eslint/template/label-has-associated-control -->
 <div class="profile-info-wrapper">
-  <form class="profile-fields" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <form class="profile-fields" tuiForm [formGroup]="form" (ngSubmit)="onSubmit()">
     <tui-textfield>
       <label tuiLabel>Имя *</label>
       <input formControlName="name" tuiInput />
@@ -12,16 +12,18 @@
         <label tuiLabel>Логин</label>
         <input formControlName="login" tuiInput />
       </tui-textfield>
+      <span class="login-hint">Логин нельзя изменить</span>
     </div>
 
-    <span class="login-hint">Логин нельзя изменить</span>
+    @let isInitialNameEqual = form.controls.name.value === currentUser()!.name;
+
     <div class="button-wrapper">
       <button
         class="profile-page__save-button"
         tuiButton
         type="submit"
         size="m"
-        [disabled]="isSaveDisabled()">
+        [disabled]="isInitialNameEqual || form.controls.name.invalid">
         Сохранить
       </button>
       <tui-loader
