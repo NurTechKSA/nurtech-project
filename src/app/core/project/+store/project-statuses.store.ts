@@ -23,6 +23,7 @@ const initialState: State = {
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const ProjectStatusesStore = signalStore(
+  { providedIn: 'root' },
   withDevtools('projectStatuses'),
   withLoadingStatus(),
   withState(initialState),

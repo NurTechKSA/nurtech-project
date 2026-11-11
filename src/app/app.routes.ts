@@ -3,10 +3,9 @@ import { Routes } from '@angular/router';
 import { authGuard } from '@core/authentication/guards/auth.guard';
 import { guestGuard } from '@core/authentication/guards/guest.guard';
 import { AppPath } from '@core/enums/app-path.enum';
-import { projectRoutes } from '@core/project/project.routes';
 
-import { boardRoutes } from './board/board.routes';
 import { profileRoutes } from './profile/profile.routes';
+import { projectRoutes } from './project.routes';
 
 export const routes: Routes = [
   {
@@ -26,28 +25,7 @@ export const routes: Routes = [
     loadComponent: () =>
       import('@core/layout/layout.component').then((m) => m.LayoutComponent),
     children: [
-      ...projectRoutes([
-        {
-          path: '',
-          loadComponent: () =>
-            import('./board/components/board-data-shell/board-data-shell.component').then(
-              (m) => m.BoardDataShellComponent
-            ),
-          children: [
-            ...boardRoutes,
-            // TODO: задача `tasks/:taskKey`
-            {
-              // TODO: временные данные
-              path: AppPath.PROJECT_DATA,
-              title: 'Данные API',
-              loadComponent: () =>
-                import('../temp/project-data/pages/project-data-page/project-data-page.component').then(
-                  (m) => m.ProjectDataPageComponent
-                ),
-            },
-          ],
-        },
-      ]),
+      ...projectRoutes,
       ...profileRoutes,
       {
         path: AppPath.NOT_FOUND,

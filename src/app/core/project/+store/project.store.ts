@@ -29,6 +29,7 @@ import { catchEffectError } from '@shared/store/catch-effect-error.operator';
 import { setLoaded, setLoading } from '@shared/store/status-update.util';
 import { withLoadingStatus } from '@shared/store/with-loading-status.util';
 
+import { ProjectStatusesStore } from './project-statuses.store';
 import { Project } from '../interfaces/project.interface';
 import { ApiProjectService } from '../services/api-project.service';
 
@@ -74,44 +75,56 @@ export const ProjectStore = signalStore(
 
   withProps(() => ({
     permissionStore: inject(PermissionStore),
+    projectStatusesStore: inject(ProjectStatusesStore),
     apiProjectService: inject(ApiProjectService),
   })),
 
-  withMethods(({ permissionStore, apiProjectService, ...store }) => ({
-    loadProjects: rxMethod<void>(
-      pipe(
-        filter(() => !store.isLoaded()),
-        tap(() => {
-          updateState(store, '[ProjectStore] loadProjects', setLoading());
-        }),
-        exhaustMap(() => apiProjectService.getProjects()),
-        tap((projects) => {
-          updateState(
-            store,
-            '[ProjectStore] loadProjectsSuccess',
-            setAllEntities(projects, projectConfig),
-            setLoaded()
-          );
-        }),
-        catchEffectError({ store, methodName: '[ProjectStore] loadProjects' })
-      )
-    ),
-    openProject: signalMethod<Project['key']>((currentProjectKey) => {
-      updateState(store, '[ProjectStore] openProject', { currentProjectKey });
+  withMethods(
+    ({
+      permissionStore,
+      projectStatusesStore,
+      apiProjectService,
+      ...store
+    }) => ({
+      loadProjects: rxMethod<void>(
+        pipe(
+          filter(() => !store.isLoaded()),
+          tap(() => {
+            updateState(store, '[ProjectStore] loadProjects', setLoading());
+          }),
+          exhaustMap(() => apiProjectService.getProjects()),
+          tap((projects) => {
+            updateState(
+              store,
+              '[ProjectStore] loadProjectsSuccess',
+              setAllEntities(projects, projectConfig),
+              setLoaded()
+            );
+          }),
+          catchEffectError({ store, methodName: '[ProjectStore] loadProjects' })
+        )
+      ),
+      openProject: signalMethod<Project['key']>((currentProjectKey) => {
+        updateState(store, '[ProjectStore] openProject', { currentProjectKey });
 
-      const project = store.currentProject();
+        const project = store.currentProject();
 
-      if (project) {
-        permissionStore.loadPermissions(project.id);
-      }
-    }),
-    closeProject: (): void => {
-      permissionStore.reset();
-    },
-    reset: (): void => {
-      updateState(store, '[ProjectStore] reset', removeAllEntities(), {
-        status: LoadingStatus.INIT,
-      });
-    },
-  }))
+        projectStatusesStore.loadStatuses(project?.id ?? null);
+
+        if (project) {
+          permissionStore.loadPermissions(project.id);
+        }
+      }),
+      closeProject: (): void => {
+        permissionStore.reset();
+        projectStatusesStore.loadStatuses(null);
+      },
+      reset: (): void => {
+        projectStatusesStore.loadStatuses(null);
+        updateState(store, '[ProjectStore] reset', removeAllEntities(), {
+          status: LoadingStatus.INIT,
+        });
+      },
+    })
+  )
 );

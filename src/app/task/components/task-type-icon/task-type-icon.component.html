@@ -1,0 +1,10 @@
+@let currentData = data[type()];
+
+<span
+  class="task-type-icon"
+  tuiBadge
+  role="img"
+  [appearance]="currentData.appearance"
+  [attr.aria-label]="currentData.label">
+  {{ currentData.letter }}
+</span>
