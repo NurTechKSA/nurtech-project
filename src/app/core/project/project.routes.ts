@@ -37,6 +37,11 @@ export const projectRoutes: Routes = [
         children: [
           // TODO: доска `board/:boardId` и задача `tasks/:taskKey`
           {
+            path: '',
+            pathMatch: 'full',
+            redirectTo: AppPath.PROJECT_DATA,
+          },
+          {
             // TODO: временные данные
             path: AppPath.PROJECT_DATA,
             title: 'Данные API',
