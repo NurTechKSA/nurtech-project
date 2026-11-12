@@ -5,15 +5,17 @@ import { map, Observable } from 'rxjs';
 import { Project } from '@core/project/interfaces/project.interface';
 import { buildHttpParams } from '@shared/utils/build-http-params.util';
 
-import { TaskCreateRequest } from '../interfaces/api/task-create-request.interface';
-import { TaskMoveRequest } from '../interfaces/api/task-move-request.interface';
-import { TaskSearchRequest } from '../interfaces/api/task-search-request.interface';
-import { TaskUpdateRequest } from '../interfaces/api/task-update-request.interface';
+import { TaskCreateRequest } from '../interfaces/api/requests/task-create-request.interface';
+import { TaskMoveRequest } from '../interfaces/api/requests/task-move-request.interface';
+import { TaskSearchRequest } from '../interfaces/api/requests/task-search-request.interface';
+import { TaskUpdateRequest } from '../interfaces/api/requests/task-update-request.interface';
+import { HistoryListResponse } from '../interfaces/api/responses/history-list-response.interface';
+import { TaskByKeyResponse } from '../interfaces/api/responses/task-by-key-response.interface';
+import { TaskCreateResponse } from '../interfaces/api/responses/task-create-response.interface';
+import { TaskSearchResponse } from '../interfaces/api/responses/task-search-response.interface';
 import { HistoryEvent } from '../interfaces/history-event.interface';
-import { HistoryListResponse } from '../interfaces/history-list-response.interface';
 import { TaskDetail } from '../interfaces/task-detail.interface';
 import { TaskSearchItem } from '../interfaces/task-search-item.interface';
-import { TaskSearchResult } from '../interfaces/task-search-result.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -26,8 +28,8 @@ export class ApiTaskService {
   getTaskByKey(
     projectId: Project['id'],
     taskKey: TaskDetail['key']
-  ): Observable<TaskDetail> {
-    return this.http.get<TaskDetail>(
+  ): Observable<TaskByKeyResponse> {
+    return this.http.get<TaskByKeyResponse>(
       `${this.projectEndpoint}/${projectId}/${this.taskEndpoint}/by-key/${taskKey}`
     );
   }
@@ -35,8 +37,8 @@ export class ApiTaskService {
   createTask(
     projectId: Project['id'],
     payload: TaskCreateRequest
-  ): Observable<TaskDetail> {
-    return this.http.post<TaskDetail>(
+  ): Observable<TaskCreateResponse> {
+    return this.http.post<TaskCreateResponse>(
       `${this.projectEndpoint}/${projectId}/${this.taskEndpoint}`,
       payload
     );
@@ -75,7 +77,7 @@ export class ApiTaskService {
     const params = buildHttpParams(payload);
 
     return this.http
-      .get<TaskSearchResult>(
+      .get<TaskSearchResponse>(
         `${this.projectEndpoint}/${projectId}/${this.taskEndpoint}/search`,
         { params }
       )

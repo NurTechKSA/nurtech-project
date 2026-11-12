@@ -1,4 +1,4 @@
-import { HistoryEvent } from './history-event.interface';
+import { HistoryEvent } from '../../history-event.interface';
 
 export interface HistoryListResponse {
   items: HistoryEvent[];

@@ -1,5 +1,5 @@
-import { Priority } from '../../enums/priority.enum';
-import { TaskType } from '../../enums/task-type.enum';
+import { Priority } from '../../../enums/priority.enum';
+import { TaskType } from '../../../enums/task-type.enum';
 
 export interface TaskUpdateRequest {
   title?: string;
