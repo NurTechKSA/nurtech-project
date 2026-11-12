@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { TuiHint } from '@taiga-ui/core';
 
 import { Priority } from '../../enums/priority.enum';
@@ -40,13 +35,11 @@ const PRIORITY_CONFIG: Record<Priority, PriorityConfigItem> = {
 @Component({
   selector: 'app-priority-badge',
   imports: [TuiHint],
-  templateUrl: './priority-badge.component.html',
-  styleUrl: './priority-badge.component.scss',
+  templateUrl: './task-priority-badge.component.html',
+  styleUrl: './task-priority-badge.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PriorityBadgeComponent {
   readonly priority = input.required<Priority>();
-  protected readonly priorityConfig = computed(
-    () => PRIORITY_CONFIG[this.priority()]
-  );
+  readonly data = PRIORITY_CONFIG;
 }

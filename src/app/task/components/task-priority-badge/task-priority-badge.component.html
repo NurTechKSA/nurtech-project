@@ -1,0 +1,10 @@
+@let priorityConfig = data[priority()];
+
+<span
+  class="badge"
+  role="img"
+  [class]="priorityConfig.className"
+  [tuiHint]="priorityConfig.name"
+  [attr.aria-label]="priorityConfig.name"
+  >{{ priorityConfig.letter }}</span
+>
