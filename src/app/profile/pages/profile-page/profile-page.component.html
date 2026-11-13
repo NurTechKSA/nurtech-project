@@ -1,2 +1,17 @@
-<p>{{ user()?.name }}</p>
-<p>{{ user()?.username }}</p>
+<main class="profile">
+  <h2 tuiTitle class="profile-title">Профиль</h2>
+
+  <app-profile-info />
+
+  <hr class="divider" />
+
+  <div class="profile-footer">
+    <button
+      appearance="flat"
+      tuiButton
+      type="button"
+      (click)="onLogoutButtonClick()">
+      Выйти
+    </button>
+  </div>
+</main>
