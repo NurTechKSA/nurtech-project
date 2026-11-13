@@ -1,0 +1,12 @@
+@let priorityConfig = data[priority()];
+
+<span
+  class="badge"
+  role="img"
+  tuiBadge
+  [style.background]="priorityConfig.backgroundColor"
+  [style.color]="'#1B1F3B'"
+  [class]="priorityConfig.backgroundColor"
+  [attr.aria-label]="priorityConfig.name"
+  >{{ priorityConfig.letter }}</span
+>
