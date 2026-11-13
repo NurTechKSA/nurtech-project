@@ -1,40 +1,41 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { TuiHint } from '@taiga-ui/core';
+import { TuiBadge } from '@taiga-ui/kit';
 
 import { Priority } from '../../enums/priority.enum';
 
 interface PriorityConfigItem {
   letter: string;
   name: string;
-  className: string;
+  backgroundColor: string;
 }
 
 const PRIORITY_CONFIG: Record<Priority, PriorityConfigItem> = {
   [Priority.LOW]: {
     letter: 'L',
     name: 'Low',
-    className: 'badge-low',
+    backgroundColor: '#4dd269',
   },
   [Priority.MEDIUM]: {
     letter: 'M',
     name: 'Medium',
-    className: 'badge-medium',
+    backgroundColor: '#e0a100',
   },
   [Priority.HIGH]: {
     letter: 'H',
     name: 'High',
-    className: 'badge-high',
+    backgroundColor: '#e07b00',
   },
   [Priority.CRITICAL]: {
     letter: 'C',
     name: 'Critical',
-    className: 'badge-critical',
+    backgroundColor: '#f45d48',
   },
 };
 
 @Component({
   selector: 'app-priority-badge',
-  imports: [TuiHint],
+  imports: [TuiHint, TuiBadge],
   templateUrl: './task-priority-badge.component.html',
   styleUrl: './task-priority-badge.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

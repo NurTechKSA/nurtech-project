@@ -3,8 +3,10 @@
 <span
   class="badge"
   role="img"
-  [class]="priorityConfig.className"
-  [tuiHint]="priorityConfig.name"
+  tuiBadge
+  [style.background]="priorityConfig.backgroundColor"
+  [style.color]="'#1B1F3B'"
+  [class]="priorityConfig.backgroundColor"
   [attr.aria-label]="priorityConfig.name"
   >{{ priorityConfig.letter }}</span
 >
