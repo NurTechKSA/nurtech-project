@@ -107,18 +107,31 @@ export default tseslint.config(
                 'Слой core может импортировать только из shared и самого core (зависимости от доменов запрещены).',
             },
             {
+              target: './src/app/dictionary',
+              from: './src/app',
+              except: ['./dictionary', './core', './shared'],
+              message:
+                'Справочники (dictionary) могут импортировать только core и shared: ими пользуются домены, а не наоборот.',
+            },
+            {
               target: './src/app/task',
               from: './src/app',
-              except: ['./task', './core', './shared'],
+              except: ['./task', './dictionary', './core', './shared'],
               message:
-                'Домен task может импортировать только core и shared (импорт других доменов, включая board, запрещён).',
+                'Домен task может импортировать только dictionary, core и shared (импорт других доменов, включая board, запрещён).',
             },
             {
               target: './src/app/board',
               from: './src/app',
-              except: ['./task', './board', './core', './shared'],
+              except: [
+                './task',
+                './board',
+                './dictionary',
+                './core',
+                './shared',
+              ],
               message:
-                'Домен board может импортировать только task, core и shared (импорт других доменов запрещён).',
+                'Домен board может импортировать только task, dictionary, core и shared (импорт других доменов запрещён).',
             },
             {
               target: './src/app/profile',
