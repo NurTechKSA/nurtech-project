@@ -3,9 +3,9 @@ import { Routes } from '@angular/router';
 import { authGuard } from '@core/authentication/guards/auth.guard';
 import { guestGuard } from '@core/authentication/guards/guest.guard';
 import { AppPath } from '@core/enums/app-path.enum';
-import { projectRoutes } from '@core/project/project.routes';
 
 import { profileRoutes } from './profile/profile.routes';
+import { projectRoutes } from './project.routes';
 
 export const routes: Routes = [
   {
