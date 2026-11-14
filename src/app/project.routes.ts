@@ -44,6 +44,11 @@ export const projectRoutes: Routes = [
               ),
             children: [
               ...boardRoutes,
+              {
+                path: '',
+                pathMatch: 'full',
+                redirectTo: AppPath.PROJECT_DATA,
+              },
               // TODO: задача `tasks/:taskKey`
               {
                 // TODO: временные данные
