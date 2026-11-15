@@ -7,6 +7,8 @@ import {
 import { TuiHint } from '@taiga-ui/core';
 import { TuiChip } from '@taiga-ui/kit';
 
+import { IdName } from '../../interfaces/id-name.interface';
+
 @Component({
   selector: 'app-task-tags',
   imports: [TuiChip, TuiHint],
@@ -15,7 +17,7 @@ import { TuiChip } from '@taiga-ui/kit';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaskTagsComponent {
-  readonly tags = input.required<readonly string[]>();
+  readonly tags = input.required<readonly IdName[]>();
   readonly limit = input<number>();
 
   protected readonly visibleTags = computed(() =>

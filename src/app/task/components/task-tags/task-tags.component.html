@@ -1,7 +1,7 @@
 @if (tags().length) {
   <div class="task-tags">
-    @for (tag of visibleTags(); track $index) {
-      <span tuiChip size="s">{{ tag }}</span>
+    @for (tag of visibleTags(); track tag.id) {
+      <span tuiChip size="s">{{ tag.name }}</span>
     }
 
     @if (hiddenCount()) {
@@ -12,8 +12,8 @@
   </div>
 
   <ng-template #hiddenTagsHint>
-    @for (tag of hiddenTags(); track $index) {
-      <div>{{ tag }}</div>
+    @for (tag of hiddenTags(); track tag.id) {
+      <div>{{ tag.name }}</div>
     }
   </ng-template>
 }
