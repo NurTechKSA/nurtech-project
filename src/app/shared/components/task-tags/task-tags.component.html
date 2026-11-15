@@ -1,0 +1,19 @@
+@if (tags().length) {
+  <div class="task-tags">
+    @for (tag of visibleTags(); track $index) {
+      <span tuiChip size="s">{{ tag }}</span>
+    }
+
+    @if (hiddenCount()) {
+      <span tuiChip size="s" [tuiHint]="hiddenTagsHint">
+        +{{ hiddenCount() }}
+      </span>
+    }
+  </div>
+
+  <ng-template #hiddenTagsHint>
+    @for (tag of hiddenTags(); track $index) {
+      <div>{{ tag }}</div>
+    }
+  </ng-template>
+}

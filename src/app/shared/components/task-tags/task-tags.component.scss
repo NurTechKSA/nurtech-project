@@ -1,0 +1,9 @@
+:host {
+  display: contents;
+}
+
+.task-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
