@@ -22,65 +22,57 @@ import { TaskSearchItem } from '../interfaces/task-search-item.interface';
 })
 export class ApiTaskService {
   private readonly http = inject(HttpClient);
-  private readonly projectEndpoint = 'projects';
-  private readonly taskEndpoint = 'tasks';
+  private readonly endpoint = 'tasks';
 
   getTaskByKey(
-    projectId: Project['id'],
-    taskKey: TaskDetail['key']
+    id: Project['id'],
+    key: TaskDetail['key']
   ): Observable<TaskByKeyResponse> {
     return this.http.get<TaskByKeyResponse>(
-      `${this.projectEndpoint}/${projectId}/${this.taskEndpoint}/by-key/${taskKey}`
+      `projects/${id}/${this.endpoint}/by-key/${key}`
     );
   }
 
   createTask(
-    projectId: Project['id'],
+    id: Project['id'],
     payload: TaskCreateRequest
   ): Observable<TaskCreateResponse> {
     return this.http.post<TaskCreateResponse>(
-      `${this.projectEndpoint}/${projectId}/${this.taskEndpoint}`,
+      `projects/${id}/${this.endpoint}`,
       payload
     );
   }
 
   updateTask(
-    taskId: TaskDetail['id'],
+    id: TaskDetail['id'],
     payload: TaskUpdateRequest
   ): Observable<TaskDetail> {
-    return this.http.patch<TaskDetail>(
-      `${this.taskEndpoint}/${taskId}`,
-      payload
-    );
+    return this.http.patch<TaskDetail>(`${this.endpoint}/${id}`, payload);
   }
 
   moveTask(
-    taskId: TaskDetail['id'],
+    id: TaskDetail['id'],
     payload: TaskMoveRequest
   ): Observable<TaskDetail> {
-    return this.http.post<TaskDetail>(
-      `${this.taskEndpoint}/${taskId}/move`,
-      payload
-    );
+    return this.http.post<TaskDetail>(`${this.endpoint}/${id}/move`, payload);
   }
 
-  getTaskHistory(taskId: TaskDetail['id']): Observable<HistoryEvent[]> {
+  getTaskHistory(id: TaskDetail['id']): Observable<HistoryEvent[]> {
     return this.http
-      .get<HistoryListResponse>(`${this.taskEndpoint}/${taskId}/history`)
+      .get<HistoryListResponse>(`${this.endpoint}/${id}/history`)
       .pipe(map(({ items }) => items));
   }
 
   searchTasks(
-    projectId: Project['id'],
+    id: Project['id'],
     payload: TaskSearchRequest
   ): Observable<TaskSearchItem[]> {
     const params = buildHttpParams(payload);
 
     return this.http
-      .get<TaskSearchResponse>(
-        `${this.projectEndpoint}/${projectId}/${this.taskEndpoint}/search`,
-        { params }
-      )
+      .get<TaskSearchResponse>(`projects/${id}/${this.endpoint}/search`, {
+        params,
+      })
       .pipe(map(({ items }) => items));
   }
 }

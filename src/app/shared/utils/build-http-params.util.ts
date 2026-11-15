@@ -1,12 +1,11 @@
-import { HttpParams } from '@angular/common/http';
+import { HttpParams, HttpParamsOptions } from '@angular/common/http';
 
-type Primitive = string | number | boolean;
-type Nullish = null | undefined;
-type ParamValue = Primitive | Nullish | readonly (Primitive | Nullish)[];
+type ParamValue =
+  NonNullable<HttpParamsOptions['fromObject']>[string] | null | undefined;
+type FlatPayload<T> = { [K in keyof T]: ParamValue };
 
-export type FlatPayload<T> = { [K in keyof T]: ParamValue };
-
-const isPresent = (item: Primitive | Nullish): item is Primitive =>
+const isPresent = <T>(item: T): item is NonNullable<T> =>
+  // eslint-disable-next-line sonarjs/different-types-comparison
   item !== null && item !== undefined && item !== '';
 
 const serialize = (value: ParamValue): string | null => {
