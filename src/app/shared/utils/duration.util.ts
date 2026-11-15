@@ -14,7 +14,7 @@ export function parseDuration(input: string): number | null {
       return null;
     }
 
-    const value = parseInt(part, 10);
+    const value = Number(part.slice(0, -1));
     const unit = part.at(-1);
 
     if (unit === 'h') {
@@ -24,7 +24,6 @@ export function parseDuration(input: string): number | null {
 
       hasHours = true;
       totalMinutes += value * 60;
-
     } else if (unit === 'm') {
       if (hasMinutes) {
         return null;
@@ -33,10 +32,10 @@ export function parseDuration(input: string): number | null {
       hasMinutes = true;
       totalMinutes += value;
     }
-  }
 
-  if (totalMinutes > 1440 || totalMinutes < 1) {
-    return null;
+    if (!Number.isSafeInteger(totalMinutes)) {
+      return null;
+    }
   }
 
   return totalMinutes;
