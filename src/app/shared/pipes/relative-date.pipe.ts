@@ -1,21 +1,9 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import dayjs from 'dayjs';
-import 'dayjs/locale/ru';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import updateLocale from 'dayjs/plugin/updateLocale';
 
-dayjs.extend(relativeTime);
-dayjs.extend(updateLocale);
-dayjs.locale('ru');
-dayjs.updateLocale('ru', {
-  monthsShort: 'янв_фев_мар_апр_мая_июн_июл_авг_сен_окт_ноя_дек'.split('_'),
-  relativeTime: {
-    ...dayjs.Ls['ru'].relativeTime,
-    m: '1 минуту',
-    h: '1 час',
-    d: '1 день',
-  },
-});
+const JUST_NOW_SECONDS = 60;
+const MAX_RELATIVE_DAYS = 7;
+const RELATIVE_TIME_FORMAT = new Intl.RelativeTimeFormat('ru');
 
 @Pipe({ name: 'relativeDate' })
 export class RelativeDatePipe implements PipeTransform {
@@ -23,22 +11,28 @@ export class RelativeDatePipe implements PipeTransform {
     const date = dayjs(value);
     const now = dayjs();
 
-    if (now.diff(date, 'second') < 60) {
+    if (now.diff(date, 'second') < JUST_NOW_SECONDS) {
       return 'только что';
     }
 
     const diffDays = now.startOf('day').diff(date.startOf('day'), 'day');
 
-    if (diffDays > 7) {
-      return date.format('D MMM');
+    if (diffDays === 0) {
+      const diffHours = now.diff(date, 'hour');
+
+      return diffHours === 0
+        ? RELATIVE_TIME_FORMAT.format(-now.diff(date, 'minute'), 'minute')
+        : RELATIVE_TIME_FORMAT.format(-diffHours, 'hour');
     }
 
     if (diffDays === 1) {
       return 'вчера';
     }
 
-    return diffDays >= 2
-      ? now.subtract(diffDays, 'day').from(now)
-      : date.from(now);
+    if (diffDays <= MAX_RELATIVE_DAYS) {
+      return RELATIVE_TIME_FORMAT.format(-diffDays, 'day');
+    }
+
+    return date.format('D MMM');
   }
 }
