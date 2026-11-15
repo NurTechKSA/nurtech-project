@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import dayjs from 'dayjs';
+
+import { dayjs } from '../config/dayjs.config';
 
 const JUST_NOW_SECONDS = 60;
 const MAX_RELATIVE_DAYS = 7;

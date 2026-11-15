@@ -14,7 +14,6 @@ import { AuthStore } from '@core/authentication/+store/auth.store';
 import { unauthorizedInterceptor } from '@core/authentication/interceptors/unauthorized.interceptor';
 import { apiUrlInterceptor } from '@core/interceptors/api-url.interceptor';
 import { errorNotificationInterceptor } from '@core/interceptors/error-notification.interceptor';
-import { configureDayjs } from '@shared/config/dayjs.config';
 
 import { routes } from './app.routes';
 
@@ -33,7 +32,6 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(() => {
       inject(AuthStore).getCurrentUser();
     }),
-    provideAppInitializer(configureDayjs),
     { provide: TUI_LANGUAGE, useValue: signal(TUI_RUSSIAN_LANGUAGE) },
   ],
 };
