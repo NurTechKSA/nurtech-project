@@ -8,15 +8,6 @@ dayjs.extend(updateLocale);
 dayjs.locale('ru');
 dayjs.updateLocale('ru', {
   monthsShort: 'янв_фев_мар_апр_мая_июн_июл_авг_сен_окт_ноя_дек'.split('_'),
-  relativeTime: {
-    ...dayjs.Ls['ru'].relativeTime,
-    s: 'только что',
-    d: 'вчера',
-    past: (output: string) =>
-      output === 'только что' || output === 'вчера'
-        ? output
-        : `${output} назад`,
-  },
 });
 
 export { dayjs };
