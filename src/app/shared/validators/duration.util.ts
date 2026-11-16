@@ -1,6 +1,6 @@
-import { AbstractControl, ValidationErrors, ValidatorFn } from "@angular/forms";
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
-import { parseDuration } from "@shared/utils/duration-parser.util";
+import { parseDuration } from '@shared/utils/duration-parser.util';
 
 interface DurationLimits {
   min?: number;
@@ -28,7 +28,9 @@ export function getDurationValidator(limits: DurationLimits): ValidatorFn {
     }
 
     if (limits.max !== undefined && duration > limits.max) {
-      return { other: `Максимальная длительность — ${String(limits.max)} мин.` };
+      return {
+        other: `Максимальная длительность — ${String(limits.max)} мин.`,
+      };
     }
 
     return null;

@@ -1,4 +1,3 @@
-
 function getUnitMinutes(unit: string): number {
   switch (unit) {
     case 'w':
