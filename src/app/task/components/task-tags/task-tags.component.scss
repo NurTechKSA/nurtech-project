@@ -6,4 +6,13 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem;
+
+  &__hint {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    max-inline-size: 18rem;
+    max-block-size: 12rem;
+    overflow-y: auto;
+  }
 }

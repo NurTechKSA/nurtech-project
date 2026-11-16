@@ -28,5 +28,4 @@ export class TaskTagsComponent {
 
     return limit === undefined ? [] : this.tags().slice(limit);
   });
-  protected readonly hiddenCount = computed(() => this.hiddenTags().length);
 }

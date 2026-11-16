@@ -4,16 +4,18 @@
       <span tuiChip size="s">{{ tag.name }}</span>
     }
 
-    @if (hiddenCount()) {
+    @if (hiddenTags().length; as hiddenCount) {
       <span tuiChip size="s" [tuiHint]="hiddenTagsHint">
-        +{{ hiddenCount() }}
+        +{{ hiddenCount }}
       </span>
     }
   </div>
 
   <ng-template #hiddenTagsHint>
-    @for (tag of hiddenTags(); track tag.id) {
-      <div>{{ tag.name }}</div>
-    }
+    <div class="task-tags__hint">
+      @for (tag of hiddenTags(); track tag.id) {
+        <span tuiChip size="s">{{ tag.name }}</span>
+      }
+    </div>
   </ng-template>
 }
