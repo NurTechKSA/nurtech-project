@@ -19,14 +19,13 @@ import { filter, pipe, switchMap, tap } from 'rxjs';
 
 import { Project } from '@core/project/interfaces/project.interface';
 import { UserStore } from '@core/user/+store/user.store';
-import { UserRef } from '@core/user/interfaces/user-ref.interface';
 import { LoadingStatus } from '@shared/enums/loading-status.enum';
 import { catchEffectError } from '@shared/store/catch-effect-error.operator';
 import { setLoaded, setLoading } from '@shared/store/status-update.util';
 import { withLoadingStatus } from '@shared/store/with-loading-status.util';
 
+import { Member } from '../interfaces/member.interface';
 import { ApiMemberService } from '../services/api-member.service';
-
 interface MemberState {
   projectId: Project['id'] | null;
 }
@@ -36,7 +35,7 @@ const initialState: MemberState = {
 };
 
 const memberConfig = entityConfig({
-  entity: type<UserRef>(),
+  entity: type<Member>(),
   selectId: (member) => member.userId,
 });
 

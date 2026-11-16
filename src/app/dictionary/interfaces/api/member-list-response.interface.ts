@@ -1,5 +1,5 @@
-import { UserRef } from '@core/user/interfaces/user-ref.interface';
+import { Member } from '../member.interface';
 
 export interface MemberListResponse {
-  items: UserRef[];
+  items: Member[];
 }
