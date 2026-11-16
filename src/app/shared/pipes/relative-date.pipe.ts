@@ -4,7 +4,13 @@ import { dayjs } from '../config/dayjs.config';
 
 @Pipe({ name: 'relativeDate' })
 export class RelativeDatePipe implements PipeTransform {
-  transform(value: Date | string): string {
-    return dayjs(value).fromNow();
+  transform(value: Date | string | null | undefined): string {
+    if (!value) {
+      return '';
+    }
+
+    const date = dayjs(value);
+
+    return date.isValid() ? date.fromNow() : '';
   }
 }
