@@ -1,0 +1,5 @@
+@let priorityConfig = data[priority()];
+
+<span class="badge" tuiBadge [style.background]="priorityConfig.bgColor">{{
+  priorityConfig.letter
+}}</span>
