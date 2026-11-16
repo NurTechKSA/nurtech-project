@@ -1,6 +1,6 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
-import { parseDuration } from '../utils/duration.util';
+import { parseDuration } from '../utils/duration-parser.util';
 
 interface DurationLimits {
   min?: number;
