@@ -6,41 +6,37 @@ import { Priority } from '../../enums/priority.enum';
 
 interface PriorityConfigItem {
   letter: string;
-  name: string;
-  backgroundColor: string;
+  bgColor: string;
 }
 
 const PRIORITY_CONFIG: Record<Priority, PriorityConfigItem> = {
   [Priority.LOW]: {
     letter: 'L',
-    name: 'Low',
-    backgroundColor: '#4dd269',
+    bgColor: 'var(--tui-status-positive)',
   },
   [Priority.MEDIUM]: {
     letter: 'M',
-    name: 'Medium',
-    backgroundColor: '#e0a100',
+    bgColor: 'var(--tui-status-warning)',
   },
   [Priority.HIGH]: {
     letter: 'H',
-    name: 'High',
-    backgroundColor: '#e07b00',
+    bgColor: 'var(--tui-background-accent-2)',
   },
   [Priority.CRITICAL]: {
     letter: 'C',
-    name: 'Critical',
-    backgroundColor: '#f45d48',
+    bgColor: 'var(--tui-status-negative)',
   },
 };
 
 @Component({
   selector: 'app-priority-badge',
   imports: [TuiHint, TuiBadge],
+  standalone: true,
   templateUrl: './task-priority-badge.component.html',
   styleUrl: './task-priority-badge.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PriorityBadgeComponent {
+export class TaskPriorityBadgeComponent {
   readonly priority = input.required<Priority>();
   readonly data = PRIORITY_CONFIG;
 }
