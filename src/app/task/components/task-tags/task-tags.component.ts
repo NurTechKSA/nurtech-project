@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -11,7 +12,7 @@ import { IdName } from '../../interfaces/id-name.interface';
 
 @Component({
   selector: 'app-task-tags',
-  imports: [TuiChip, TuiHint],
+  imports: [NgTemplateOutlet, TuiChip, TuiHint],
   templateUrl: './task-tags.component.html',
   styleUrl: './task-tags.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
