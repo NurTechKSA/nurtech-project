@@ -10,7 +10,7 @@ import { projectsGuard } from '@core/project/guards/projects.guard';
 
 import { BoardStore } from '../board/+store/board.store';
 import { boardRoutes } from '../board/board.routes';
-import { ProjectStatusesStore } from './+store/project-statuses.store';
+import { ProjectStatusesStore } from '../status/+store/project-statuses.store';
 
 const loadProjectData: ResolveFn<void> = (route) => {
   const projectKey = route.paramMap.get(RouteParam.PROJECT_KEY) ?? '';
