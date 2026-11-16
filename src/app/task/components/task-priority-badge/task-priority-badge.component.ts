@@ -31,7 +31,6 @@ const PRIORITY_CONFIG: Record<Priority, PriorityConfigItem> = {
 @Component({
   selector: 'app-priority-badge',
   imports: [TuiHint, TuiBadge],
-  standalone: true,
   templateUrl: './task-priority-badge.component.html',
   styleUrl: './task-priority-badge.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
