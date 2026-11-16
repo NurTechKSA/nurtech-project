@@ -18,7 +18,7 @@ export class ApiBoardService {
       .pipe(map(({ items }) => items));
   }
 
-  getBoardCards(boardId: string): Observable<BoardColumn[]> {
+  getBoardCards(boardId: Board['id']): Observable<BoardColumn[]> {
     return this.http
       .get<BoardCardsResponse>(`boards/${boardId}/cards`)
       .pipe(map(({ columns }) => columns));

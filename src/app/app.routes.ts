@@ -5,7 +5,7 @@ import { guestGuard } from '@core/authentication/guards/guest.guard';
 import { AppPath } from '@core/enums/app-path.enum';
 
 import { profileRoutes } from './profile/profile.routes';
-import { projectRoutes } from './project.routes';
+import { projectRoutes } from './project/project.routes';
 
 export const routes: Routes = [
   {
