@@ -5,10 +5,10 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap } from 'rxjs';
 
 import { Project } from '@core/project/interfaces/project.interface';
-import { Status } from '@core/project/interfaces/status.interface';
 import { catchEffectError } from '@shared/store/catch-effect-error.operator';
 import { setLoaded, setLoading } from '@shared/store/status-update.util';
 import { withLoadingStatus } from '@shared/store/with-loading-status.util';
+import { Status } from '@status/interfaces/status.interface';
 
 import { ApiStatusService } from '../services/api-status.service';
 
@@ -33,7 +33,7 @@ export const ProjectStatusesStore = signalStore(
           updateState(
             store,
             '[ProjectStatusesStore] loadStatuses',
-            initialState,
+            { statuses: [] },
             setLoading()
           );
         }),

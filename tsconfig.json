@@ -16,7 +16,8 @@
     "module": "preserve",
     "paths": {
       "@core/*": ["./src/app/core/*"],
-      "@shared/*": ["./src/app/shared/*"]
+      "@shared/*": ["./src/app/shared/*"],
+      "@status/*": ["./src/app/status/*"]
     }
   },
   "angularCompilerOptions": {

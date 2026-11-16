@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { TuiBadge, TuiStatus } from '@taiga-ui/kit';
 
-import { StatusColor } from '@core/project/enums/status-color.enum';
+import { StatusColor } from '@status/enums/status-color.enum';
 
 import { StatusRef } from '../../interfaces/status-ref.interface';
 

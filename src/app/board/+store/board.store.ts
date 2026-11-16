@@ -39,7 +39,7 @@ export const BoardStore = signalStore(
           updateState(
             store,
             '[BoardStore] loadBoards',
-            initialState,
+            { boards: [] },
             setLoading()
           );
         }),

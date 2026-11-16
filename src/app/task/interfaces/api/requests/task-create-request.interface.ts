@@ -1,5 +1,5 @@
-import { Status } from '@core/project/interfaces/status.interface';
 import { UserRef } from '@core/user/interfaces/user-ref.interface';
+import { Status } from '@status/interfaces/status.interface';
 
 import { Priority } from '../../../enums/priority.enum';
 import { TaskType } from '../../../enums/task-type.enum';

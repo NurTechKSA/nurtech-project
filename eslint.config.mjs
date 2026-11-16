@@ -58,7 +58,7 @@ export default tseslint.config(
       },
     },
     settings: {
-      'import-x/internal-regex': '^@(core|shared)/',
+      'import-x/internal-regex': '^@(core|shared|status)/',
       'import-x/resolver-next': [
         createNodeResolver({
           extensions: ['.ts'],
@@ -107,18 +107,25 @@ export default tseslint.config(
                 'Слой core может импортировать только из shared и самого core (зависимости от доменов запрещены).',
             },
             {
+              target: './src/app/status',
+              from: './src/app',
+              except: ['./status', './core', './shared'],
+              message:
+                'Домен status может импортировать только свой код, core и shared.',
+            },
+            {
               target: './src/app/task',
               from: './src/app',
-              except: ['./task', './core', './shared'],
+              except: ['./task', './status', './core', './shared'],
               message:
-                'Домен task может импортировать только core и shared (импорт других доменов, включая board, запрещён).',
+                'Домен task может импортировать только status, core и shared (импорт других доменов, включая board, запрещён).',
             },
             {
               target: './src/app/board',
               from: './src/app',
-              except: ['./task', './board', './core', './shared'],
+              except: ['./task', './board', './status', './core', './shared'],
               message:
-                'Домен board может импортировать только task, core и shared (импорт других доменов запрещён).',
+                'Домен board может импортировать только task, status, core и shared (импорт других доменов запрещён).',
             },
             {
               target: './src/app/profile',

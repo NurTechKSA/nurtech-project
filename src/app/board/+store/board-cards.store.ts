@@ -15,6 +15,7 @@ import { setLoaded, setLoading } from '@shared/store/status-update.util';
 import { withLoadingStatus } from '@shared/store/with-loading-status.util';
 
 import { BoardStore } from './board.store';
+import { BoardColumnViewModel } from '../interfaces/board-column-view-model.interface';
 import { BoardColumn } from '../interfaces/board-column.interface';
 import { Board } from '../interfaces/board.interface';
 import { ApiBoardService } from '../services/api-board.service';
@@ -43,7 +44,8 @@ export const BoardCardsStore = signalStore(
   })),
 
   withComputed(({ boardId, boardStore, columns }) => ({
-    columnsWithDetails: computed(() => {
+    // TODO: заменить временное объединение данных при реализации колонок доски.
+    columnsWithDetails: computed<BoardColumnViewModel[]>(() => {
       const board = boardStore.boards().find(({ id }) => id === boardId());
       const detailsByStatusId = new Map(
         board?.columns.map((column) => [column.statusId, column])
@@ -68,8 +70,7 @@ export const BoardCardsStore = signalStore(
           updateState(
             store,
             '[BoardCardsStore] loadBoardCards',
-            initialState,
-            { boardId },
+            { boardId, columns: [] },
             setLoading()
           );
         }),
