@@ -10,6 +10,7 @@ import { projectsGuard } from '@core/project/guards/projects.guard';
 
 import { BoardStore } from '../board/+store/board.store';
 import { boardRoutes } from '../board/board.routes';
+import { MemberStore } from '../dictionary/+store/member.store';
 import { ProjectStatusesStore } from '../status/+store/project-statuses.store';
 
 const loadProjectData: ResolveFn<void> = (route) => {
@@ -18,6 +19,7 @@ const loadProjectData: ResolveFn<void> = (route) => {
 
   inject(BoardStore).loadBoards(project.id);
   inject(ProjectStatusesStore).loadStatuses(project.id);
+  inject(MemberStore).loadMembers(project.id);
 };
 
 export const projectRoutes: Routes = [
@@ -43,7 +45,7 @@ export const projectRoutes: Routes = [
       {
         path: `${AppPath.PROJECT}/:${RouteParam.PROJECT_KEY}`,
         canActivate: [projectGuard],
-        providers: [BoardStore, ProjectStatusesStore],
+        providers: [BoardStore, ProjectStatusesStore, MemberStore],
         resolve: { projectData: loadProjectData },
         loadComponent: () =>
           import('@core/project/components/project-shell/project-shell.component').then(

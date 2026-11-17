@@ -6,9 +6,10 @@ import { Project } from '@core/project/interfaces/project.interface';
 
 import { MemberListResponse } from '../interfaces/api/member-list-response.interface';
 import { Member } from '../interfaces/member.interface';
+
 @Injectable({ providedIn: 'root' })
 export class ApiMemberService {
-  private readonly http: HttpClient = inject(HttpClient);
+  private readonly http = inject(HttpClient);
   private readonly endpoint = 'projects';
 
   getMembers(id: Project['id']): Observable<Member[]> {
