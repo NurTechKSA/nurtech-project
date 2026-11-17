@@ -1,0 +1,25 @@
+.profile {
+  padding: 80px;
+}
+
+.profile-title {
+  margin: 0 0 14px;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.divider {
+  margin: 30px 0;
+  border: none;
+  border-top: 1px solid var(--tui-border-normal);
+}
+
+.profile-footer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.profile-page__loader {
+  inline-size: 100%;
+  max-inline-size: 100%;
+}
