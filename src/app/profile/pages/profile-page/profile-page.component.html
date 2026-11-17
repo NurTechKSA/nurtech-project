@@ -1,10 +1,22 @@
-<p>{{ user()?.name }}</p>
-<p>{{ user()?.username }}</p>
-<button
-  appearance="primary"
-  size="m"
-  tuiButton
-  type="button"
-  (click)="openChangePasswordDialog()">
-  Сменить пароль
-</button>
+<main class="profile">
+  <h2 tuiTitle class="profile-title">Профиль</h2>
+  <app-profile-info />
+  <hr class="divider" />
+  <div class="profile-footer">
+    <button
+      appearance="secondary"
+      size="m"
+      tuiButton
+      type="button"
+      (click)="openChangePasswordDialog()">
+      Сменить пароль
+    </button>
+    <button
+      appearance="flat"
+      tuiButton
+      type="button"
+      (click)="onLogoutButtonClick()">
+      Выйти
+    </button>
+  </div>
+</main>

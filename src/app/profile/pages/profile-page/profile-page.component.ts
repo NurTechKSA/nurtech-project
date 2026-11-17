@@ -1,22 +1,24 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { TuiButton, TuiDialogService } from '@taiga-ui/core';
+import { Router } from '@angular/router';
+import { TuiButton, TuiDialogService, TuiTitle } from '@taiga-ui/core';
 import { PolymorpheusComponent } from '@taiga-ui/polymorpheus';
 
-import { UserStore } from '@core/user/+store/user.store';
+import { AuthStore } from '@core/authentication/+store/auth.store';
+import { AppPath } from '@core/enums/app-path.enum';
 
 import { ChangePasswordDialogComponent } from '../../components/change-password-dialog/change-password-dialog.component';
+import { ProfileInfoComponent } from '../../components/profile-info/profile-info.component';
 
 @Component({
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TuiButton],
+  imports: [ProfileInfoComponent, TuiTitle, TuiButton],
 })
 export class ProfilePageComponent {
-  private readonly store = inject(UserStore);
+  private readonly authStore = inject(AuthStore);
+  private readonly router = inject(Router);
   private readonly dialogService = inject(TuiDialogService);
-
-  readonly user = this.store.currentUser;
 
   openChangePasswordDialog(): void {
     this.dialogService
@@ -25,5 +27,11 @@ export class ProfilePageComponent {
         size: 's',
       })
       .subscribe();
+  }
+
+  onLogoutButtonClick(): void {
+    this.authStore.logout({
+      callback: () => void this.router.navigateByUrl(`/${AppPath.LOGIN}`),
+    });
   }
 }

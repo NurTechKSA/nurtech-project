@@ -37,10 +37,16 @@ export const projectRoutes: Routes = [
         children: [
           // TODO: доска `board/:boardId` и задача `tasks/:taskKey`
           {
+            path: '',
+            pathMatch: 'full',
+            redirectTo: AppPath.PROJECT_DATA,
+          },
+          {
             // TODO: временные данные
             path: AppPath.PROJECT_DATA,
             title: 'Данные API',
             loadComponent: () =>
+              // eslint-disable-next-line import-x/no-restricted-paths
               import('../../../temp/project-data/pages/project-data-page/project-data-page.component').then(
                 (m) => m.ProjectDataPageComponent
               ),

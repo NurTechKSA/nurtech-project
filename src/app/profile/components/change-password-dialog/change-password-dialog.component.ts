@@ -17,7 +17,7 @@ import { TuiPassword } from '@taiga-ui/kit';
 import { injectContext } from '@taiga-ui/polymorpheus';
 
 import { NotificationService } from '@shared/services/notification.service';
-import { applyFormServerError } from '@shared/validators/form-error.util';
+import { applyFormServerError } from '@shared/utils/apply-form-server-error.util';
 import { getPasswordsMatchValidator } from '@shared/validators/passwords-match.util';
 import { getRequiredValidator } from '@shared/validators/required.util';
 
@@ -74,8 +74,10 @@ export class ChangePasswordDialogComponent {
         applyFormServerError(
           this.changePasswordForm,
           this.profileStore.error(),
-          { current: 'currentPassword', next: 'newPassword' },
-          this.changePasswordForm.controls.currentPassword
+          {
+            fieldMap: { current: 'currentPassword', next: 'newPassword' },
+            fallbackField: 'currentPassword',
+          }
         );
       }
     });
