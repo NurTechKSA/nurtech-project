@@ -23,8 +23,7 @@ export class ProfilePageComponent {
   );
 
   openChangePasswordDialog(): void {
-    this.changePasswordDialogService.open()
-    .subscribe();
+    this.changePasswordDialogService.open().subscribe();
   }
 
   onLogoutButtonClick(): void {
