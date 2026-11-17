@@ -1,32 +1,29 @@
+<ng-template let-tagText let-hint="hint" #tagChip>
+  <span tuiChip size="s" [tuiHint]="hint">{{ tagText }}</span>
+</ng-template>
+
+<ng-template #hiddenTagsHint>
+  <div class="task-tags__hint">
+    @for (tag of hiddenTags(); track tag.id) {
+      <ng-container
+        *ngTemplateOutlet="tagChip; context: { $implicit: tag.name }" />
+    }
+  </div>
+</ng-template>
+
 @if (tags().length) {
   <div class="task-tags">
     @for (tag of visibleTags(); track tag.id) {
       <ng-container
-        [ngTemplateOutlet]="tagChip"
-        [ngTemplateOutletContext]="{ value: tag.name }" />
+        *ngTemplateOutlet="tagChip; context: { $implicit: tag.name }" />
     }
 
     @if (hiddenTags().length; as hiddenCount) {
       <ng-container
-        [ngTemplateOutlet]="tagChip"
-        [ngTemplateOutletContext]="{
-          value: `+${hiddenCount}`,
-          hint: hiddenTagsHint,
-        }" />
+        *ngTemplateOutlet="
+          tagChip;
+          context: { $implicit: `+${hiddenCount}`, hint: hiddenTagsHint }
+        " />
     }
   </div>
-
-  <ng-template let-value="value" let-hint="hint" #tagChip>
-    <span tuiChip size="s" [tuiHint]="hint">{{ value }}</span>
-  </ng-template>
-
-  <ng-template #hiddenTagsHint>
-    <div class="task-tags__hint">
-      @for (tag of hiddenTags(); track tag.id) {
-        <ng-container
-          [ngTemplateOutlet]="tagChip"
-          [ngTemplateOutletContext]="{ value: tag.name }" />
-      }
-    </div>
-  </ng-template>
 }
