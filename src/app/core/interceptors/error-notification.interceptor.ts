@@ -16,7 +16,6 @@ const FORBIDDEN_STATUS = 403;
 const CONFLICT_STATUS = 409;
 const SERVER_ERROR_MIN_STATUS = 500;
 const TOO_MANY_REQUESTS_STATUS = 429;
-const TOO_MANY_REQUESTS_MESSAGE = 'Слишком много попыток.';
 
 export const errorNotificationInterceptor: HttpInterceptorFn = (
   request,
@@ -56,19 +55,10 @@ export const errorNotificationInterceptor: HttpInterceptorFn = (
 
       if (
         error.status === NETWORK_ERROR_STATUS ||
+        error.status === TOO_MANY_REQUESTS_STATUS ||
         error.status >= SERVER_ERROR_MIN_STATUS
       ) {
         notificationService.showError(GENERIC_ERROR_MESSAGE);
-      }
-
-      if (error.status === TOO_MANY_REQUESTS_STATUS) {
-        const retryAfter = Number(error.headers.get('Retry-After'));
-
-        const message = retryAfter
-          ? `${TOO_MANY_REQUESTS_MESSAGE} Попробуйте через ${String(Math.max(1, Math.ceil(retryAfter / 60)))} мин.`
-          : TOO_MANY_REQUESTS_MESSAGE;
-
-        notificationService.showError(message);
       }
 
       return throwError(() => error);

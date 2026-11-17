@@ -11,6 +11,7 @@ import {
   TuiError,
   TuiIcon,
   TuiInput,
+  TuiLoader,
   TuiTextfield,
 } from '@taiga-ui/core';
 import { TuiPassword } from '@taiga-ui/kit';
@@ -18,7 +19,7 @@ import { injectContext } from '@taiga-ui/polymorpheus';
 
 import { NotificationService } from '@shared/services/notification.service';
 import { applyFormServerError } from '@shared/utils/apply-form-server-error.util';
-import { getPasswordsMatchValidator } from '@shared/validators/passwords-match.util';
+import { getCompareControlValidator } from '@shared/validators/compare-control.util';
 import { getRequiredValidator } from '@shared/validators/required.util';
 
 import { ProfileStore } from '../../+store/profile.store';
@@ -31,6 +32,7 @@ import { ProfileStore } from '../../+store/profile.store';
     TuiError,
     TuiIcon,
     TuiInput,
+    TuiLoader,
     TuiPassword,
     TuiTextfield,
   ],
@@ -42,45 +44,38 @@ import { ProfileStore } from '../../+store/profile.store';
 export class ChangePasswordDialogComponent {
   private readonly profileStore = inject(ProfileStore);
   private readonly notificationService = inject(NotificationService);
-  private readonly context = injectContext<TuiDialogContext>();
+  private readonly context = injectContext<TuiDialogContext<void, void>>();
 
   readonly isLoading = this.profileStore.isLoading;
 
-  readonly changePasswordForm = inject(FormBuilder).nonNullable.group(
-    {
-      currentPassword: ['', getRequiredValidator()],
-      newPassword: ['', getRequiredValidator()],
-      confirmPassword: ['', getRequiredValidator()],
-    },
-    {
-      validators: [
-        getPasswordsMatchValidator(
-          'newPassword',
-          'confirmPassword',
-          'Пароли не совпадают'
-        ),
+  readonly changePasswordForm = inject(FormBuilder).nonNullable.group({
+    currentPassword: ['', getRequiredValidator()],
+    newPassword: [
+      '',
+      [
+        getRequiredValidator(),
+        getCompareControlValidator({
+          targetControlName: 'currentPassword',
+          match: false,
+          message: 'Новый пароль должен отличаться от текущего',
+        }),
       ],
-    }
-  );
+    ],
+    confirmPassword: [
+      '',
+      [
+        getRequiredValidator(),
+        getCompareControlValidator({
+          targetControlName: 'newPassword',
+          match: true,
+          message: 'Пароли должны совпадать',
+        }),
+      ],
+    ],
+  });
 
   constructor() {
-    effect(() => {
-      if (this.profileStore.isLoaded()) {
-        this.notificationService.showSuccess('Пароль изменён');
-        this.context.completeWith();
-      }
-
-      if (this.profileStore.isError()) {
-        applyFormServerError(
-          this.changePasswordForm,
-          this.profileStore.error(),
-          {
-            fieldMap: { current: 'currentPassword', next: 'newPassword' },
-            fallbackField: 'currentPassword',
-          }
-        );
-      }
-    });
+    this.initPasswordChangeEffect();
   }
 
   onCancel(): void {
@@ -100,6 +95,26 @@ export class ChangePasswordDialogComponent {
     this.profileStore.changePassword({
       current: currentPassword,
       next: newPassword,
+    });
+  }
+
+  private initPasswordChangeEffect(): void {
+    effect(() => {
+      if (this.profileStore.isLoaded()) {
+        this.notificationService.showSuccess('Пароль изменён');
+        this.context.completeWith();
+      }
+
+      if (this.profileStore.isError()) {
+        applyFormServerError(
+          this.changePasswordForm,
+          this.profileStore.error(),
+          {
+            fieldMap: { current: 'currentPassword', next: 'newPassword' },
+            fallbackField: 'currentPassword',
+          }
+        );
+      }
     });
   }
 }
