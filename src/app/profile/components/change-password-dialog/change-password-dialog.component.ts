@@ -33,8 +33,8 @@ import { ProfileStore } from '../../+store/profile.store';
     TuiIcon,
     TuiInput,
     TuiLoader,
-    TuiPassword,
     TuiTextfield,
+    TuiPassword
   ],
   templateUrl: './change-password-dialog.component.html',
   styleUrl: './change-password-dialog.component.scss',
@@ -83,6 +83,9 @@ export class ChangePasswordDialogComponent {
   }
 
   onSubmit(): void {
+    this.changePasswordForm.controls.newPassword.updateValueAndValidity();
+    this.changePasswordForm.controls.confirmPassword.updateValueAndValidity();
+
     if (this.changePasswordForm.invalid) {
       this.changePasswordForm.markAllAsTouched();
 

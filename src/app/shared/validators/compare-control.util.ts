@@ -3,13 +3,13 @@ import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 export interface CompareControlOptions {
   targetControlName: string;
   message: string;
-  match: boolean;
+  match?: boolean;
 }
 
 export function getCompareControlValidator({
   targetControlName,
   message,
-  match,
+  match = true,
 }: CompareControlOptions): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     if (!control.value || !control.parent) {
