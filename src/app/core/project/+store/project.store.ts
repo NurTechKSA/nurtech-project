@@ -68,6 +68,10 @@ export const ProjectStore = signalStore(
     }),
   })),
 
+  withComputed(({ currentProject }) => ({
+    currentProjectId: computed(() => currentProject()?.id ?? null),
+  })),
+
   withProps(() => ({
     permissionStore: inject(PermissionStore),
     apiProjectService: inject(ApiProjectService),
@@ -95,10 +99,10 @@ export const ProjectStore = signalStore(
     openProject: signalMethod<Project['key']>((currentProjectKey) => {
       updateState(store, '[ProjectStore] openProject', { currentProjectKey });
 
-      const project = store.currentProject();
+      const projectId = store.currentProjectId();
 
-      if (project) {
-        permissionStore.loadPermissions(project.id);
+      if (projectId) {
+        permissionStore.loadPermissions(projectId);
       }
     }),
     closeProject: (): void => {
