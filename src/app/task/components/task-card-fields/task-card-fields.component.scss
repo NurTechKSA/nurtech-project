@@ -1,0 +1,14 @@
+.fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1rem;
+  margin: 0;
+
+  dt {
+    color: var(--tui-text-secondary);
+  }
+
+  dd {
+    margin: 0;
+  }
+}
