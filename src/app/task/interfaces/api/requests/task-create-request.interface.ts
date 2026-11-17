@@ -1,9 +1,9 @@
 import { UserRef } from '@core/user/interfaces/user-ref.interface';
+import { Status } from '@status/interfaces/status.interface';
 
 import { Priority } from '../../../enums/priority.enum';
 import { TaskType } from '../../../enums/task-type.enum';
 import { IdName } from '../../id-name.interface';
-import { Status } from '../../status.interface';
 import { TaskDetail } from '../../task-detail.interface';
 
 export interface TaskCreateRequest {
