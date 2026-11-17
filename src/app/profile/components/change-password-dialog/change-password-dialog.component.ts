@@ -34,7 +34,7 @@ import { ProfileStore } from '../../+store/profile.store';
     TuiInput,
     TuiLoader,
     TuiTextfield,
-    TuiPassword
+    TuiPassword,
   ],
   templateUrl: './change-password-dialog.component.html',
   styleUrl: './change-password-dialog.component.scss',
