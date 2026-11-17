@@ -1,49 +1,21 @@
-function getUnitMinutes(unit: string): number {
-  switch (unit) {
-    case 'w':
-      return 2400;
-    case 'd':
-      return 480;
-    case 'h':
-      return 60;
-    case 'm':
-      return 1;
-    default:
-      return 0;
-  }
-}
-
 export function parseDuration(input: string): number | null {
-  if (!input.trim()) {
-    return null;
+  if (!input.trim()) return null;
+
+  let total = 0;
+
+  for (const part of input.trim().split(' ').filter(Boolean)) {
+    const unit = part.slice(-1);
+    const number = part.slice(0, -1);
+    const value = Number(number);
+
+    if (!['w', 'd', 'h', 'm'].includes(unit)) return null;
+    if (!number || !Number.isInteger(value) || value < 0) return null;
+
+    if (unit === 'w') total += value * 2400;
+    else if (unit === 'd') total += value * 480;
+    else if (unit === 'h') total += value * 60;
+    else if (unit === 'm') total += value;
   }
 
-  const parts = input.trim().split(/\s+/);
-  let totalMinutes = 0;
-  let lastUnitOrder = -1;
-
-  for (const part of parts) {
-    const match = /^(\d+)([wdhm])$/.exec(part);
-
-    if (!match) {
-      return null;
-    }
-
-    const value = Number(match[1]);
-    const unit = match[2];
-    const unitOrder = 'wdhm'.indexOf(unit);
-
-    if (unitOrder <= lastUnitOrder) {
-      return null;
-    }
-
-    lastUnitOrder = unitOrder;
-    totalMinutes += value * getUnitMinutes(unit);
-
-    if (!Number.isSafeInteger(totalMinutes)) {
-      return null;
-    }
-  }
-
-  return totalMinutes;
+  return Number.isSafeInteger(total) ? total : null;
 }

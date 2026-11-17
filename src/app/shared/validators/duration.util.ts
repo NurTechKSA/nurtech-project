@@ -1,21 +1,38 @@
-export function parseDuration(input: string): number | null {
-  if (!input.trim()) return null;
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
-  let total = 0;
+import { parseDuration } from '@shared/utils/duration-parser.util';
 
-  for (const part of input.trim().split(' ').filter(Boolean)) {
-    const unit = part.slice(-1);
-    const number = part.slice(0, -1);
-    const value = Number(number);
+interface DurationLimits {
+  min?: number;
+  max?: number;
+}
 
-    if (!['w', 'd', 'h', 'm'].includes(unit)) return null;
-    if (!number || !Number.isInteger(value) || value < 0) return null;
+export function getDurationValidator(limits: DurationLimits): ValidatorFn {
+  return (control: AbstractControl<string>): ValidationErrors | null => {
+    const value = control.value;
 
-    if (unit === 'w') total += value * 2400;
-    else if (unit === 'd') total += value * 480;
-    else if (unit === 'h') total += value * 60;
-    else if (unit === 'm') total += value;
-  }
+    if (!value.trim()) {
+      return null;
+    }
 
-  return Number.isSafeInteger(total) ? total : null;
+    const duration = parseDuration(value);
+
+    if (duration === null) {
+      return {
+        other: 'Некорректный формат. Используйте формат: 2h 30m, 2h или 45m',
+      };
+    }
+
+    if (limits.min !== undefined && duration < limits.min) {
+      return { other: `Минимальная длительность — ${String(limits.min)} мин.` };
+    }
+
+    if (limits.max !== undefined && duration > limits.max) {
+      return {
+        other: `Максимальная длительность — ${String(limits.max)} мин.`,
+      };
+    }
+
+    return null;
+  };
 }
