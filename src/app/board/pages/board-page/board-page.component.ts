@@ -4,11 +4,13 @@ import {
   inject,
   input,
 } from '@angular/core';
+import { TuiIcon } from '@taiga-ui/core';
 
 import { BoardCardsStore } from '../../+store/board-cards.store';
 import { Board } from '../../interfaces/board.interface';
 
 @Component({
+  imports: [TuiIcon],
   providers: [BoardCardsStore],
   templateUrl: './board-page.component.html',
   styleUrl: './board-page.component.scss',
