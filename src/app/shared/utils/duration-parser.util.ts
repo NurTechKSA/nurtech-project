@@ -1,21 +1,34 @@
+const MINUTES_PER_UNIT: Record<string, number> = {
+  w: 2400,
+  d: 480,
+  h: 60,
+  m: 1,
+};
+
+/**
+ * Переводит строку вида "1w 2d 3h 30m" в минуты.
+ * При некорректном формате возвращает null.
+ */
 export function parseDuration(input: string): number | null {
-  if (!input.trim()) return null;
+  const parts: string[] = input.trim().split(' ').filter(Boolean);
 
-  let total = 0;
+  if (!parts.length) return null;
 
-  for (const part of input.trim().split(' ').filter(Boolean)) {
-    const unit = part.slice(-1);
-    const number = part.slice(0, -1);
-    const value = Number(number);
+  let totalMinutes = 0;
 
-    if (!['w', 'd', 'h', 'm'].includes(unit)) return null;
-    if (!number || !Number.isInteger(value) || value < 0) return null;
+  for (const part of parts) {
+    const amountText: string = part.slice(0, -1);
+    const amount = Number(amountText);
 
-    if (unit === 'w') total += value * 2400;
-    else if (unit === 'd') total += value * 480;
-    else if (unit === 'h') total += value * 60;
-    else if (unit === 'm') total += value;
+    if (!amountText || !Number.isInteger(amount) || amount < 0) return null;
+
+    const unitSymbol: string = part.slice(-1);
+    const minutesPerUnit: number = MINUTES_PER_UNIT[unitSymbol];
+
+    if (!minutesPerUnit) return null;
+
+    totalMinutes += amount * minutesPerUnit;
   }
 
-  return Number.isSafeInteger(total) ? total : null;
+  return Number.isSafeInteger(totalMinutes) ? totalMinutes : null;
 }
