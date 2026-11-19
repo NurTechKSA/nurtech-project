@@ -1,0 +1,26 @@
+@if (readOnly()) {
+  <app-task-status-badge [status]="value()" />
+} @else {
+  <button
+    tuiButton
+    type="button"
+    appearance="flat"
+    size="s"
+    [tuiDropdown]="dropdownContent"
+    [(tuiDropdownOpen)]="open">
+    <app-task-status-badge [status]="value()" />
+  </button>
+}
+
+<ng-template #dropdownContent>
+  <tui-data-list size="s">
+    @for (status of statuses(); track status.id) {
+      <button tuiOption type="button" (click)="selectStatus(status)">
+        <app-task-status-badge [status]="status" />
+        @if (status.id === value().id) {
+          <tui-icon class="check-icon" icon="@tui.check" />
+        }
+      </button>
+    }
+  </tui-data-list>
+</ng-template>
