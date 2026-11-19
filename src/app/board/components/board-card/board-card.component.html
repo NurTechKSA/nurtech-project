@@ -1,0 +1,30 @@
+<article tuiCardMedium class="board-card">
+  <header class="board-card__header">
+    <div class="board-card__identity">
+      <ng-content select="[boardCardType]" />
+
+      <span class="board-card__key">
+        <ng-content select="[boardCardKey]">{{ card().key }}</ng-content>
+      </span>
+    </div>
+
+    <ng-content select="[boardCardPriority]" />
+  </header>
+
+  <p class="board-card__title">{{ card().title }}</p>
+
+  <footer class="board-card__footer">
+    <div class="board-card__details">
+      <ng-content select="[boardCardTags]" />
+      <ng-content select="[boardCardBadges]" />
+    </div>
+
+    <div>
+      <ng-content select="[boardCardDueDate]" />
+    </div>
+
+    @if (card().assignee; as assignee) {
+      <app-user-avatar size="s" [name]="assignee.name" />
+    }
+  </footer>
+</article>
