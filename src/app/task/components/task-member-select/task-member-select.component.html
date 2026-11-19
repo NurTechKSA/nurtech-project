@@ -7,8 +7,9 @@
     tuiComboBox
     placeholder="Выберите участника"
     [readonly]="viewOnly()"
-    [ngModel]="value()"
-    (ngModelChange)="value.set($event)" />
+    [matcher]="matcher"
+    [ngModel]="query()"
+    (ngModelChange)="onQueryChange($event)" />
 
   <tui-data-list *tuiDropdown>
     @for (
@@ -19,7 +20,8 @@
         tuiOption
         type="button"
         class="task-member-select__row"
-        [value]="option">
+        [value]="option"
+        (click)="select(option)">
         @if (option; as user) {
           <app-user-avatar size="s" [name]="user.name" />
           <span class="task-member-select__name">

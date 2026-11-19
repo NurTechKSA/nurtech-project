@@ -3,10 +3,14 @@ import {
   Component,
   computed,
   input,
+  linkedSignal,
   model,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { type TuiIdentityMatcher } from '@taiga-ui/cdk';
+import {
+  type TuiIdentityMatcher,
+  type TuiStringMatcher,
+} from '@taiga-ui/cdk';
 import {
   TuiDataList,
   TuiFilterByInputPipe,
@@ -41,6 +45,7 @@ export class TaskMemberSelectComponent {
   readonly value = model<UserRef | null>(null);
   readonly currentUser = input.required<UserRef>();
   readonly viewOnly = input(false);
+  readonly query = linkedSignal<UserRef | string | null>(() => this.value());
 
   readonly options = computed<readonly (UserRef | null)[]>(() => {
     const me = this.currentUser();
@@ -55,6 +60,9 @@ export class TaskMemberSelectComponent {
   readonly identityMatcher: TuiIdentityMatcher<unknown> = (first, second) =>
     this.isSameUser(first as UserRef | null, second as UserRef | null);
 
+  readonly matcher: TuiStringMatcher<UserRef | null> = (item, query) =>
+    item !== null && item.userId === query;
+
   readonly isSameUser = (
     first: UserRef | null,
     second: UserRef | null
@@ -64,7 +72,7 @@ export class TaskMemberSelectComponent {
     items,
     query
   ) => {
-    const normalized = query.toLowerCase();
+    const normalized = query.trim().toLowerCase();
 
     return this.value()?.name.toLowerCase() === normalized
       ? items
@@ -75,4 +83,14 @@ export class TaskMemberSelectComponent {
             option.name.toLowerCase().includes(normalized)
         );
   };
+
+  onQueryChange(next: UserRef | string | null): void {
+    if (typeof next === 'string') {
+      this.query.set(next);
+    }
+  }
+
+  select(option: UserRef | null): void {
+    this.value.set(option);
+  }
 }
