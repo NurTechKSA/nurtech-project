@@ -17,15 +17,15 @@ export function parseDuration(input: string): number | null {
   let totalMinutes = 0;
 
   for (const part of parts) {
-    const amountText: string = part.slice(0, -1);
-    const amount = Number(amountText);
-
-    if (!amountText || !Number.isInteger(amount) || amount < 0) return null;
-
     const unitSymbol: string = part.slice(-1);
     const minutesPerUnit: number = MINUTES_PER_UNIT[unitSymbol];
 
     if (!minutesPerUnit) return null;
+
+    const amountText: string = part.slice(0, -1);
+    const amount = Number(amountText);
+
+    if (!amountText || !Number.isInteger(amount) || amount < 0) return null;
 
     totalMinutes += amount * minutesPerUnit;
   }
