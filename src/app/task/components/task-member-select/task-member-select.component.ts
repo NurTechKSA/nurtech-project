@@ -7,10 +7,7 @@ import {
   model,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {
-  type TuiIdentityMatcher,
-  type TuiStringMatcher,
-} from '@taiga-ui/cdk';
+import { type TuiIdentityMatcher, type TuiStringMatcher } from '@taiga-ui/cdk';
 import {
   TuiDataList,
   TuiFilterByInputPipe,
