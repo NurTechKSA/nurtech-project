@@ -37,7 +37,7 @@ export class TaskTypeSelectComponent {
   readonly options = input.required<TaskDetail['type'][]>();
   readonly value = input<TaskDetail['type'] | null>(null);
   readonly readonly = input(false);
-  
+
   readonly variant = input<'segmented' | 'dropdown'>('segmented');
 
   readonly changed = output<TaskDetail['type']>();
