@@ -1,0 +1,59 @@
+@if (variant() === 'segmented') {
+  <tui-segmented
+    class="type-select__segmented"
+    size="l"
+    [activeItemIndex]="activeIndex()"
+    (activeItemIndexChange)="onActiveIndexChange($event)">
+    @for (type of options(); track type) {
+      <button
+        class="type-select__segment"
+        type="button"
+        [class.type-select__segment--selected]="type === value()"
+        [disabled]="readonly()">
+        <app-task-type-icon [type]="type" />
+        {{ labels[type] }}
+      </button>
+    }
+  </tui-segmented>
+} @else if (readonly()) {
+  <span class="type-select__static">
+    @if (value(); as current) {
+      <app-task-type-icon [type]="current" />
+      {{ labels[current] }}
+    }
+  </span>
+} @else {
+  <button
+    tuiButton
+    class="type-select__trigger"
+    type="button"
+    appearance="flat-grayscale"
+    size="s"
+    iconEnd="@tui.chevron-down"
+    tuiDropdownAlign="start"
+    [tuiDropdown]="list"
+    [(tuiDropdownOpen)]="isOpen">
+    @if (value(); as current) {
+      <span class="type-select__value">
+        <app-task-type-icon [type]="current" />
+        {{ labels[current] }}
+      </span>
+    }
+  </button>
+
+  <ng-template #list>
+    <tui-data-list>
+      @for (type of options(); track type) {
+        <button tuiOption type="button" (click)="onOptionClick(type)">
+          <span class="type-select__option">
+            <app-task-type-icon [type]="type" />
+            {{ labels[type] }}
+          </span>
+          @if (type === value()) {
+            <tui-icon icon="@tui.check" />
+          }
+        </button>
+      }
+    </tui-data-list>
+  </ng-template>
+}
