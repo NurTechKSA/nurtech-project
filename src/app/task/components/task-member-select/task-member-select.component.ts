@@ -7,7 +7,7 @@ import {
   model,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { type TuiIdentityMatcher, type TuiStringMatcher } from '@taiga-ui/cdk';
+import { type TuiIdentityMatcher, type TuiStringHandler } from '@taiga-ui/cdk';
 import {
   TuiDataList,
   TuiFilterByInputPipe,
@@ -15,7 +15,7 @@ import {
   TuiIcon,
   TuiTextfield,
 } from '@taiga-ui/core';
-import { TuiChevron, TuiComboBox, TuiStringifyPipe } from '@taiga-ui/kit';
+import { TuiChevron, TuiComboBox } from '@taiga-ui/kit';
 
 import { UserRef } from '@core/user/interfaces/user-ref.interface';
 import { UserAvatarComponent } from '@shared/components/user-avatar/user-avatar.component';
@@ -29,7 +29,6 @@ import { UserAvatarComponent } from '@shared/components/user-avatar/user-avatar.
     TuiDataList,
     TuiFilterByInputPipe,
     TuiIcon,
-    TuiStringifyPipe,
     TuiTextfield,
     UserAvatarComponent,
   ],
@@ -54,16 +53,13 @@ export class TaskMemberSelectComponent {
     ];
   });
 
-  readonly identityMatcher: TuiIdentityMatcher<unknown> = (first, second) =>
-    this.isSameUser(first as UserRef | null, second as UserRef | null);
+  readonly identityMatcher: TuiIdentityMatcher<UserRef | null> = (
+    first,
+    second
+  ) => this.isSameUser(first, second);
 
-  readonly matcher: TuiStringMatcher<UserRef | null> = (item, query) =>
-    item !== null && item.userId === query;
-
-  readonly isSameUser = (
-    first: UserRef | null,
-    second: UserRef | null
-  ): boolean => first?.userId !== undefined && first.userId === second?.userId;
+  readonly stringify: TuiStringHandler<UserRef | null> = (item) =>
+    item?.name ?? '';
 
   readonly optionFilter: TuiFilterByInputOptions<UserRef | null>['filter'] = (
     items,
@@ -80,6 +76,13 @@ export class TaskMemberSelectComponent {
             option.name.toLowerCase().includes(normalized)
         );
   };
+
+  isSameUser(first: UserRef | null, second: UserRef | null): boolean {
+    return (
+      (!first && !second) ||
+      (first?.userId !== undefined && first.userId === second?.userId)
+    );
+  }
 
   onQueryChange(next: UserRef | string | null): void {
     if (typeof next === 'string') {

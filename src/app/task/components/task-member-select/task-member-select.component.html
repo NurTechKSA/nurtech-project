@@ -2,12 +2,12 @@
   tuiChevron
   class="task-member-select"
   [identityMatcher]="identityMatcher"
-  [stringify]="'name' | tuiStringify">
+  [stringify]="stringify">
   <input
     tuiComboBox
     placeholder="Выберите участника"
+    [matcher]="null"
     [readonly]="viewOnly()"
-    [matcher]="matcher"
     [ngModel]="query()"
     (ngModelChange)="onQueryChange($event)" />
 
