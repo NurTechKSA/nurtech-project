@@ -1,0 +1,25 @@
+.task-member-select {
+  width: 100%;
+
+  &__row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  &__name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &--muted {
+      font-style: italic;
+      color: var(--tui-text-secondary);
+    }
+  }
+
+  &__check {
+    color: var(--tui-status-positive);
+  }
+}
