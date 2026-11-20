@@ -1,0 +1,41 @@
+:host {
+  display: block;
+  inline-size: min(56.25rem, calc(100vw - 2rem));
+}
+
+.create-task-dialog__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.create-task-dialog__columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 19rem;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.create-task-dialog__aside {
+  padding: 1rem;
+  background: var(--tui-background-neutral-1);
+  border-radius: var(--tui-radius-l);
+}
+
+.create-task-dialog__footer {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  padding-block-start: 1rem;
+  border-block-start: 1px solid var(--tui-border-normal);
+}
+
+.create-task-dialog__action {
+  min-inline-size: 8.5rem;
+}
+
+@media (width <= 48rem) {
+  .create-task-dialog__columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

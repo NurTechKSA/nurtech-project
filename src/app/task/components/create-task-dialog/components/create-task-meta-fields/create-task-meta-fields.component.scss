@@ -1,0 +1,116 @@
+.create-task-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.create-task-meta__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.create-task-meta__label-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.create-task-meta__label {
+  font: var(--tui-font-text-xs);
+  font-weight: 600;
+  color: var(--tui-text-secondary);
+}
+
+.create-task-meta__assign-me {
+  font: var(--tui-font-text-xs);
+}
+
+.create-task-meta__select-btn {
+  justify-content: space-between;
+  inline-size: 100%;
+  background: var(--tui-background-base);
+}
+
+.create-task-meta__inline-value,
+.create-task-meta__parent-value,
+.create-task-meta__parent-option {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  min-inline-size: 0;
+}
+
+.create-task-meta__parent-key {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.create-task-meta__truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.create-task-meta__muted {
+  color: var(--tui-text-tertiary);
+}
+
+.create-task-meta__dropdown-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-inline-size: 15rem;
+  max-inline-size: 20rem;
+  padding: 0.5rem;
+}
+
+.create-task-meta__search-loader {
+  align-self: center;
+  padding: 0.5rem;
+}
+
+.create-task-meta__empty {
+  padding: 0.25rem 0.5rem;
+  font: var(--tui-font-text-s);
+  color: var(--tui-text-tertiary);
+}
+
+.create-task-meta__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  align-items: center;
+}
+
+.create-task-meta__tag-chip {
+  display: inline-flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.create-task-meta__tag-remove {
+  padding: 0;
+  font-size: 0.875rem;
+  line-height: 1;
+  color: inherit;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+}
+
+.create-task-meta__new-tag {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding-block-start: 0.5rem;
+  border-block-start: 1px solid var(--tui-border-normal);
+}
+
+.create-task-meta__new-tag-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.375rem;
+  align-items: center;
+}

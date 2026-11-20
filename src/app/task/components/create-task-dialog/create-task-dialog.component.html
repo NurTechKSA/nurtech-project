@@ -1,0 +1,38 @@
+<tui-loader [overlay]="true" [loading]="isLoading()">
+  <form
+    tuiForm="m"
+    class="create-task-dialog__form"
+    [formGroup]="form"
+    (ngSubmit)="onFormSubmit()">
+    <div class="create-task-dialog__columns">
+      <app-create-task-main-fields [form]="form" />
+
+      <div class="create-task-dialog__aside">
+        <app-create-task-meta-fields
+          [form]="form"
+          [isSubtask]="isSubtask()"
+          [parentOptions]="parentOptions()"
+          [isSearchingParents]="isSearchingParents()"
+          (parentSearch)="onParentSearch($event)" />
+      </div>
+    </div>
+
+    <footer class="create-task-dialog__footer">
+      <button
+        tuiButton
+        type="button"
+        appearance="secondary"
+        class="create-task-dialog__action"
+        (click)="onCancelClick()">
+        Отмена
+      </button>
+      <button
+        tuiButton
+        type="submit"
+        appearance="primary"
+        class="create-task-dialog__action">
+        Создать
+      </button>
+    </footer>
+  </form>
+</tui-loader>

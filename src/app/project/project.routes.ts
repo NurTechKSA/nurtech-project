@@ -11,7 +11,10 @@ import { projectsGuard } from '@core/project/guards/projects.guard';
 import { BoardStore } from '../board/+store/board.store';
 import { boardRoutes } from '../board/board.routes';
 import { MemberStore } from '../dictionary/+store/member.store';
+import { SubsystemStore } from '../dictionary/+store/subsystem.store';
+import { TagStore } from '../dictionary/+store/tag.store';
 import { ProjectStatusesStore } from '../status/+store/project-statuses.store';
+import { CreateTaskDialogService } from '../task/services/create-task-dialog.service';
 
 const loadProjectData: ResolveFn<void> = (route) => {
   const projectKey = route.paramMap.get(RouteParam.PROJECT_KEY) ?? '';
@@ -20,6 +23,8 @@ const loadProjectData: ResolveFn<void> = (route) => {
   inject(BoardStore).loadBoards(project.id);
   inject(ProjectStatusesStore).loadStatuses(project.id);
   inject(MemberStore).loadMembers(project.id);
+  inject(SubsystemStore).loadSubsystems(project.id);
+  inject(TagStore).loadTags(project.id);
 };
 
 export const projectRoutes: Routes = [
@@ -45,7 +50,14 @@ export const projectRoutes: Routes = [
       {
         path: `${AppPath.PROJECT}/:${RouteParam.PROJECT_KEY}`,
         canActivate: [projectGuard],
-        providers: [BoardStore, ProjectStatusesStore, MemberStore],
+        providers: [
+          BoardStore,
+          ProjectStatusesStore,
+          MemberStore,
+          SubsystemStore,
+          TagStore,
+          CreateTaskDialogService,
+        ],
         resolve: { projectData: loadProjectData },
         loadComponent: () =>
           import('@core/project/components/project-shell/project-shell.component').then(
