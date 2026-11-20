@@ -2,6 +2,12 @@
   <h1 class="project-data-page__heading">
     Данные проекта {{ currentProject()?.key }}
   </h1>
+  <!-- TODO: временные данные -->
+  @if (canCreateTask()) {
+    <button tuiButton type="button" size="s" (click)="onCreateTaskClick()">
+      + Задача
+    </button>
+  }
   <p class="project-data-page__hint">
     Временная страница: что отдаёт бэкенд и где это понадобится в интерфейсе.
     Запрос уходит, когда вы открываете ответ.

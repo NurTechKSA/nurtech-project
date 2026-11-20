@@ -8,18 +8,24 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   inject,
   Signal,
   signal,
   WritableSignal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TuiButton, TuiExpand } from '@taiga-ui/core';
 import { TuiButtonLoading } from '@taiga-ui/kit';
 
 import { PermissionStore } from '@core/permissions/+store/permission.store';
+import { ProjectPermission } from '@core/permissions/enums/project-permission.enum';
 import { ProjectStore } from '@core/project/+store/project.store';
 import { SKIP_ERROR_NOTIFICATION } from '@core/tokens/skip-error-notification.token';
 import { UserStore } from '@core/user/+store/user.store';
+
+import { BoardStore } from '../../../../app/board/+store/board.store';
+import { CreateTaskDialogService } from '../../../../app/task/services/create-task-dialog.service';
 
 interface DataBlockInfo {
   title: string;
@@ -48,12 +54,20 @@ export class ProjectDataPageComponent {
   private readonly projectStore = inject(ProjectStore);
   private readonly permissionStore = inject(PermissionStore);
   private readonly userStore = inject(UserStore);
+  // TODO: временные данные
+  private readonly boardStore = inject(BoardStore);
+  private readonly createTaskDialogService = inject(CreateTaskDialogService);
+  private readonly destroyRef = inject(DestroyRef);
 
   private readonly projectId = computed(
     () => this.projectStore.currentProject()?.id
   );
 
   readonly currentProject = this.projectStore.currentProject;
+  // TODO: временные данные
+  readonly canCreateTask = computed(() =>
+    this.permissionStore.hasPermission(ProjectPermission.TASK_CREATE)
+  );
 
   readonly swaggerPath = '/api/docs/#/';
 
@@ -143,6 +157,17 @@ export class ProjectDataPageComponent {
   onBlockToggle(block: DataBlock): void {
     block.isRequested.set(true);
     block.isOpen.update((isOpen) => !isOpen);
+  }
+
+  // TODO: временные данные
+  onCreateTaskClick(): void {
+    const firstStatusId =
+      this.boardStore.boards()[0]?.columns[0]?.statusId ?? null;
+
+    this.createTaskDialogService
+      .open({ statusId: firstStatusId })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe();
   }
 
   private createStoreBlock(
