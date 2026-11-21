@@ -1,7 +1,7 @@
 :host {
   display: flex;
   flex-direction: column;
-  min-block-size: 100dvh;
+  block-size: 100dvh;
   background: var(--tui-background-base-alt);
 }
 
@@ -16,4 +16,13 @@
   display: flex;
   flex: 1;
   flex-direction: column;
+  min-height: 0;
+}
+
+/* stylelint-disable-next-line selector-pseudo-element-no-unknown */
+::ng-deep router-outlet + ng-component {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
 }

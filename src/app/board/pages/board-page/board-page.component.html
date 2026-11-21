@@ -1,18 +1,11 @@
-<h1>Доска</h1>
-
 <!-- TODO: заменить временный список полноценной версткой колонок и карточек -->
-@for (column of columns(); track column.statusId) {
-  <section>
-    <h2>{{ column.name }}</h2>
-
-    <ul>
-      @for (card of column.cards; track card.id) {
-        <li>{{ card.title }}</li>
-      } @empty {
-        <li>Нет карточек</li>
-      }
-    </ul>
-  </section>
-} @empty {
-  <p>Колонки не найдены</p>
-}
+<tui-scrollbar class="board-scrollbar">
+  <div class="board">
+    @for (column of columns(); track column.statusId) {
+      <app-board-column
+        [column]="column"
+        [completedDays]="board()?.doneWindowDays">
+      </app-board-column>
+    }
+  </div>
+</tui-scrollbar>
