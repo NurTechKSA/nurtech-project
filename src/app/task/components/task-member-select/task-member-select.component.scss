@@ -1,6 +1,10 @@
 .task-member-select {
   width: 100%;
 
+  &--view-only::after {
+    display: none;
+  }
+
   &__row {
     display: flex;
     gap: 0.5rem;

@@ -5,14 +5,17 @@ import {
   input,
   linkedSignal,
   model,
+  viewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { type TuiIdentityMatcher, type TuiStringHandler } from '@taiga-ui/cdk';
 import {
   TuiDataList,
+  TuiDropdownOpen,
   TuiFilterByInputPipe,
   type TuiFilterByInputOptions,
   TuiIcon,
+  TuiInputDirective,
   TuiTextfield,
 } from '@taiga-ui/core';
 import { TuiChevron, TuiComboBox } from '@taiga-ui/kit';
@@ -37,6 +40,8 @@ import { UserAvatarComponent } from '@shared/components/user-avatar/user-avatar.
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaskMemberSelectComponent {
+  private readonly textInput = viewChild.required(TuiInputDirective);
+  private readonly dropdown = viewChild.required(TuiDropdownOpen);
   readonly members = input.required<readonly UserRef[]>();
   readonly value = model<UserRef | null>(null);
   readonly currentUser = input.required<UserRef>();
@@ -53,11 +58,8 @@ export class TaskMemberSelectComponent {
     ];
   });
 
-  readonly identityMatcher: TuiIdentityMatcher<UserRef | null> = (
-    first,
-    second
-  ) => this.isSameUser(first, second);
-
+  readonly identityMatcher: TuiIdentityMatcher<UserRef | null> =
+    this.isSameUser;
   readonly stringify: TuiStringHandler<UserRef | null> = (item) =>
     item?.name ?? '';
 
@@ -77,17 +79,26 @@ export class TaskMemberSelectComponent {
         );
   };
 
-  isSameUser(first: UserRef | null, second: UserRef | null): boolean {
-    return (
-      (!first && !second) ||
-      (first?.userId !== undefined && first.userId === second?.userId)
-    );
+  isSameUser(
+    this: void,
+    first: UserRef | null,
+    second: UserRef | null
+  ): boolean {
+    return first?.userId === second?.userId;
   }
 
   onQueryChange(next: UserRef | string | null): void {
     if (typeof next === 'string') {
       this.query.set(next);
+    } else if (next) {
+      this.select(next);
     }
+  }
+
+  onSearchCancel(): void {
+    this.textInput().setValue(this.value());
+    this.dropdown().open.set(false);
+    this.query.set(this.value());
   }
 
   select(option: UserRef | null): void {

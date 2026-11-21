@@ -1,6 +1,7 @@
 <tui-textfield
   tuiChevron
   class="task-member-select"
+  [class.task-member-select--view-only]="viewOnly()"
   [identityMatcher]="identityMatcher"
   [stringify]="stringify">
   <input
@@ -9,7 +10,8 @@
     [matcher]="null"
     [readonly]="viewOnly()"
     [ngModel]="query()"
-    (ngModelChange)="onQueryChange($event)" />
+    (ngModelChange)="onQueryChange($event)"
+    (keydown.escape)="onSearchCancel()" />
 
   <tui-data-list *tuiDropdown>
     @for (
