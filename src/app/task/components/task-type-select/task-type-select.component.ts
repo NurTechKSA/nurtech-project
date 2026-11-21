@@ -3,14 +3,13 @@ import {
   Component,
   computed,
   input,
-  output,
-  signal,
+  model,
 } from '@angular/core';
-import { TuiButton, TuiDataList, TuiDropdown, TuiIcon } from '@taiga-ui/core';
-import { TuiSegmented } from '@taiga-ui/kit';
+import { FormsModule } from '@angular/forms';
+import { TuiButton, TuiDataList, TuiDropdown } from '@taiga-ui/core';
+import { TuiSegmented, TuiButtonSelect, TuiChevron } from '@taiga-ui/kit';
 
 import { TaskType } from '../../enums/task-type.enum';
-import { TaskDetail } from '../../interfaces/task-detail.interface';
 import { TaskTypeIconComponent } from '../task-type-icon/task-type-icon.component';
 
 const TASK_TYPE_LABELS: Record<TaskType, string> = {
@@ -22,11 +21,13 @@ const TASK_TYPE_LABELS: Record<TaskType, string> = {
 @Component({
   selector: 'app-task-type-select',
   imports: [
+    FormsModule,
     TaskTypeIconComponent,
     TuiButton,
+    TuiButtonSelect,
+    TuiChevron,
     TuiDataList,
     TuiDropdown,
-    TuiIcon,
     TuiSegmented,
   ],
   templateUrl: './task-type-select.component.html',
@@ -34,38 +35,29 @@ const TASK_TYPE_LABELS: Record<TaskType, string> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaskTypeSelectComponent {
-  readonly options = input.required<TaskDetail['type'][]>();
-  readonly value = input<TaskDetail['type'] | null>(null);
-  readonly readonly = input(false);
+  readonly options = input.required<TaskType[]>();
+  readonly value = model.required<TaskType>();
+  readonly viewOnly = input(false);
 
   readonly variant = input<'segmented' | 'dropdown'>('segmented');
 
-  readonly changed = output<TaskDetail['type']>();
-
-  readonly isOpen = signal(false);
   readonly labels = TASK_TYPE_LABELS;
 
-  readonly activeIndex = computed(() => {
-    const current = this.value();
-
-    return current === null ? -1 : this.options().indexOf(current);
-  });
+  readonly activeIndex = computed(() => this.options().indexOf(this.value()));
 
   onActiveIndexChange(index: number): void {
-    const type = this.options().at(index);
-
-    if (type !== undefined) {
-      this.onOptionClick(type);
-    }
-  }
-
-  onOptionClick(type: TaskDetail['type']): void {
-    this.isOpen.set(false);
-
-    if (this.readonly() || type === this.value()) {
+    if (index < 0 || index >= this.options().length) {
       return;
     }
 
-    this.changed.emit(type);
+    this.onOptionClick(this.options()[index]);
+  }
+
+  onOptionClick(type: TaskType): void {
+    if (this.viewOnly() || type === this.value()) {
+      return;
+    }
+
+    this.value.set(type);
   }
 }

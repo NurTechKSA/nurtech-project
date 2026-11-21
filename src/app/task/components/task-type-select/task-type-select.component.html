@@ -9,51 +9,43 @@
         class="type-select__segment"
         type="button"
         [class.type-select__segment--selected]="type === value()"
-        [disabled]="readonly()">
+        [disabled]="viewOnly()">
         <app-task-type-icon [type]="type" />
         {{ labels[type] }}
       </button>
     }
   </tui-segmented>
-} @else if (readonly()) {
+} @else if (viewOnly()) {
   <span class="type-select__static">
-    @if (value(); as current) {
-      <app-task-type-icon [type]="current" />
-      {{ labels[current] }}
-    }
+    <app-task-type-icon [type]="value()" />
+    {{ labels[value()] }}
   </span>
 } @else {
   <button
     tuiButton
+    tuiButtonSelect
+    tuiChevron
     class="type-select__trigger"
     type="button"
     appearance="flat-grayscale"
     size="s"
-    iconEnd="@tui.chevron-down"
     tuiDropdownAlign="start"
-    [tuiDropdown]="list"
-    [(tuiDropdownOpen)]="isOpen">
-    @if (value(); as current) {
-      <span class="type-select__value">
-        <app-task-type-icon [type]="current" />
-        {{ labels[current] }}
-      </span>
-    }
-  </button>
+    [ngModel]="value()"
+    (ngModelChange)="onOptionClick($event)">
+    <span class="type-select__value">
+      <app-task-type-icon [type]="value()" />
+      {{ labels[value()] }}
+    </span>
 
-  <ng-template #list>
-    <tui-data-list>
+    <tui-data-list *tuiDropdown>
       @for (type of options(); track type) {
-        <button tuiOption type="button" (click)="onOptionClick(type)">
+        <button tuiOption type="button" [value]="type">
           <span class="type-select__option">
             <app-task-type-icon [type]="type" />
             {{ labels[type] }}
           </span>
-          @if (type === value()) {
-            <tui-icon icon="@tui.check" />
-          }
         </button>
       }
     </tui-data-list>
-  </ng-template>
+  </button>
 }
