@@ -2,4 +2,7 @@
   display: inline-flex;
   gap: 0.5rem;
   align-items: center;
+  min-block-size: var(--tui-height-s);
+  font: var(--tui-typography-body-s);
+  vertical-align: middle;
 }
