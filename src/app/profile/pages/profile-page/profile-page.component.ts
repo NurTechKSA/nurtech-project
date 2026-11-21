@@ -22,7 +22,7 @@ export class ProfilePageComponent {
     ChangePasswordDialogService
   );
 
-  openChangePasswordDialog(): void {
+  onChangePasswordDialog(): void {
     this.changePasswordDialogService.open().subscribe();
   }
 

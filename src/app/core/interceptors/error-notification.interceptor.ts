@@ -15,7 +15,6 @@ const BAD_REQUEST_STATUS = 400;
 const FORBIDDEN_STATUS = 403;
 const CONFLICT_STATUS = 409;
 const SERVER_ERROR_MIN_STATUS = 500;
-const TOO_MANY_REQUESTS_STATUS = 429;
 
 export const errorNotificationInterceptor: HttpInterceptorFn = (
   request,
@@ -55,7 +54,6 @@ export const errorNotificationInterceptor: HttpInterceptorFn = (
 
       if (
         error.status === NETWORK_ERROR_STATUS ||
-        error.status === TOO_MANY_REQUESTS_STATUS ||
         error.status >= SERVER_ERROR_MIN_STATUS
       ) {
         notificationService.showError(GENERIC_ERROR_MESSAGE);

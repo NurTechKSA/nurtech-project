@@ -2,15 +2,11 @@ import { inject } from '@angular/core';
 import { updateState, withDevtools } from '@angular-architects/ngrx-toolkit';
 import { signalStore, withMethods, withProps, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { catchError, EMPTY, exhaustMap, pipe, switchMap, tap } from 'rxjs';
+import { catchError, exhaustMap, pipe, switchMap, tap, throwError } from 'rxjs';
 
 import { UserStore } from '@core/user/+store/user.store';
 import { catchEffectError } from '@shared/store/catch-effect-error.operator';
-import {
-  setError,
-  setLoaded,
-  setLoading,
-} from '@shared/store/status-update.util';
+import { setLoaded, setLoading } from '@shared/store/status-update.util';
 import { withLoadingStatus } from '@shared/store/with-loading-status.util';
 
 import { ChangePasswordRequest } from '../interfaces/api/change-password-request.interface';
@@ -57,14 +53,11 @@ export const ProfileStore = signalStore(
               );
             }),
             catchError((error: unknown) => {
-              updateState(
-                store,
-                '[ProfileStore] changePasswordFailure',
-                setError(),
-                { error }
-              );
+              updateState(store, '[ProfileStore] changePasswordFailure', {
+                error,
+              });
 
-              return EMPTY;
+              return throwError(() => error);
             })
           )
         ),

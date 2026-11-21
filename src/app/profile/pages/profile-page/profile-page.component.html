@@ -1,14 +1,17 @@
 <main class="profile">
   <h2 tuiTitle class="profile-title">Профиль</h2>
+
   <app-profile-info />
+
   <hr class="divider" />
+
   <div class="profile-footer">
     <button
       appearance="secondary"
       size="m"
       tuiButton
       type="button"
-      (click)="openChangePasswordDialog()">
+      (click)="onChangePasswordDialog()">
       Сменить пароль
     </button>
     <button

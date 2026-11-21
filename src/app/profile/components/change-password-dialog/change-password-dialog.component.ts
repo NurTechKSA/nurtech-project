@@ -11,10 +11,10 @@ import {
   TuiError,
   TuiIcon,
   TuiInput,
-  TuiLoader,
   TuiTextfield,
 } from '@taiga-ui/core';
-import { TuiPassword } from '@taiga-ui/kit';
+import { TuiButtonLoading, TuiPassword } from '@taiga-ui/kit';
+import { TuiForm } from '@taiga-ui/layout';
 import { injectContext } from '@taiga-ui/polymorpheus';
 
 import { NotificationService } from '@shared/services/notification.service';
@@ -29,10 +29,11 @@ import { ProfileStore } from '../../+store/profile.store';
   imports: [
     ReactiveFormsModule,
     TuiButton,
+    TuiButtonLoading,
     TuiError,
+    TuiForm,
     TuiIcon,
     TuiInput,
-    TuiLoader,
     TuiTextfield,
     TuiPassword,
   ],
@@ -75,17 +76,22 @@ export class ChangePasswordDialogComponent {
   });
 
   constructor() {
-    this.initPasswordChangeEffect();
+    effect(() => {
+      this.syncFormDisabledState();
+    });
+    effect(() => {
+      this.handleSuccess();
+    });
+    effect(() => {
+      this.handleError();
+    });
   }
 
   onCancel(): void {
     this.context.completeWith();
   }
 
-  onSubmit(): void {
-    this.changePasswordForm.controls.newPassword.updateValueAndValidity();
-    this.changePasswordForm.controls.confirmPassword.updateValueAndValidity();
-
+  onFormSubmit(): void {
     if (this.changePasswordForm.invalid) {
       this.changePasswordForm.markAllAsTouched();
 
@@ -101,23 +107,26 @@ export class ChangePasswordDialogComponent {
     });
   }
 
-  private initPasswordChangeEffect(): void {
-    effect(() => {
-      if (this.profileStore.isLoaded()) {
-        this.notificationService.showSuccess('Пароль изменён');
-        this.context.completeWith();
-      }
+  private syncFormDisabledState(): void {
+    if (this.isLoading()) {
+      this.changePasswordForm.disable({ emitEvent: false });
+    } else if (this.changePasswordForm.disabled) {
+      this.changePasswordForm.enable({ emitEvent: false });
+    }
+  }
 
-      if (this.profileStore.isError()) {
-        applyFormServerError(
-          this.changePasswordForm,
-          this.profileStore.error(),
-          {
-            fieldMap: { current: 'currentPassword', next: 'newPassword' },
-            fallbackField: 'currentPassword',
-          }
-        );
-      }
-    });
+  private handleSuccess(): void {
+    if (this.profileStore.isLoaded()) {
+      this.notificationService.showSuccess('Пароль изменён');
+      this.context.completeWith();
+    }
+  }
+
+  private handleError(): void {
+    if (this.profileStore.isError()) {
+      applyFormServerError(this.changePasswordForm, this.profileStore.error(), {
+        fieldMap: { current: 'currentPassword', next: 'newPassword' },
+      });
+    }
   }
 }
