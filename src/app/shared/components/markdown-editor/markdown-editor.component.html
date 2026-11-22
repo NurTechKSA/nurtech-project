@@ -3,6 +3,7 @@
     class="markdown-editor__segmented"
     size="s"
     [activeItemIndex]="activeTab()"
+    [disabled]="isDisabled()"
     (activeItemIndexChange)="onTabChange($event)">
     <button type="button">Редактор</button>
     <button type="button">Просмотр</button>
@@ -10,9 +11,10 @@
 
   <div class="markdown-editor__body" [hidden]="activeTab() !== 0">
     <tui-editor
-      appMarkdownEditor
+      [disabled]="isDisabled()"
       [ngModel]="value()"
       [placeholder]="placeholder()"
+      [readonly]="readOnly()"
       (focusOut)="onEditorBlur()"
       (ngModelChange)="onInput($event)" />
   </div>

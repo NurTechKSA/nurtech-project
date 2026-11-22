@@ -1,5 +1,10 @@
 :host {
   display: block;
+
+  &.ng-invalid.ng-touched
+    tui-editor:not([data-mode~='readonly'], [data-state='disabled']) {
+    outline-color: var(--tui-status-negative);
+  }
 }
 
 .markdown-editor {
