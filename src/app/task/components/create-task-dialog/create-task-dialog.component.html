@@ -1,38 +1,241 @@
-<tui-loader [overlay]="true" [loading]="isLoading()">
-  <form
-    tuiForm="m"
-    class="create-task-dialog__form"
-    [formGroup]="form"
-    (ngSubmit)="onFormSubmit()">
-    <div class="create-task-dialog__columns">
-      <app-create-task-main-fields [form]="form" />
+<form class="create-task-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <tui-loader size="l" [loading]="isLoading()" [overlay]="true">
+    <div class="create-task-form__content">
+      <div class="create-task-form__layout">
+        <!-- Левая колонка: основные поля -->
+        <section class="create-task-form__main">
+          <tui-segmented
+            class="create-task-form__type-switcher"
+            size="m"
+            [activeItemIndex]="activeTypeIndex()"
+            (activeItemIndexChange)="onTypeIndexChange($event)">
+            @for (option of taskTypes; track option.value) {
+              <button type="button">{{ option.label }}</button>
+            }
+          </tui-segmented>
 
-      <div class="create-task-dialog__aside">
-        <app-create-task-meta-fields
-          [form]="form"
-          [isSubtask]="isSubtask()"
-          [parentOptions]="parentOptions()"
-          [isSearchingParents]="isSearchingParents()"
-          (parentSearch)="onParentSearch($event)" />
+          <div class="create-task-form__field">
+            <tui-textfield class="create-task-form__title-field">
+              <label tuiLabel for="task-title">Название *</label>
+              <input
+                id="task-title"
+                formControlName="title"
+                placeholder="Что нужно сделать"
+                tuiInput
+                #titleInput />
+            </tui-textfield>
+            <tui-error formControlName="title" />
+          </div>
+
+          <div class="create-task-form__description-field">
+            <span class="create-task-form__field-label">Описание</span>
+            <div class="create-task-form__field">
+              <tui-editor
+                appMarkdownEditor
+                class="create-task-form__editor"
+                formControlName="description" />
+              <tui-error formControlName="description" />
+            </div>
+          </div>
+        </section>
+
+        <!-- Правая колонка: метаданные задачи -->
+        <aside class="create-task-form__meta" tuiTextfieldSize="m">
+          @if (isSubtask()) {
+            <div class="create-task-form__meta-field">
+              <tui-textfield [(open)]="isParentDropdownOpen">
+                <label tuiLabel for="task-parent">Родитель *</label>
+                <input
+                  id="task-parent"
+                  placeholder="Поиск по ключу или названию"
+                  tuiInput
+                  #parentInput
+                  [value]="parentQuery()"
+                  (focus)="onParentFocus()"
+                  (input)="onParentSearch($event)" />
+                <tui-data-list *tuiDropdown>
+                  @for (parent of parentOptions(); track parent.id) {
+                    <button
+                      tuiOption
+                      type="button"
+                      (click)="onParentSelect(parent)">
+                      <strong>{{ parent.key }}</strong> {{ parent.title }}
+                    </button>
+                  } @empty {
+                    <div class="create-task-form__dropdown-empty">
+                      {{
+                        isSearchingParents() ? 'Поиск...' : 'Ничего не найдено'
+                      }}
+                    </div>
+                  }
+                </tui-data-list>
+              </tui-textfield>
+              <tui-error formControlName="parent" />
+            </div>
+          }
+
+          <div class="create-task-form__meta-field">
+            <tui-textfield
+              tuiChevron
+              [stringify]="stringifyStatus"
+              [tuiTextfieldCleaner]="false">
+              <label tuiLabel for="task-status">Статус</label>
+              <input id="task-status" formControlName="statusId" tuiSelect />
+              <tui-data-list *tuiDropdown>
+                @for (status of availableStatuses(); track status.id) {
+                  <button tuiOption type="button" [value]="status.id">
+                    {{ status.name }}
+                  </button>
+                }
+              </tui-data-list>
+            </tui-textfield>
+          </div>
+
+          <div class="create-task-form__meta-field">
+            <tui-textfield
+              tuiChevron
+              [stringify]="stringifyPriority"
+              [tuiTextfieldCleaner]="false">
+              <label tuiLabel for="task-priority">Приоритет</label>
+              <input id="task-priority" formControlName="priority" tuiSelect />
+              <tui-data-list *tuiDropdown>
+                @for (option of priorityOptions; track option.value) {
+                  <button tuiOption type="button" [value]="option.value">
+                    {{ option.label }}
+                  </button>
+                }
+              </tui-data-list>
+            </tui-textfield>
+          </div>
+
+          @for (field of memberFields; track field.controlName) {
+            @if (currentUserRef(); as currentUser) {
+              <div class="create-task-form__meta-field">
+                <span class="create-task-form__meta-label">{{
+                  field.label
+                }}</span>
+                <app-task-member-select
+                  [currentUser]="currentUser"
+                  [members]="members()"
+                  [value]="selectedMember(field.controlName)"
+                  [viewOnly]="isLoading()"
+                  (valueChange)="onMemberChange(field.controlName, $event)" />
+              </div>
+            }
+          }
+
+          @if (hasSubsystems()) {
+            <div class="create-task-form__meta-field">
+              <tui-textfield tuiChevron [stringify]="stringifySubsystem">
+                <label tuiLabel for="task-subsystem">Направление</label>
+                <input
+                  id="task-subsystem"
+                  formControlName="subsystemId"
+                  tuiSelect />
+                <tui-data-list *tuiDropdown>
+                  <button tuiOption type="button" [value]="null">
+                    Не выбрано
+                  </button>
+                  @for (sub of subsystems(); track sub.id) {
+                    <button tuiOption type="button" [value]="sub.id">
+                      {{ sub.name }}
+                    </button>
+                  }
+                </tui-data-list>
+              </tui-textfield>
+            </div>
+          }
+
+          <div class="create-task-form__meta-field">
+            <tui-textfield>
+              <label tuiLabel for="task-due-date">К дате</label>
+              <input
+                id="task-due-date"
+                formControlName="dueDate"
+                tuiInputDate />
+              <tui-calendar *tuiDropdown />
+            </tui-textfield>
+          </div>
+
+          <div class="create-task-form__meta-field">
+            <tui-textfield>
+              <label tuiLabel for="task-estimate">Оценка</label>
+              <input
+                id="task-estimate"
+                formControlName="estimate"
+                placeholder="например, 2h 30m"
+                tuiInput />
+            </tui-textfield>
+            <tui-error formControlName="estimate" />
+          </div>
+
+          <div class="create-task-form__meta-field">
+            @if (selectedTags().length > 0) {
+              <div class="create-task-form__tags-chips">
+                @for (tag of selectedTags(); track tag.id) {
+                  <button
+                    class="create-task-form__tag-chip"
+                    size="s"
+                    type="button"
+                    tuiChip
+                    (click)="onRemoveTag(tag.id)">
+                    {{ tag.name }}
+                    <tui-icon icon="@tui.x" />
+                  </button>
+                }
+              </div>
+            }
+            <tui-textfield [(open)]="isTagDropdownOpen">
+              <label tuiLabel for="task-tags">Теги</label>
+              <input
+                id="task-tags"
+                placeholder="+ Тег"
+                tuiInput
+                [formControl]="tagInputControl"
+                (focus)="isTagDropdownOpen.set(true)"
+                (keydown.enter)="onTagEnter($event)" />
+              <tui-data-list *tuiDropdown>
+                @for (tag of unselectedTags(); track tag.id) {
+                  <button tuiOption type="button" (click)="onSelectTag(tag)">
+                    {{ tag.name }}
+                  </button>
+                } @empty {
+                  <div class="create-task-form__dropdown-empty">
+                    @if (canCreateTag() && trimmedTagQuery()) {
+                      Нажмите Enter, чтобы создать «{{ trimmedTagQuery() }}»
+                    } @else {
+                      Теги не найдены
+                    }
+                  </div>
+                }
+              </tui-data-list>
+            </tui-textfield>
+            <tui-error [formControl]="tagInputControl" />
+          </div>
+        </aside>
       </div>
-    </div>
 
-    <footer class="create-task-dialog__footer">
-      <button
-        tuiButton
-        type="button"
-        appearance="secondary"
-        class="create-task-dialog__action"
-        (click)="onCancelClick()">
-        Отмена
-      </button>
-      <button
-        tuiButton
-        type="submit"
-        appearance="primary"
-        class="create-task-dialog__action">
-        Создать
-      </button>
-    </footer>
-  </form>
-</tui-loader>
+      <!-- Подвал действий -->
+      <footer class="create-task-form__actions">
+        <button
+          appearance="secondary"
+          class="create-task-form__action-btn"
+          size="m"
+          type="button"
+          tuiButton
+          [disabled]="isLoading()"
+          (click)="onCancelClick()">
+          Отмена
+        </button>
+        <button
+          appearance="primary"
+          class="create-task-form__action-btn"
+          size="m"
+          type="submit"
+          tuiButton>
+          Создать
+        </button>
+      </footer>
+    </div>
+  </tui-loader>
+</form>
