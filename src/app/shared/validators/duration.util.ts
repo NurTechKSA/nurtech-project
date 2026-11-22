@@ -1,25 +1,36 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
-import { parseDuration } from '../utils/duration-parser.util';
+import { parseDuration } from '@shared/utils/duration-parser.util';
 
-const DEFAULT_MAX_MINUTES = 100000;
+interface DurationLimits {
+  min?: number;
+  max?: number;
+}
 
-export function getDurationValidator(
-  maxMinutes = DEFAULT_MAX_MINUTES
-): ValidatorFn {
-  return ({ value }: AbstractControl<string>): ValidationErrors | null => {
+export function getDurationValidator(limits: DurationLimits): ValidatorFn {
+  return (control: AbstractControl<string>): ValidationErrors | null => {
+    const value = control.value;
+
     if (!value.trim()) {
       return null;
     }
 
-    const minutes = parseDuration(value);
+    const duration = parseDuration(value);
 
-    if (minutes === null || minutes < 1) {
-      return { other: 'Укажите длительность, например 2h 30m' };
+    if (duration === null) {
+      return {
+        other: 'Некорректный формат. Используйте формат: 2h 30m, 2h или 45m',
+      };
     }
 
-    if (minutes > maxMinutes) {
-      return { other: 'Не более 100 000 минут' };
+    if (limits.min !== undefined && duration < limits.min) {
+      return { other: `Минимальная длительность — ${String(limits.min)} мин.` };
+    }
+
+    if (limits.max !== undefined && duration > limits.max) {
+      return {
+        other: `Максимальная длительность — ${String(limits.max)} мин.`,
+      };
     }
 
     return null;
