@@ -9,7 +9,6 @@ import { TuiButton, TuiDropdown, TuiIcon, TuiDataList } from '@taiga-ui/core';
 
 import { Status } from '@status/interfaces/status.interface';
 
-import { StatusRef } from '../../interfaces/status-ref.interface';
 import { TaskStatusBadgeComponent } from '../task-status-badge/task-status-badge.component';
 
 @Component({
@@ -22,12 +21,13 @@ import { TaskStatusBadgeComponent } from '../task-status-badge/task-status-badge
     TuiIcon,
   ],
   templateUrl: './task-status-select.component.html',
+  styleUrl: './task-status-select.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaskStatusSelectComponent {
   readonly statuses = input.required<Status[]>();
-  readonly value = input.required<StatusRef>();
-  readonly readOnly = input(false);
+  readonly value = input.required<Status>();
+  readonly viewOnly = input(false);
 
   readonly valueChange = output<Status>();
 
