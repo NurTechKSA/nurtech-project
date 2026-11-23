@@ -1,40 +1,49 @@
 @if (task(); as task) {
-  <article tuiCardLarge appearance="floating" class="task-card">
+  <article class="task-card" tuiCardLarge appearance="floating">
     <header class="task-card__header">
       <div class="task-card__heading">
         <ng-content select="[taskCardLeadingActions]" />
         <app-task-type-icon [type]="task.type" />
         <strong>{{ task.key }}</strong>
+
         <div class="task-card__actions">
           <ng-content select="[taskCardTrailingActions]" />
         </div>
       </div>
+
       <p class="task-card__meta">
         Создана {{ task.createdAt | relativeDate }} · {{ task.reporter.name }} ·
         обновлена {{ task.updatedAt | relativeDate }}
       </p>
     </header>
+
     <div class="task-card__columns">
       <div class="task-card__content">
         <section class="task-card__summary">
-          <h1 tuiTitle class="task-card__title">{{ task.title }}</h1>
+          <h1 class="task-card__title" tuiTitle>{{ task.title }}</h1>
+
           <div class="task-card__tags" aria-label="Теги">
-            @for (tag of task.tags; track tag.id) {
-              <span tuiBadge appearance="neutral">{{ tag.name }}</span>
-            } @empty {
+            @if (task.tags.length) {
+              <app-task-tags [tags]="task.tags" />
+            } @else {
               <span class="task-card__meta">Без тегов</span>
             }
           </div>
         </section>
+
         <section class="task-card__description">
-          <h2 tuiTitle>Описание</h2>
-          <p
-            class="task-card__description-text"
-            [textContent]="task.description || 'Описание не задано'"></p>
+          <h2 class="task-card__section-title" tuiTitle>Описание</h2>
+          <p class="task-card__description-text">
+            {{ task.description || 'Описание не задано' }}
+          </p>
         </section>
+
         @if (task.type !== taskType.SUBTASK) {
           <section class="task-card__subtasks">
-            <h2 tuiTitle>Подзадачи · {{ task.subtasks.length }}</h2>
+            <h2 class="task-card__section-title" tuiTitle>
+              Подзадачи · {{ task.subtasks.length }}
+            </h2>
+
             <ul class="task-card__list">
               @for (subtask of task.subtasks; track subtask.id) {
                 <li>
@@ -48,8 +57,12 @@
             </ul>
           </section>
         }
+
         <section class="task-card__links">
-          <h2 tuiTitle>Связи · {{ task.links.length }}</h2>
+          <h2 class="task-card__section-title" tuiTitle>
+            Связи · {{ task.links.length }}
+          </h2>
+
           <ul class="task-card__list">
             @for (link of task.links; track link.id) {
               <li>
@@ -62,8 +75,12 @@
             }
           </ul>
         </section>
+
         <section class="task-card__urls">
-          <h2 tuiTitle>Ссылки · {{ task.urls.length }}</h2>
+          <h2 class="task-card__section-title" tuiTitle>
+            Ссылки · {{ task.urls.length }}
+          </h2>
+
           <ul class="task-card__list">
             @for (url of task.urls; track url.id) {
               <li>
@@ -77,8 +94,10 @@
             }
           </ul>
         </section>
+
         <app-task-card-activity [task]="task" />
       </div>
+
       <aside class="task-card__fields" aria-label="Поля задачи">
         <app-task-card-fields [task]="task" />
       </aside>

@@ -21,45 +21,63 @@ interface LoadTaskParams {
   key: TaskDetail['key'];
 }
 
+const initialState: TaskState = {
+  task: null,
+};
+
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const TaskStore = signalStore(
   withDevtools('task'),
   withLoadingStatus(),
-  withState<TaskState>({ task: null }),
+  withState(initialState),
   withProps(() => ({
     apiTaskService: inject(ApiTaskService),
   })),
-  withMethods(({ apiTaskService, ...store }) => ({
-    loadTask: rxMethod<LoadTaskParams>(
-      pipe(
-        tap(() => {
-          updateState(
-            store,
-            '[TaskStore] loadTask',
-            { task: null },
-            setLoading()
-          );
-        }),
-        switchMap(({ projectId, key }) =>
-          apiTaskService.getTaskByKey(projectId, key)
-        ),
-        tap((task) => {
-          updateState(
-            store,
-            '[TaskStore] loadTaskSuccess',
-            { task },
-            setLoaded()
-          );
-        }),
-        catchEffectError({ store, methodName: '[TaskStore] loadTask' })
-      )
-    ),
-    setTask: (task: TaskDetail): void => {
-      if (store.task()?.id !== task.id) {
-        return;
-      }
+  withMethods(({ apiTaskService, ...store }) => {
+    let loadedProjectId: Project['id'] | null = null;
 
-      updateState(store, '[TaskStore] setTask', { task });
-    },
-  }))
+    return {
+      loadTask: rxMethod<LoadTaskParams>(
+        pipe(
+          tap(({ projectId, key }) => {
+            const isSameTask =
+              loadedProjectId === projectId && store.task()?.key === key;
+
+            if (isSameTask) {
+              updateState(store, '[TaskStore] loadTask', setLoading());
+
+              return;
+            }
+
+            loadedProjectId = projectId;
+            updateState(
+              store,
+              '[TaskStore] loadTask',
+              initialState,
+              setLoading()
+            );
+          }),
+          switchMap(({ projectId, key }) =>
+            apiTaskService.getTaskByKey(projectId, key)
+          ),
+          tap((task) => {
+            updateState(
+              store,
+              '[TaskStore] loadTaskSuccess',
+              { task },
+              setLoaded()
+            );
+          }),
+          catchEffectError({ store, methodName: '[TaskStore] loadTask' })
+        )
+      ),
+      setTask: (task: TaskDetail): void => {
+        if (store.task()?.id !== task.id) {
+          return;
+        }
+
+        updateState(store, '[TaskStore] setTask', { task });
+      },
+    };
+  })
 );

@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, TitleCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 import { DurationPipe } from '@shared/pipes/duration.pipe';
@@ -16,6 +16,7 @@ import { TaskStatusBadgeComponent } from '../task-status-badge/task-status-badge
     TaskKeyComponent,
     TaskPriorityBadgeComponent,
     TaskStatusBadgeComponent,
+    TitleCasePipe,
   ],
   templateUrl: './task-card-fields.component.html',
   styleUrl: './task-card-fields.component.scss',

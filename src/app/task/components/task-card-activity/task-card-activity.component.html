@@ -3,6 +3,7 @@
   <button tuiTab type="button">Время</button>
   <button tuiTab type="button">История</button>
 </tui-tabs>
+
 @switch (activeTab()) {
   @case (0) {
     <section aria-label="Комментарии">
@@ -10,12 +11,14 @@
       <p>Лента комментариев будет доступна здесь.</p>
     </section>
   }
+
   @case (1) {
     <section aria-label="Время">
       <p>Всего затрачено: {{ task().spentMinutes | duration }}.</p>
       <p>Списания времени будут доступны здесь.</p>
     </section>
   }
+
   @case (2) {
     <section aria-label="История">
       <p>История изменений будет доступна здесь.</p>
