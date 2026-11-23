@@ -1,7 +1,19 @@
 import { effect, inject } from '@angular/core';
 import { updateState, withDevtools } from '@angular-architects/ngrx-toolkit';
-import { signalStore, type, withHooks, withMethods, withProps, withState } from '@ngrx/signals';
-import { entityConfig, removeAllEntities, setAllEntities, withEntities } from '@ngrx/signals/entities';
+import {
+  signalStore,
+  type,
+  withHooks,
+  withMethods,
+  withProps,
+  withState,
+} from '@ngrx/signals';
+import {
+  entityConfig,
+  removeAllEntities,
+  setAllEntities,
+  withEntities,
+} from '@ngrx/signals/entities';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { filter, pipe, switchMap, tap } from 'rxjs';
 
@@ -41,14 +53,16 @@ export const StatusStore = signalStore(
   withMethods(({ apiStatusService, ...store }) => ({
     loadStatuses: rxMethod<Project['id']>(
       pipe(
-        filter((projectId) => projectId !== store.projectId() || store.isError()),
+        filter(
+          (projectId) => projectId !== store.projectId() || store.isError()
+        ),
         tap((projectId) => {
           updateState(
             store,
             '[StatusStore] loadStatuses',
             { projectId },
             removeAllEntities(),
-            setLoading(),
+            setLoading()
           );
         }),
         switchMap((projectId) => apiStatusService.getStatuses(projectId)),
@@ -57,11 +71,11 @@ export const StatusStore = signalStore(
             store,
             '[StatusStore] loadStatusesSuccess',
             setAllEntities(statuses, statusConfig),
-            setLoaded(),
+            setLoaded()
           );
         }),
-        catchEffectError({ store, methodName: '[StatusStore] loadStatuses' }),
-      ),
+        catchEffectError({ store, methodName: '[StatusStore] loadStatuses' })
+      )
     ),
     reset: (): void => {
       updateState(
@@ -69,7 +83,7 @@ export const StatusStore = signalStore(
         '[StatusStore] reset',
         initialState,
         removeAllEntities(),
-        { status: LoadingStatus.INIT },
+        { status: LoadingStatus.INIT }
       );
     },
   })),
@@ -81,5 +95,5 @@ export const StatusStore = signalStore(
         }
       });
     },
-  })),
+  }))
 );
