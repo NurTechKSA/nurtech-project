@@ -31,7 +31,6 @@ import {
   TuiTextfield,
   type TuiTextfieldMultiComponent,
 } from '@taiga-ui/core';
-import { TuiEditor } from '@taiga-ui/editor';
 import {
   TuiChevron,
   TuiComboBox,
@@ -62,7 +61,7 @@ import { ProjectPermission } from '@core/permissions/enums/project-permission.en
 import { ProjectStore } from '@core/project/+store/project.store';
 import { UserStore } from '@core/user/+store/user.store';
 import { UserRef } from '@core/user/interfaces/user-ref.interface';
-import { MarkdownEditorDirective } from '@shared/directives/markdown-editor.directive';
+import { MarkdownEditorComponent } from '@shared/components/markdown-editor/markdown-editor.component';
 import { ErrorResponse } from '@shared/interfaces/error-response.interface';
 import { NotificationService } from '@shared/services/notification.service';
 import { applyFormServerError } from '@shared/utils/apply-form-server-error.util';
@@ -123,7 +122,7 @@ const SERVER_ERROR_FIELD_MAP: Readonly<Record<string, string>> = {
 @Component({
   selector: 'app-create-task-dialog',
   imports: [
-    MarkdownEditorDirective,
+    MarkdownEditorComponent,
     ReactiveFormsModule,
     TaskMemberSelectComponent,
     TitleCasePipe,
@@ -134,7 +133,6 @@ const SERVER_ERROR_FIELD_MAP: Readonly<Record<string, string>> = {
     TuiComboBox,
     TuiDataList,
     TuiDataListWrapper,
-    TuiEditor,
     TuiError,
     TuiFilterByInputPipe,
     TuiHideSelectedPipe,
@@ -199,14 +197,16 @@ export class CreateTaskDialogComponent {
       nonNullable: true,
       validators: [
         getRequiredValidator('Введите название'),
-        getLengthValidator({ max: MAX_TITLE_LENGTH }),
+        getLengthValidator({ max: MAX_TITLE_LENGTH, trim: true }),
       ],
     }),
     description: new FormControl(
       this.context.data.type === TaskType.BUG ? BUG_DESCRIPTION_TEMPLATE : '',
       {
         nonNullable: true,
-        validators: [getLengthValidator({ max: MAX_DESCRIPTION_LENGTH })],
+        validators: [
+          getLengthValidator({ max: MAX_DESCRIPTION_LENGTH, trim: true }),
+        ],
       }
     ),
     parent: new FormControl<TaskParentRef | null>(
@@ -494,7 +494,10 @@ export class CreateTaskDialogComponent {
       .pipe(
         finalize(() => {
           this.isLoading.set(false);
-          this.form.enable({ emitEvent: false });
+
+          if (this.form.disabled) {
+            this.form.enable({ emitEvent: false });
+          }
         }),
         tap({
           next: (createdTask) => {
@@ -505,6 +508,8 @@ export class CreateTaskDialogComponent {
             this.context.completeWith(createdTask);
           },
           error: (error: unknown) => {
+            this.form.enable({ emitEvent: false });
+
             const isApplied = applyFormServerError(this.form, error, {
               fieldMap: SERVER_ERROR_FIELD_MAP,
             });
