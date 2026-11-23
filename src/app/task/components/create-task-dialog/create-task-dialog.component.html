@@ -9,8 +9,8 @@
             size="m"
             [activeItemIndex]="activeTypeIndex()"
             (activeItemIndexChange)="onTypeIndexChange($event)">
-            @for (option of taskTypes; track option.value) {
-              <button type="button">{{ option.label }}</button>
+            @for (type of taskTypes; track type) {
+              <button type="button">{{ type | titlecase }}</button>
             }
           </tui-segmented>
 
@@ -21,6 +21,7 @@
                 id="task-title"
                 formControlName="title"
                 placeholder="Что нужно сделать"
+                tuiAutoFocus
                 tuiInput
                 #titleInput />
             </tui-textfield>
@@ -43,32 +44,23 @@
         <aside class="create-task-form__meta" tuiTextfieldSize="m">
           @if (isSubtask()) {
             <div class="create-task-form__meta-field">
-              <tui-textfield [(open)]="isParentDropdownOpen">
+              <tui-textfield
+                tuiChevron
+                [identityMatcher]="matchById"
+                [stringify]="stringifyParent">
                 <label tuiLabel for="task-parent">Родитель *</label>
                 <input
                   id="task-parent"
+                  formControlName="parent"
                   placeholder="Поиск по ключу или названию"
-                  tuiInput
+                  tuiComboBox
                   #parentInput
-                  [value]="parentQuery()"
                   (focus)="onParentFocus()"
-                  (input)="onParentSearch($event)" />
-                <tui-data-list *tuiDropdown>
-                  @for (parent of parentOptions(); track parent.id) {
-                    <button
-                      tuiOption
-                      type="button"
-                      (click)="onParentSelect(parent)">
-                      <strong>{{ parent.key }}</strong> {{ parent.title }}
-                    </button>
-                  } @empty {
-                    <div class="create-task-form__dropdown-empty">
-                      {{
-                        isSearchingParents() ? 'Поиск...' : 'Ничего не найдено'
-                      }}
-                    </div>
-                  }
-                </tui-data-list>
+                  (input)="onParentInput(parentInput.value)" />
+                <tui-data-list-wrapper
+                  emptyContent="Ничего не найдено"
+                  *tuiDropdown
+                  [items]="parentOptions()" />
               </tui-textfield>
               <tui-error formControlName="parent" />
             </div>
@@ -77,34 +69,26 @@
           <div class="create-task-form__meta-field">
             <tui-textfield
               tuiChevron
-              [stringify]="stringifyStatus"
+              [identityMatcher]="matchById"
+              [stringify]="stringifyName"
               [tuiTextfieldCleaner]="false">
               <label tuiLabel for="task-status">Статус</label>
-              <input id="task-status" formControlName="statusId" tuiSelect />
-              <tui-data-list *tuiDropdown>
-                @for (status of availableStatuses(); track status.id) {
-                  <button tuiOption type="button" [value]="status.id">
-                    {{ status.name }}
-                  </button>
-                }
-              </tui-data-list>
+              <input id="task-status" formControlName="status" tuiSelect />
+              <tui-data-list-wrapper
+                *tuiDropdown
+                [items]="availableStatuses()" />
             </tui-textfield>
+            <tui-error formControlName="status" />
           </div>
 
           <div class="create-task-form__meta-field">
             <tui-textfield
               tuiChevron
-              [stringify]="stringifyPriority"
+              [stringify]="stringifyTitleCase"
               [tuiTextfieldCleaner]="false">
               <label tuiLabel for="task-priority">Приоритет</label>
               <input id="task-priority" formControlName="priority" tuiSelect />
-              <tui-data-list *tuiDropdown>
-                @for (option of priorityOptions; track option.value) {
-                  <button tuiOption type="button" [value]="option.value">
-                    {{ option.label }}
-                  </button>
-                }
-              </tui-data-list>
+              <tui-data-list-wrapper *tuiDropdown [items]="priorities" />
             </tui-textfield>
           </div>
 
@@ -117,32 +101,30 @@
                 <app-task-member-select
                   [currentUser]="currentUser"
                   [members]="members()"
-                  [value]="selectedMember(field.controlName)"
+                  [value]="formValue()[field.controlName]"
                   [viewOnly]="isLoading()"
-                  (valueChange)="onMemberChange(field.controlName, $event)" />
+                  (valueChange)="
+                    form.controls[field.controlName].setValue($event)
+                  " />
+                <tui-error [formControl]="form.controls[field.controlName]" />
               </div>
             }
           }
 
           @if (hasSubsystems()) {
             <div class="create-task-form__meta-field">
-              <tui-textfield tuiChevron [stringify]="stringifySubsystem">
+              <tui-textfield
+                tuiChevron
+                [identityMatcher]="matchById"
+                [stringify]="stringifyName">
                 <label tuiLabel for="task-subsystem">Направление</label>
                 <input
                   id="task-subsystem"
-                  formControlName="subsystemId"
+                  formControlName="subsystem"
                   tuiSelect />
-                <tui-data-list *tuiDropdown>
-                  <button tuiOption type="button" [value]="null">
-                    Не выбрано
-                  </button>
-                  @for (sub of subsystems(); track sub.id) {
-                    <button tuiOption type="button" [value]="sub.id">
-                      {{ sub.name }}
-                    </button>
-                  }
-                </tui-data-list>
+                <tui-data-list-wrapper *tuiDropdown [items]="subsystems()" />
               </tui-textfield>
+              <tui-error formControlName="subsystem" />
             </div>
           }
 
@@ -155,6 +137,7 @@
                 tuiInputDate />
               <tui-calendar *tuiDropdown />
             </tui-textfield>
+            <tui-error formControlName="dueDate" />
           </div>
 
           <div class="create-task-form__meta-field">
@@ -170,47 +153,49 @@
           </div>
 
           <div class="create-task-form__meta-field">
-            @if (selectedTags().length > 0) {
-              <div class="create-task-form__tags-chips">
-                @for (tag of selectedTags(); track tag.id) {
-                  <button
-                    class="create-task-form__tag-chip"
-                    size="s"
-                    type="button"
-                    tuiChip
-                    (click)="onRemoveTag(tag.id)">
-                    {{ tag.name }}
-                    <tui-icon icon="@tui.x" />
-                  </button>
-                }
-              </div>
-            }
-            <tui-textfield [(open)]="isTagDropdownOpen">
+            <tui-textfield
+              multi
+              tuiChevron
+              #tagsField
+              [identityMatcher]="matchById"
+              [stringify]="stringifyName">
               <label tuiLabel for="task-tags">Теги</label>
               <input
                 id="task-tags"
+                formControlName="tags"
                 placeholder="+ Тег"
-                tuiInput
-                [formControl]="tagInputControl"
-                (focus)="isTagDropdownOpen.set(true)"
-                (keydown.enter)="onTagEnter($event)" />
+                separator=""
+                tuiInputChip
+                (input)="form.controls.tags.setErrors(null)"
+                (keydown.enter.prevent)="
+                  onCreateTag(tagsField.value(), tagsField)
+                " />
+              <tui-input-chip *tuiItem [editable]="false" />
               <tui-data-list *tuiDropdown>
-                @for (tag of unselectedTags(); track tag.id) {
-                  <button tuiOption type="button" (click)="onSelectTag(tag)">
+                @for (
+                  tag of tags() | tuiHideSelected | tuiFilterByInput;
+                  track tag.id
+                ) {
+                  <button tuiOption type="button" [value]="tag">
                     {{ tag.name }}
                   </button>
                 } @empty {
-                  <div class="create-task-form__dropdown-empty">
-                    @if (canCreateTag() && trimmedTagQuery()) {
-                      Нажмите Enter, чтобы создать «{{ trimmedTagQuery() }}»
-                    } @else {
+                  @if (canCreateTag() && tagsField.value().trim(); as tagName) {
+                    <button
+                      tuiOption
+                      type="button"
+                      (click)="onCreateTag(tagName, tagsField)">
+                      Создать «{{ tagName }}»
+                    </button>
+                  } @else {
+                    <div class="create-task-form__dropdown-empty">
                       Теги не найдены
-                    }
-                  </div>
+                    </div>
+                  }
                 }
               </tui-data-list>
             </tui-textfield>
-            <tui-error [formControl]="tagInputControl" />
+            <tui-error formControlName="tags" />
           </div>
         </aside>
       </div>

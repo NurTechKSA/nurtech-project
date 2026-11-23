@@ -1,4 +1,4 @@
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, TitleCasePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
@@ -8,36 +8,36 @@ import {
   effect,
   ElementRef,
   inject,
-  type Signal,
   signal,
   viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
-  AbstractControl,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  ValidationErrors,
-  ValidatorFn,
-} from '@angular/forms';
-import { TuiDay, type TuiStringHandler } from '@taiga-ui/cdk';
+  TuiAutoFocus,
+  TuiDay,
+  type TuiIdentityMatcher,
+  type TuiStringHandler,
+} from '@taiga-ui/cdk';
 import {
   TuiButton,
   TuiCalendar,
   TuiDataList,
   type TuiDialogContext,
   TuiError,
-  TuiIcon,
+  TuiFilterByInputPipe,
   TuiInput,
   TuiLoader,
   TuiTextfield,
+  type TuiTextfieldMultiComponent,
 } from '@taiga-ui/core';
 import { TuiEditor } from '@taiga-ui/editor';
 import {
   TuiChevron,
-  TuiChip,
+  TuiComboBox,
+  TuiDataListWrapper,
+  TuiHideSelectedPipe,
+  TuiInputChip,
   TuiInputDate,
   TuiSegmented,
   TuiSelect,
@@ -50,6 +50,7 @@ import {
   finalize,
   map,
   of,
+  startWith,
   Subject,
   switchMap,
   take,
@@ -68,11 +69,14 @@ import { applyFormServerError } from '@shared/utils/apply-form-server-error.util
 import { parseDuration } from '@shared/utils/duration-parser.util';
 import { getDurationValidator } from '@shared/validators/duration.util';
 import { getLengthValidator } from '@shared/validators/length.util';
+import { getRequiredValidator } from '@shared/validators/required.util';
 import { ProjectStatusesStore } from '@status/+store/project-statuses.store';
+import { Status } from '@status/interfaces/status.interface';
 
 import { MemberStore } from '../../../dictionary/+store/member.store';
 import { SubsystemStore } from '../../../dictionary/+store/subsystem.store';
 import { TagStore } from '../../../dictionary/+store/tag.store';
+import { Subsystem } from '../../../dictionary/interfaces/subsystem.interface';
 import { Tag } from '../../../dictionary/interfaces/tag.interface';
 import { ApiTagService } from '../../../dictionary/services/api-tag.service';
 import { BUG_DESCRIPTION_TEMPLATE } from '../../config/bug-description-template.config';
@@ -92,46 +96,29 @@ const MAX_ESTIMATE_MINUTES = 100000;
 const SEARCH_DEBOUNCE_MS = 300;
 const PARENT_SEARCH_LIMIT = 10;
 const UNPROCESSABLE_HTTP_STATUS = 422;
+const GENERIC_ERROR_MESSAGE =
+  'Не удалось выполнить действие. Повторите попытку';
 
-const TASK_TYPES: readonly { value: TaskType; label: string }[] = [
-  { value: TaskType.TASK, label: 'Задача' },
-  { value: TaskType.BUG, label: 'Баг' },
-  { value: TaskType.SUBTASK, label: 'Подзадача' },
-];
-
-const PRIORITY_OPTIONS: readonly { value: Priority; label: string }[] = [
-  { value: Priority.LOW, label: 'Низкий' },
-  { value: Priority.MEDIUM, label: 'Средний' },
-  { value: Priority.HIGH, label: 'Высокий' },
-  { value: Priority.CRITICAL, label: 'Критический' },
-];
-
-const PRIORITY_LABELS: Readonly<Record<Priority, string>> = {
-  [Priority.LOW]: 'Низкий',
-  [Priority.MEDIUM]: 'Средний',
-  [Priority.HIGH]: 'Высокий',
-  [Priority.CRITICAL]: 'Критический',
-};
+const TASK_TYPES = Object.values(TaskType);
+const PRIORITIES = Object.values(Priority);
 
 const MEMBER_FIELDS: readonly {
-  controlName: 'assigneeId' | 'reviewerId';
+  controlName: 'assignee' | 'reviewer';
   label: string;
 }[] = [
-  { controlName: 'assigneeId', label: 'Исполнитель' },
-  { controlName: 'reviewerId', label: 'Ревьюер' },
+  { controlName: 'assignee', label: 'Исполнитель' },
+  { controlName: 'reviewer', label: 'Ревьюер' },
 ];
 
-function createRequiredValidator(message: string): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    const value: unknown = control.value;
-    const isEmpty =
-      typeof value === 'string'
-        ? value.trim() === ''
-        : value === null || value === undefined;
-
-    return isEmpty ? { other: message } : null;
-  };
-}
+const SERVER_ERROR_FIELD_MAP: Readonly<Record<string, string>> = {
+  parentId: 'parent',
+  statusId: 'status',
+  assigneeId: 'assignee',
+  reviewerId: 'reviewer',
+  subsystemId: 'subsystem',
+  estimateMinutes: 'estimate',
+  tagIds: 'tags',
+};
 
 @Component({
   selector: 'app-create-task-dialog',
@@ -139,15 +126,20 @@ function createRequiredValidator(message: string): ValidatorFn {
     MarkdownEditorDirective,
     ReactiveFormsModule,
     TaskMemberSelectComponent,
+    TitleCasePipe,
+    TuiAutoFocus,
     TuiButton,
     TuiCalendar,
     TuiChevron,
-    TuiChip,
+    TuiComboBox,
     TuiDataList,
+    TuiDataListWrapper,
     TuiEditor,
     TuiError,
-    TuiIcon,
+    TuiFilterByInputPipe,
+    TuiHideSelectedPipe,
     TuiInput,
+    TuiInputChip,
     TuiInputDate,
     TuiLoader,
     TuiSegmented,
@@ -183,44 +175,21 @@ export class CreateTaskDialogComponent {
     viewChild<ElementRef<HTMLInputElement>>('parentInput');
 
   private readonly parentSearch$$ = new Subject<string>();
-  private readonly selectedType: Signal<TaskType>;
-  private readonly selectedTagIds: Signal<Tag['id'][]>;
-  private readonly selectedAssigneeId: Signal<string | null>;
-  private readonly selectedReviewerId: Signal<string | null>;
-  private readonly tagQuery: Signal<string>;
-  private initialFormValue: ReturnType<
-    FormGroup<CreateTaskForm>['getRawValue']
-  >;
-
-  private readonly statusNameMap = computed(
-    () =>
-      new Map(
-        this.statusesStore.statuses().map((status) => [status.id, status.name])
-      )
-  );
-  private readonly subsystemNameMap = computed(
-    () =>
-      new Map(this.subsystemStore.entities().map((sub) => [sub.id, sub.name]))
-  );
+  private initialSnapshot = '';
 
   protected readonly taskTypes = TASK_TYPES;
-  protected readonly priorityOptions = PRIORITY_OPTIONS;
+  protected readonly priorities = PRIORITIES;
   protected readonly memberFields = MEMBER_FIELDS;
 
   protected readonly isLoading = signal(false);
-  protected readonly isSearchingParents = signal(false);
   protected readonly isCreatingTag = signal(false);
-  protected readonly isParentDropdownOpen = signal(false);
-  protected readonly isTagDropdownOpen = signal(false);
-  protected readonly parentOptions = signal<TaskParentRef[]>(
-    this.context.data.parent ? [this.context.data.parent] : []
+
+  protected readonly members = this.memberStore.entities;
+  protected readonly subsystems = this.subsystemStore.entities;
+  protected readonly tags = this.tagStore.entities;
+  protected readonly availableStatuses = computed(() =>
+    this.statusesStore.statuses().filter((status) => !status.requiresReason)
   );
-  protected readonly parentQuery = signal(
-    this.formatParent(this.context.data.parent ?? null)
-  );
-  protected readonly tagInputControl = new FormControl('', {
-    nonNullable: true,
-  });
 
   protected readonly form = inject(FormBuilder).group<CreateTaskForm>({
     type: new FormControl<TaskType>(this.context.data.type ?? TaskType.TASK, {
@@ -229,7 +198,7 @@ export class CreateTaskDialogComponent {
     title: new FormControl('', {
       nonNullable: true,
       validators: [
-        createRequiredValidator('Введите название'),
+        getRequiredValidator('Введите название'),
         getLengthValidator({ max: MAX_TITLE_LENGTH }),
       ],
     }),
@@ -243,42 +212,67 @@ export class CreateTaskDialogComponent {
     parent: new FormControl<TaskParentRef | null>(
       this.context.data.parent ?? null,
       this.context.data.type === TaskType.SUBTASK
-        ? [createRequiredValidator('Выберите родительскую задачу')]
+        ? [getRequiredValidator('Выберите родительскую задачу')]
         : []
     ),
-    statusId: new FormControl<string | null>(
-      this.context.data.statusId ?? null
-    ),
+    status: new FormControl<Status | null>(this.resolveDefaultStatus()),
     priority: new FormControl<Priority>(Priority.MEDIUM, {
       nonNullable: true,
     }),
-    assigneeId: new FormControl<string | null>(null),
-    reviewerId: new FormControl<string | null>(null),
-    subsystemId: new FormControl<string | null>(null),
+    assignee: new FormControl<UserRef | null>(null),
+    reviewer: new FormControl<UserRef | null>(null),
+    subsystem: new FormControl<Subsystem | null>(null),
     dueDate: new FormControl<TuiDay | null>(null),
     estimate: new FormControl('', {
       nonNullable: true,
       validators: [getDurationValidator({ min: 1, max: MAX_ESTIMATE_MINUTES })],
     }),
-    tagIds: new FormControl<Tag['id'][]>([], { nonNullable: true }),
+    tags: new FormControl<Tag[]>([], { nonNullable: true }),
   });
 
-  protected readonly availableStatuses = computed(() =>
-    this.statusesStore.statuses().filter((status) => !status.requiresReason)
+  protected readonly formValue = toSignal(
+    this.form.valueChanges.pipe(map(() => this.form.getRawValue())),
+    { initialValue: this.form.getRawValue() }
   );
-  protected readonly members = this.memberStore.entities;
-  protected readonly subsystems = this.subsystemStore.entities;
+
+  protected readonly parentOptions = toSignal(
+    this.parentSearch$$.pipe(
+      debounceTime(SEARCH_DEBOUNCE_MS),
+      switchMap((q) => {
+        const projectId = this.projectStore.currentProjectId();
+
+        if (!projectId) {
+          return of<readonly TaskParentRef[]>([]);
+        }
+
+        return this.apiTaskService
+          .searchTasks(projectId, {
+            q,
+            types: [TaskType.TASK, TaskType.BUG],
+            limit: PARENT_SEARCH_LIMIT,
+          })
+          .pipe(
+            map((items): readonly TaskParentRef[] =>
+              items.map(({ id, key, title }) => ({ id, key, title }))
+            ),
+            startWith(null),
+            catchError(() => of<readonly TaskParentRef[]>([]))
+          );
+      })
+    ),
+    {
+      initialValue: this.context.data.parent ? [this.context.data.parent] : [],
+    }
+  );
+
   protected readonly hasSubsystems = computed(
     () => this.subsystems().length > 0
   );
   protected readonly isSubtask = computed(
-    () => this.selectedType() === TaskType.SUBTASK
+    () => this.formValue().type === TaskType.SUBTASK
   );
   protected readonly activeTypeIndex = computed(() =>
-    Math.max(
-      0,
-      TASK_TYPES.findIndex((option) => option.value === this.selectedType())
-    )
+    Math.max(0, TASK_TYPES.indexOf(this.formValue().type))
   );
   protected readonly currentUserRef = computed<UserRef | null>(() => {
     const user = this.userStore.currentUser();
@@ -290,149 +284,53 @@ export class CreateTaskDialogComponent {
   protected readonly canCreateTag = computed(() =>
     this.permissionStore.hasPermission(ProjectPermission.TAG_CREATE)
   );
-  protected readonly trimmedTagQuery = computed(() => this.tagQuery().trim());
-  protected readonly selectedTags = computed(() => {
-    const ids = new Set(this.selectedTagIds());
-
-    return this.tagStore.entities().filter((tag) => ids.has(tag.id));
-  });
-  protected readonly unselectedTags = computed(() => {
-    const ids = new Set(this.selectedTagIds());
-    const query = this.trimmedTagQuery().toLowerCase();
-
-    return this.tagStore
-      .entities()
-      .filter(
-        (tag) => !ids.has(tag.id) && tag.name.toLowerCase().includes(query)
-      );
-  });
 
   constructor() {
-    this.selectedType = toSignal(this.form.controls.type.valueChanges, {
-      initialValue: this.form.controls.type.value,
-    });
-    this.selectedTagIds = toSignal(this.form.controls.tagIds.valueChanges, {
-      initialValue: this.form.controls.tagIds.value,
-    });
-    this.selectedAssigneeId = toSignal(
-      this.form.controls.assigneeId.valueChanges,
-      { initialValue: this.form.controls.assigneeId.value }
-    );
-    this.selectedReviewerId = toSignal(
-      this.form.controls.reviewerId.valueChanges,
-      { initialValue: this.form.controls.reviewerId.value }
-    );
-    this.tagQuery = toSignal(this.tagInputControl.valueChanges, {
-      initialValue: '',
-    });
-    this.initialFormValue = this.form.getRawValue();
+    this.initialSnapshot = JSON.stringify(this.form.getRawValue());
 
     effect(() => {
-      const statuses = this.availableStatuses();
+      const defaultStatus = this.resolveDefaultStatus();
 
-      if (!this.form.controls.statusId.value && statuses.length > 0) {
-        const defaultStatusId = statuses[0].id;
+      if (this.form.controls.status.value || !defaultStatus) {
+        return;
+      }
 
-        this.form.controls.statusId.setValue(defaultStatusId, {
-          emitEvent: false,
-        });
-        this.initialFormValue = {
-          ...this.initialFormValue,
-          statusId: defaultStatusId,
-        };
+      this.form.controls.status.setValue(defaultStatus, { emitEvent: false });
+
+      if (!this.context.data.isDirty()) {
+        this.initialSnapshot = JSON.stringify(this.form.getRawValue());
       }
     });
 
-    this.form.valueChanges
-      .pipe(
-        tap(() => {
-          const isModified =
-            JSON.stringify(this.form.getRawValue()) !==
-            JSON.stringify(this.initialFormValue);
-
-          this.context.data.isDirty.set(isModified);
-        }),
-        takeUntilDestroyed()
-      )
-      .subscribe();
-
-    this.parentSearch$$
-      .pipe(
-        debounceTime(SEARCH_DEBOUNCE_MS),
-        tap(() => {
-          this.isSearchingParents.set(true);
-        }),
-        switchMap((query) => {
-          const projectId = this.projectStore.currentProjectId();
-
-          if (!projectId) {
-            return of<TaskParentRef[]>([]);
-          }
-
-          return this.apiTaskService
-            .searchTasks(projectId, {
-              q: query,
-              types: [TaskType.TASK, TaskType.BUG],
-              limit: PARENT_SEARCH_LIMIT,
-            })
-            .pipe(
-              map((items) =>
-                items.map(({ id, key, title }) => ({ id, key, title }))
-              ),
-              catchError(() => of<TaskParentRef[]>([]))
-            );
-        }),
-        tap((options) => {
-          this.parentOptions.set(options);
-          this.isSearchingParents.set(false);
-        }),
-        takeUntilDestroyed()
-      )
-      .subscribe();
+    effect(() => {
+      this.formValue();
+      this.context.data.isDirty.set(
+        JSON.stringify(this.form.getRawValue()) !== this.initialSnapshot
+      );
+    });
   }
 
-  protected readonly stringifyStatus: TuiStringHandler<string | null> = (id) =>
-    id ? (this.statusNameMap().get(id) ?? '') : '';
+  protected readonly matchById: TuiIdentityMatcher<{ id: string }> = (
+    first,
+    second
+  ) => first.id === second.id;
 
-  protected readonly stringifyPriority: TuiStringHandler<Priority> = (
-    priority
-  ) => PRIORITY_LABELS[priority];
+  protected readonly stringifyName: TuiStringHandler<{
+    id: string;
+    name?: string;
+  }> = (item) => item.name ?? '';
 
-  protected readonly stringifySubsystem: TuiStringHandler<string | null> = (
-    id
-  ) => (id ? (this.subsystemNameMap().get(id) ?? '') : '');
+  protected readonly stringifyParent: TuiStringHandler<TaskParentRef> = (
+    parent
+  ) => `${parent.key} ${parent.title}`;
 
-  protected selectedMember(field: 'assigneeId' | 'reviewerId'): UserRef | null {
-    const userId =
-      field === 'assigneeId'
-        ? this.selectedAssigneeId()
-        : this.selectedReviewerId();
-
-    if (!userId) {
-      return null;
-    }
-
-    const currentUser = this.currentUserRef();
-
-    if (currentUser?.userId === userId) {
-      return currentUser;
-    }
-
-    return this.members().find((member) => member.userId === userId) ?? null;
-  }
-
-  protected onMemberChange(
-    field: 'assigneeId' | 'reviewerId',
-    user: UserRef | null
-  ): void {
-    this.form.controls[field].setValue(user?.userId ?? null);
-  }
+  protected readonly stringifyTitleCase: TuiStringHandler<Priority> = (value) =>
+    value.charAt(0).toUpperCase() + value.slice(1);
 
   protected onDocumentEscape(event: Event): void {
+    // dismissible: false блокирует и клик вне окна, и Esc — обрабатываем Esc сами
     if (
       event.defaultPrevented ||
-      this.isParentDropdownOpen() ||
-      this.isTagDropdownOpen() ||
       this.document.querySelector('tui-dropdown, tui-dialog ~ tui-dialog')
     ) {
       return;
@@ -443,7 +341,7 @@ export class CreateTaskDialogComponent {
   }
 
   protected onTypeIndexChange(index: number): void {
-    const nextType = TASK_TYPES.at(index)?.value ?? TaskType.TASK;
+    const nextType = TASK_TYPES[index] ?? TaskType.TASK;
 
     if (this.form.controls.type.value === nextType) {
       return;
@@ -460,78 +358,64 @@ export class CreateTaskDialogComponent {
 
     if (nextType === TaskType.SUBTASK) {
       this.form.controls.parent.setValidators(
-        createRequiredValidator('Выберите родительскую задачу')
+        getRequiredValidator('Выберите родительскую задачу')
       );
-      this.searchParents('');
+      this.parentSearch$$.next('');
     } else {
       this.form.controls.parent.clearValidators();
       this.form.controls.parent.setValue(null);
-      this.parentQuery.set('');
     }
 
     this.form.controls.parent.updateValueAndValidity();
   }
 
   protected onParentFocus(): void {
-    this.isParentDropdownOpen.set(true);
+    const options = this.parentOptions();
 
-    if (this.parentOptions().length === 0) {
-      this.searchParents('');
+    if (
+      options !== null &&
+      (options.length === 0 ||
+        (options.length === 1 &&
+          options[0].id === this.form.controls.parent.value?.id))
+    ) {
+      this.parentSearch$$.next('');
     }
   }
 
-  protected onParentSearch(event: Event): void {
-    const query = (event.target as HTMLInputElement).value;
+  protected onParentInput(query: string): void {
+    const current = this.form.controls.parent.value;
 
-    this.parentQuery.set(query);
-
-    if (
-      this.form.controls.parent.value &&
-      query !== this.formatParent(this.form.controls.parent.value)
-    ) {
+    if (current && query !== this.stringifyParent(current)) {
       this.form.controls.parent.setValue(null);
     }
 
-    this.isParentDropdownOpen.set(true);
-    this.searchParents(query);
+    this.parentSearch$$.next(query);
   }
 
-  protected onParentSelect(parent: TaskParentRef): void {
-    this.form.controls.parent.setValue(parent);
-    this.parentQuery.set(this.formatParent(parent));
-    this.isParentDropdownOpen.set(false);
-  }
+  protected onCreateTag(
+    rawName: string,
+    tagsField: TuiTextfieldMultiComponent<Tag>
+  ): void {
+    const name = rawName.trim();
 
-  protected onSelectTag(tag: Tag): void {
-    this.addTagId(tag.id);
-    this.tagInputControl.setValue('');
-    this.tagInputControl.setErrors(null);
-    this.isTagDropdownOpen.set(false);
-  }
-
-  protected onRemoveTag(tagId: Tag['id']): void {
-    const current = this.form.controls.tagIds.value;
-
-    this.form.controls.tagIds.setValue(current.filter((id) => id !== tagId));
-  }
-
-  protected onTagEnter(event: Event): void {
-    event.preventDefault();
-    const rawName = this.tagInputControl.value.trim();
-
-    if (!rawName || this.isCreatingTag()) {
+    if (!name || this.isCreatingTag() || this.isLoading()) {
       return;
     }
 
-    const existingTag = this.tagStore
-      .entities()
-      .find((tag) => tag.name.toLowerCase() === rawName.toLowerCase());
+    const existingTag = this.tags().find(
+      (tag) => tag.name.toLowerCase() === name.toLowerCase()
+    );
 
     if (existingTag) {
-      this.addTagId(existingTag.id);
-      this.tagInputControl.setValue('');
-      this.tagInputControl.setErrors(null);
-      this.isTagDropdownOpen.set(false);
+      const isSelected = this.form.controls.tags.value.some(
+        (tag) => tag.id === existingTag.id
+      );
+
+      if (isSelected) {
+        this.clearTagInput(tagsField);
+      } else {
+        tagsField.handleOption(existingTag);
+      }
 
       return;
     }
@@ -545,7 +429,7 @@ export class CreateTaskDialogComponent {
     this.isCreatingTag.set(true);
 
     this.apiTagService
-      .createTag(projectId, { name: rawName })
+      .createTag(projectId, { name })
       .pipe(
         finalize(() => {
           this.isCreatingTag.set(false);
@@ -553,16 +437,19 @@ export class CreateTaskDialogComponent {
         tap({
           next: (createdTag) => {
             this.tagStore.addTag(createdTag);
-            this.addTagId(createdTag.id);
-            this.tagInputControl.setValue('');
-            this.tagInputControl.setErrors(null);
-            this.isTagDropdownOpen.set(false);
+            tagsField.handleOption(createdTag);
+            this.form.controls.tags.setErrors(null);
           },
           error: (error: unknown) => {
-            applyFormServerError(
-              new FormGroup({ name: this.tagInputControl }),
-              error
-            );
+            if (
+              applyFormServerError(this.form, error, {
+                fieldMap: { name: 'tags' },
+              })
+            ) {
+              return;
+            }
+
+            this.showFallbackError(error);
           },
         }),
         takeUntilDestroyed(this.destroyRef)
@@ -577,7 +464,8 @@ export class CreateTaskDialogComponent {
         filter(Boolean),
         tap(() => {
           this.context.completeWith(null);
-        })
+        }),
+        takeUntilDestroyed(this.destroyRef)
       )
       .subscribe();
   }
@@ -585,12 +473,7 @@ export class CreateTaskDialogComponent {
   protected onSubmit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-
-      if (this.form.controls.title.invalid) {
-        this.titleInput()?.nativeElement.focus();
-      } else if (this.form.controls.parent.invalid) {
-        this.parentInput()?.nativeElement.focus();
-      }
+      this.focusFirstInvalidField();
 
       return;
     }
@@ -601,23 +484,7 @@ export class CreateTaskDialogComponent {
       return;
     }
 
-    const formValue = this.form.getRawValue();
-    const description = formValue.description.trim();
-    const estimate = formValue.estimate.trim();
-    const payload: TaskCreateRequest = {
-      type: formValue.type,
-      title: formValue.title.trim(),
-      description: description !== '' ? description : null,
-      statusId: formValue.statusId,
-      priority: formValue.priority,
-      assigneeId: formValue.assigneeId,
-      reviewerId: formValue.reviewerId,
-      subsystemId: formValue.subsystemId,
-      dueDate: formValue.dueDate ? formValue.dueDate.toJSON() : null,
-      estimateMinutes: estimate !== '' ? parseDuration(estimate) : null,
-      tagIds: formValue.tagIds,
-      parentId: formValue.parent?.id ?? null,
-    };
+    const payload = this.buildCreatePayload();
 
     this.isLoading.set(true);
     this.form.disable({ emitEvent: false });
@@ -638,19 +505,19 @@ export class CreateTaskDialogComponent {
             this.context.completeWith(createdTask);
           },
           error: (error: unknown) => {
-            const isApplied = applyFormServerError(this.form, error);
+            const isApplied = applyFormServerError(this.form, error, {
+              fieldMap: SERVER_ERROR_FIELD_MAP,
+            });
+
+            if (isApplied) {
+              return;
+            }
 
             if (
-              !isApplied &&
               error instanceof HttpErrorResponse &&
               error.status === UNPROCESSABLE_HTTP_STATUS
             ) {
-              const body = error.error as Partial<ErrorResponse>;
-              const message = body.error?.message;
-
-              if (message) {
-                this.notificationService.showError(message);
-              }
+              this.showFallbackError(error);
             }
           },
         }),
@@ -659,19 +526,69 @@ export class CreateTaskDialogComponent {
       .subscribe();
   }
 
-  private addTagId(tagId: Tag['id']): void {
-    const current = this.form.controls.tagIds.value;
+  private resolveDefaultStatus(): Status | null {
+    const statuses = this.availableStatuses();
 
-    if (!current.includes(tagId)) {
-      this.form.controls.tagIds.setValue([...current, tagId]);
+    if (statuses.length === 0) {
+      return null;
+    }
+
+    return (
+      statuses.find((status) => status.id === this.context.data.statusId) ??
+      statuses[0]
+    );
+  }
+
+  private buildCreatePayload(): TaskCreateRequest {
+    const formValue = this.form.getRawValue();
+    const description = formValue.description.trim();
+    const estimate = formValue.estimate.trim();
+
+    return {
+      type: formValue.type,
+      title: formValue.title.trim(),
+      description: description !== '' ? description : null,
+      statusId: formValue.status?.id ?? null,
+      priority: formValue.priority,
+      assigneeId: formValue.assignee?.userId ?? null,
+      reviewerId: formValue.reviewer?.userId ?? null,
+      subsystemId: formValue.subsystem?.id ?? null,
+      dueDate: formValue.dueDate ? formValue.dueDate.toJSON() : null,
+      estimateMinutes: estimate !== '' ? parseDuration(estimate) : null,
+      tagIds: formValue.tags.map((tag) => tag.id),
+      parentId: formValue.parent?.id ?? null,
+    };
+  }
+
+  private focusFirstInvalidField(): void {
+    if (this.form.controls.title.invalid) {
+      this.titleInput()?.nativeElement.focus();
+
+      return;
+    }
+
+    if (this.form.controls.parent.invalid) {
+      this.parentInput()?.nativeElement.focus();
     }
   }
 
-  private searchParents(query: string): void {
-    this.parentSearch$$.next(query);
+  private clearTagInput(tagsField: TuiTextfieldMultiComponent<Tag>): void {
+    const input = tagsField.input()?.nativeElement;
+
+    if (input) {
+      input.value = '';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    }
   }
 
-  private formatParent(parent: TaskParentRef | null): string {
-    return parent ? `${parent.key} ${parent.title}` : '';
+  private showFallbackError(error: unknown): void {
+    const body =
+      error instanceof HttpErrorResponse
+        ? (error.error as Partial<ErrorResponse> | null)
+        : null;
+
+    this.notificationService.showError(
+      body?.error?.message ?? GENERIC_ERROR_MESSAGE
+    );
   }
 }
