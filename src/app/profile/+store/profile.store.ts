@@ -1,8 +1,8 @@
 import { inject } from '@angular/core';
 import { updateState, withDevtools } from '@angular-architects/ngrx-toolkit';
-import { signalStore, withMethods, withProps } from '@ngrx/signals';
+import { signalStore, withMethods, withProps, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { exhaustMap, pipe, switchMap, tap } from 'rxjs';
+import { catchError, exhaustMap, pipe, switchMap, tap, throwError } from 'rxjs';
 
 import { UserStore } from '@core/user/+store/user.store';
 import { catchEffectError } from '@shared/store/catch-effect-error.operator';
@@ -17,6 +17,7 @@ import { ApiProfileService } from '../services/api-profile.service';
 export const ProfileStore = signalStore(
   withDevtools('profile'),
   withLoadingStatus(),
+  withState<{ error: unknown }>({ error: null }),
   withProps(() => ({
     apiProfileService: inject(ApiProfileService),
     userStore: inject(UserStore),
@@ -38,16 +39,28 @@ export const ProfileStore = signalStore(
     changePassword: rxMethod<ChangePasswordRequest>(
       pipe(
         tap(() => {
-          updateState(store, '[ProfileStore] changePassword', setLoading());
+          updateState(store, '[ProfileStore] changePassword', setLoading(), {
+            error: null,
+          });
         }),
-        exhaustMap((passwords) => apiProfileService.changePassword(passwords)),
-        tap(() => {
-          updateState(
-            store,
-            '[ProfileStore] changePasswordSuccess',
-            setLoaded()
-          );
-        }),
+        exhaustMap((body) =>
+          apiProfileService.changePassword(body).pipe(
+            tap(() => {
+              updateState(
+                store,
+                '[ProfileStore] changePasswordSuccess',
+                setLoaded()
+              );
+            }),
+            catchError((error: unknown) => {
+              updateState(store, '[ProfileStore] changePasswordFailure', {
+                error,
+              });
+
+              return throwError(() => error);
+            })
+          )
+        ),
         catchEffectError({ store, methodName: '[ProfileStore] changePassword' })
       )
     ),
