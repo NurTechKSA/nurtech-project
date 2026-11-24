@@ -4,7 +4,7 @@ import {
   inject,
   input,
 } from '@angular/core';
-import { TuiScrollbar } from '@taiga-ui/core';
+import { TuiScrollControls, TuiScrollRef } from '@taiga-ui/core';
 
 import { BoardCardsStore } from '../../+store/board-cards.store';
 import { BoardColumnComponent } from '../../components/board-column/board-column.component';
@@ -13,7 +13,7 @@ import { Board } from '../../interfaces/board.interface';
 @Component({
   templateUrl: './board-page.component.html',
   styleUrl: './board-page.component.scss',
-  imports: [BoardColumnComponent, TuiScrollbar],
+  imports: [BoardColumnComponent, TuiScrollControls, TuiScrollRef],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [BoardCardsStore],
 })

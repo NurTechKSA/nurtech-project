@@ -1,24 +1,25 @@
 :host {
   display: flex;
-  flex: 1;
+  flex-direction: column;
+  block-size: calc(100dvh - 3.5rem);
   min-block-size: 0;
 }
 
-.board-scrollbar {
+.board-viewport {
+  position: relative;
+  display: flex;
   flex: 1;
+  inline-size: 100%;
   min-block-size: 0;
+  overflow: auto;
 }
 
 .board {
   display: flex;
+  flex: 1 0 auto;
   gap: 12px;
-  inline-size: 100%;
+  inline-size: min-content;
+  min-inline-size: 100%;
   block-size: 100%;
   min-block-size: 0;
-}
-
-/* stylelint-disable-next-line selector-pseudo-element-no-unknown */
-::ng-deep .board-scrollbar .t-content {
-  inline-size: min-content !important;
-  block-size: 100% !important;
 }

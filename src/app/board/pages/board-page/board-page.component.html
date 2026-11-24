@@ -1,11 +1,16 @@
-<!-- TODO: заменить временный список полноценной версткой колонок и карточек -->
-<tui-scrollbar class="board-scrollbar">
+<!-- TODO: заменить временный список карточек компонентом карточки в #315 -->
+<div class="board-viewport" tuiScrollRef>
+  <tui-scroll-controls />
+
   <div class="board">
     @for (column of columns(); track column.statusId) {
       <app-board-column
         [column]="column"
         [completedDays]="board()?.doneWindowDays">
+        @for (card of column.cards; track card.id) {
+          <p>{{ card.title }}</p>
+        }
       </app-board-column>
     }
   </div>
-</tui-scrollbar>
+</div>
