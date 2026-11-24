@@ -1,12 +1,17 @@
+:host {
+  display: contents;
+}
+
 .task-due-date {
   display: inline-flex;
   gap: 0.25rem;
   align-items: center;
-  font: var(--tui-typography-ui-s);
+  font: var(--tui-typography-ui-xs);
   color: var(--tui-text-secondary);
   white-space: nowrap;
 
   &--overdue {
+    font-weight: 700;
     color: var(--tui-text-negative);
   }
 

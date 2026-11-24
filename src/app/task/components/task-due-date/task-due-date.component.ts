@@ -22,8 +22,8 @@ export class TaskDueDateComponent {
   readonly isOverdue = input.required<TaskDetail['isOverdue']>();
 
   protected readonly formattedDate = computed(() => {
-    const dueDate = this.dueDate();
+    const date = dayjs(this.dueDate());
 
-    return dueDate ? dayjs(dueDate).format('D MMM') : '';
+    return date.isValid() ? date.format('D MMM') : '';
   });
 }
