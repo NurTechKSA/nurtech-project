@@ -1,0 +1,12 @@
+@if (formattedDate()) {
+  <span class="task-due-date" [class.task-due-date--overdue]="isOverdue()">
+    @if (isOverdue()) {
+      <tui-icon
+        class="task-due-date__icon"
+        role="img"
+        aria-label="Просрочено"
+        icon="@tui.clock" />
+    }
+    {{ formattedDate() }}
+  </span>
+}

@@ -1,0 +1,16 @@
+.task-due-date {
+  display: inline-flex;
+  gap: 0.25rem;
+  align-items: center;
+  font: var(--tui-typography-ui-s);
+  color: var(--tui-text-secondary);
+  white-space: nowrap;
+
+  &--overdue {
+    color: var(--tui-text-negative);
+  }
+
+  &__icon {
+    font-size: 1rem;
+  }
+}
