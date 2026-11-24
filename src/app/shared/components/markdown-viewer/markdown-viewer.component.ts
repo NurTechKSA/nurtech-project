@@ -1,40 +1,47 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   input,
   ViewEncapsulation,
 } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import {
-  MARKED_OPTIONS,
-  MarkdownComponent,
-  MarkedRenderer,
-  provideMarkdown,
-} from 'ngx-markdown';
+  provideTuiEditorOptions,
+  TUI_EDITOR_SANITIZER,
+  TuiEditorSocket,
+} from '@taiga-ui/editor';
+import MarkdownIt from 'markdown-it';
 
 const SAFE_LINK_PROTOCOL = /^(https?:|mailto:)/i;
-const defaultRenderer = new MarkedRenderer();
-const markdownRenderer = new MarkedRenderer();
 
-markdownRenderer.link = function (this: MarkedRenderer, token): string {
-  if (!SAFE_LINK_PROTOCOL.test(token.href.trim())) {
-    return this.parser.parseInline(token.tokens);
-  }
+const markdownParser = new MarkdownIt({ html: false, linkify: true });
+markdownParser.linkify.set({ fuzzyLink: false });
 
-  return defaultRenderer.link
-    .call(this, token)
-    .replace('<a ', '<a target="_blank" rel="noopener noreferrer" ');
+markdownParser.validateLink = (url: string): boolean =>
+  SAFE_LINK_PROTOCOL.test(url.trim());
+
+markdownParser.renderer.rules['link_open'] = (
+  tokens,
+  idx,
+  options,
+  _env,
+  self
+): string => {
+  const token = tokens[idx];
+
+  token.attrSet('target', '_blank');
+  token.attrSet('rel', 'noopener noreferrer');
+
+  return self.renderToken(tokens, idx, options);
 };
 
 @Component({
   selector: 'app-markdown-viewer',
-  imports: [MarkdownComponent],
+  imports: [TuiEditorSocket],
   providers: [
-    provideMarkdown({
-      markedOptions: {
-        provide: MARKED_OPTIONS,
-        useValue: { renderer: markdownRenderer },
-      },
-    }),
+    provideTuiEditorOptions({ enableDefaultStyles: false }),
+    { provide: TUI_EDITOR_SANITIZER, useExisting: DomSanitizer },
   ],
   templateUrl: './markdown-viewer.component.html',
   styleUrl: './markdown-viewer.component.scss',
@@ -44,4 +51,8 @@ markdownRenderer.link = function (this: MarkedRenderer, token): string {
 })
 export class MarkdownViewerComponent {
   readonly markdown = input.required<string>();
+
+  protected readonly html = computed(() =>
+    markdownParser.render(this.markdown())
+  );
 }
