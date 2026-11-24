@@ -7,9 +7,6 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 0.5rem;
-  align-items: stretch;
-  inline-size: auto;
-  block-size: auto;
   padding: 0.625rem 0.75rem;
   color: var(--tui-text-primary);
   background: var(--tui-background-base);
@@ -31,14 +28,17 @@
     display: flex;
     gap: 0.25rem;
     align-items: center;
+    min-inline-size: 0;
   }
 
   &__key {
     min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
     font: var(--tui-typography-body-xs);
     font-weight: 600;
     color: var(--tui-text-secondary);
-    overflow-wrap: anywhere;
+    white-space: nowrap;
   }
 
   &__title {
@@ -63,5 +63,10 @@
     display: grid;
     grid-column: 1 / -1;
     gap: 0.25rem;
+  }
+
+  &__due-date {
+    align-self: center;
+    min-inline-size: 0;
   }
 }
