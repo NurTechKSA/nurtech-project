@@ -1,16 +1,22 @@
 <!-- TODO: заменить временный список карточек компонентом карточки в #315 -->
-<div class="board-viewport" tuiScrollRef>
-  <tui-scroll-controls />
+<tui-loader
+  class="board-loader"
+  size="xxl"
+  [overlay]="true"
+  [loading]="isLoading()">
+  <div class="board-viewport" tuiScrollRef>
+    <tui-scroll-controls />
 
-  <div class="board">
-    @for (column of columns(); track column.statusId) {
-      <app-board-column
-        [column]="column"
-        [completedDays]="board()?.doneWindowDays">
-        @for (card of column.cards; track card.id) {
-          <p>{{ card.title }}</p>
-        }
-      </app-board-column>
-    }
+    <div class="board">
+      @for (column of columns(); track column.statusId) {
+        <app-board-column
+          [column]="column"
+          [completedDays]="board()?.doneWindowDays">
+          @for (card of column.cards; track card.id) {
+            <p>{{ card.title }}</p>
+          }
+        </app-board-column>
+      }
+    </div>
   </div>
-</div>
+</tui-loader>

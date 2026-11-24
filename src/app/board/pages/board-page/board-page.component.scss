@@ -5,11 +5,18 @@
   min-block-size: 0;
 }
 
+.board-loader {
+  flex: 1;
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
+  min-block-size: 0;
+}
+
 .board-viewport {
   position: relative;
   display: flex;
-  flex: 1;
   inline-size: 100%;
+  block-size: 100%;
   min-block-size: 0;
   overflow: auto;
 }

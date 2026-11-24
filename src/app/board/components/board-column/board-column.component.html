@@ -13,7 +13,11 @@
 
   <tui-scrollbar class="board-column__scrollbar">
     <div class="board-column__content">
-      <ng-content />
+      @if (column().cards.length) {
+        <ng-content />
+      } @else {
+        <p class="board-column__empty">Перетащите сюда</p>
+      }
       @if (column().category === statusCategory.DONE && completedDaysLabel()) {
         <p class="board-column__text">{{ completedDaysLabel() }}</p>
       }

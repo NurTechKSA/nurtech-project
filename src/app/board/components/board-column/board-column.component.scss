@@ -60,6 +60,13 @@
     padding-block-end: 4px;
   }
 
+  &__empty {
+    padding-block-start: 24px;
+    font: var(--tui-typography-body-xs);
+    color: var(--tui-text-secondary);
+    text-align: center;
+  }
+
   &__text {
     font: var(--tui-typography-body-xs);
     color: var(--tui-text-secondary);
