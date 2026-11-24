@@ -1,7 +1,7 @@
 :host {
   display: flex;
+  flex: 1;
   flex-direction: column;
-  block-size: calc(100dvh - 3.5rem);
   min-block-size: 0;
 }
 
@@ -22,4 +22,5 @@
   min-inline-size: 100%;
   block-size: 100%;
   min-block-size: 0;
+  padding: 16px 24px 20px;
 }
