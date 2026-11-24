@@ -1,0 +1,31 @@
+@let current = value();
+@let label = current | titlecase;
+
+@if (viewOnly()) {
+  <span class="task-type-dropdown__readonly">
+    <app-task-type-icon aria-hidden="true" [type]="current" />
+    {{ label }}
+  </span>
+} @else {
+  <button
+    tuiButton
+    tuiButtonSelect
+    tuiChevron
+    type="button"
+    size="s"
+    [attr.aria-label]="'Тип задачи: ' + label"
+    [ngModelOptions]="{ standalone: true }"
+    [(ngModel)]="value">
+    <app-task-type-icon aria-hidden="true" [type]="current" />
+    {{ label }}
+
+    <tui-data-list size="s" *tuiDropdown>
+      @for (option of options(); track option) {
+        <button tuiOption type="button" [value]="option">
+          <app-task-type-icon aria-hidden="true" [type]="option" />
+          {{ option | titlecase }}
+        </button>
+      }
+    </tui-data-list>
+  </button>
+}

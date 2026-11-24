@@ -1,51 +1,16 @@
-@if (variant() === 'segmented') {
-  <tui-segmented
-    class="type-select__segmented"
-    size="l"
-    [activeItemIndex]="activeIndex()"
-    (activeItemIndexChange)="onActiveIndexChange($event)">
-    @for (type of options(); track type) {
-      <button
-        class="type-select__segment"
-        type="button"
-        [class.type-select__segment--selected]="type === value()"
-        [disabled]="viewOnly()">
-        <app-task-type-icon [type]="type" />
-        {{ labels[type] }}
-      </button>
-    }
-  </tui-segmented>
-} @else if (viewOnly()) {
-  <span class="type-select__static">
-    <app-task-type-icon [type]="value()" />
-    {{ labels[value()] }}
-  </span>
-} @else {
-  <button
-    tuiButton
-    tuiButtonSelect
-    tuiChevron
-    class="type-select__trigger"
-    type="button"
-    appearance="flat-grayscale"
-    size="s"
-    tuiDropdownAlign="start"
-    [ngModel]="value()"
-    (ngModelChange)="onOptionClick($event)">
-    <span class="type-select__value">
-      <app-task-type-icon [type]="value()" />
-      {{ labels[value()] }}
-    </span>
-
-    <tui-data-list *tuiDropdown>
-      @for (type of options(); track type) {
-        <button tuiOption type="button" [value]="type">
-          <span class="type-select__option">
-            <app-task-type-icon [type]="type" />
-            {{ labels[type] }}
-          </span>
-        </button>
-      }
-    </tui-data-list>
-  </button>
-}
+<tui-segmented
+  class="type-select__segmented"
+  size="l"
+  [activeItemIndex]="activeIndex()"
+  (activeItemIndexChange)="onActiveIndexChange($event)">
+  @for (type of options(); track type) {
+    <button
+      class="type-select__segment"
+      type="button"
+      [class.type-select__segment--selected]="type === value()"
+      [disabled]="viewOnly()">
+      <app-task-type-icon [type]="type" />
+      {{ type | titlecase }}
+    </button>
+  }
+</tui-segmented>

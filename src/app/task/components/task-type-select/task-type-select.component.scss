@@ -22,26 +22,4 @@
       color: var(--tui-text-primary);
     }
   }
-
-  &__trigger {
-    justify-content: space-between;
-    inline-size: 100%;
-  }
-
-  &__trigger,
-  &__static,
-  &__value,
-  &__option {
-    display: inline-flex;
-    gap: 0.375rem;
-    align-items: center;
-  }
-
-  &__option {
-    flex: 1;
-  }
-
-  &__static {
-    padding-inline: 0.75rem;
-  }
 }
