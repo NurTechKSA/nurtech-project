@@ -116,12 +116,7 @@ export default tseslint.config(
             {
               target: './src/app/task',
               from: './src/app',
-              except: [
-                './task',
-                './dictionary',
-                './core',
-                './shared',
-              ],
+              except: ['./task', './dictionary', './core', './shared'],
               message:
                 'Домен task может импортировать только dictionary, core и shared (импорт других доменов, включая board, запрещён).',
             },

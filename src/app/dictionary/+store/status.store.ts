@@ -72,9 +72,9 @@ export const StatusStore = signalStore(
           resetCount: store.resetCount(),
         })),
         switchMap(({ projectId, resetCount }) =>
-          apiStatusService.getStatuses(projectId).pipe(
-            map((statuses) => ({ statuses, resetCount }))
-          )
+          apiStatusService
+            .getStatuses(projectId)
+            .pipe(map((statuses) => ({ statuses, resetCount })))
         ),
         tap(({ statuses, resetCount }) => {
           if (resetCount !== store.resetCount()) {
