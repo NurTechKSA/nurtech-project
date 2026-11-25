@@ -1,29 +1,46 @@
+@let value = card();
+
 <article class="board-card">
   <header class="board-card__header">
     <div class="board-card__identity">
-      <ng-content select="[boardCardType]" />
+      <app-task-type-icon [type]="value.type" />
 
       <span class="board-card__key">
-        <ng-content select="[boardCardKey]">{{ card().key }}</ng-content>
+        <app-task-key [key]="value.key" />
       </span>
     </div>
 
-    <ng-content select="[boardCardPriority]" />
+    <app-priority-badge [priority]="value.priority" />
   </header>
 
-  <p class="board-card__title">{{ card().title }}</p>
+  <p class="board-card__title">{{ value.title }}</p>
+
+  @if (value.tags.length || value.parent || value.blocked) {
+    <div class="board-card__details">
+      @if (value.tags.length) {
+        <app-task-tags [limit]="maxVisibleTags" [tags]="value.tags" />
+      }
+
+      @if (value.parent || value.blocked) {
+        <div class="board-card__badges">
+          @if (value.parent; as parent) {
+            <app-parent-task-key-badge [parentKey]="parent.key" />
+          }
+
+          @if (value.blocked) {
+            <app-blocked-task-badge [isBlocked]="value.blocked" />
+          }
+        </div>
+      }
+    </div>
+  }
 
   <footer class="board-card__footer">
-    <div class="board-card__details">
-      <ng-content select="[boardCardTags]" />
-      <ng-content select="[boardCardBadges]" />
-    </div>
-
     <div class="board-card__due-date">
-      <ng-content select="[boardCardDueDate]" />
+      <!-- TODO: подключить компонент срока из #300 -->
     </div>
 
-    @if (card().assignee; as assignee) {
+    @if (value.assignee; as assignee) {
       <app-user-avatar size="s" [name]="assignee.name" />
     }
   </footer>

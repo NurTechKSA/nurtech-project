@@ -51,22 +51,30 @@
     -webkit-box-orient: vertical;
   }
 
+  &__details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-inline-size: 0;
+  }
+
+  &__badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    align-items: center;
+  }
+
   &__footer {
-    grid-template-rows: auto minmax(var(--tui-height-s), auto);
+    display: grid;
     grid-template-columns: minmax(0, 1fr) var(--tui-height-s);
-    gap: 0.25rem 0.5rem;
-    align-items: end;
+    gap: 0.5rem;
+    align-items: center;
+    min-block-size: var(--tui-height-s);
     overflow-wrap: anywhere;
   }
 
-  &__details {
-    display: grid;
-    grid-column: 1 / -1;
-    gap: 0.25rem;
-  }
-
   &__due-date {
-    align-self: center;
     min-inline-size: 0;
   }
 }
