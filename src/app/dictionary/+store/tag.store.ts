@@ -4,7 +4,7 @@ import { signalStore, withMethods, withProps } from '@ngrx/signals';
 import {
   addEntity,
   removeAllEntities,
-  setAllEntities,
+  upsertEntities,
   withEntities,
 } from '@ngrx/signals/entities';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
@@ -40,7 +40,7 @@ export const TagStore = signalStore(
           updateState(
             store,
             '[TagStore] loadTagsSuccess',
-            setAllEntities(tags),
+            upsertEntities(tags),
             setLoaded()
           );
         }),

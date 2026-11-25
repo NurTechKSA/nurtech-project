@@ -654,7 +654,7 @@ export class CreateTaskDialogComponent {
       type: formValue.type,
       title: formValue.title.trim(),
       description: description !== '' ? description : null,
-      statusId: formValue.status?.id ?? null,
+      statusId: formValue.status?.id ?? this.context.data.statusId ?? null,
       priority: formValue.priority,
       assigneeId: formValue.assignee?.userId ?? null,
       reviewerId: formValue.reviewer?.userId ?? null,
