@@ -2,6 +2,10 @@
   display: block;
 }
 
+.task-card__loader {
+  min-block-size: 16rem;
+}
+
 .task-card {
   gap: 1.5rem;
   overflow-wrap: anywhere;
@@ -63,23 +67,17 @@
   gap: 0.75rem;
   padding: 0;
   list-style: none;
+}
 
-  li {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    align-items: baseline;
-  }
+.task-card__list-item {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: baseline;
 }
 
 .task-card__fields {
   padding: 1.25rem;
   background: var(--tui-background-base-alt);
   border-radius: var(--tui-radius-l);
-}
-
-@media (width <= 48rem) {
-  .task-card__columns {
-    grid-template-columns: minmax(0, 1fr);
-  }
 }

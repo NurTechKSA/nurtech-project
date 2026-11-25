@@ -1,25 +1,25 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
+  effect,
   inject,
   input,
+  output,
 } from '@angular/core';
-import { TuiTitle } from '@taiga-ui/core';
+import { TuiLoader, TuiTitle } from '@taiga-ui/core';
 import { TuiCardLarge } from '@taiga-ui/layout';
 
-import { Project } from '@core/project/interfaces/project.interface';
 import { RelativeDatePipe } from '@shared/pipes/relative-date.pipe';
 
 import { TaskStore } from '../../+store/task.store';
 import { LinkType } from '../../enums/link-type.enum';
 import { TaskType } from '../../enums/task-type.enum';
 import { TaskDetail } from '../../interfaces/task-detail.interface';
-import { TaskCardActivityComponent } from '../task-card-activity/task-card-activity.component';
-import { TaskCardFieldsComponent } from '../task-card-fields/task-card-fields.component';
 import { TaskKeyComponent } from '../task-key/task-key.component';
 import { TaskTagsComponent } from '../task-tags/task-tags.component';
 import { TaskTypeIconComponent } from '../task-type-icon/task-type-icon.component';
+import { TaskCardActivityComponent } from './components/task-card-activity/task-card-activity.component';
+import { TaskCardFieldsComponent } from './components/task-card-fields/task-card-fields.component';
 
 const LINK_LABELS: Record<LinkType, string> = {
   [LinkType.BLOCKS]: 'Блокирует',
@@ -36,6 +36,7 @@ const LINK_LABELS: Record<LinkType, string> = {
     TaskTagsComponent,
     TaskTypeIconComponent,
     TuiCardLarge,
+    TuiLoader,
     TuiTitle,
   ],
   templateUrl: './task-card.component.html',
@@ -45,19 +46,28 @@ const LINK_LABELS: Record<LinkType, string> = {
 })
 export class TaskCardComponent {
   private readonly taskStore = inject(TaskStore);
-  private readonly loadParams = computed(() => ({
-    projectId: this.projectId(),
-    key: this.taskKey(),
-  }));
 
-  readonly projectId = input.required<Project['id']>();
-  readonly taskKey = input.required<TaskDetail['key']>();
+  readonly taskKey = input<TaskDetail['key']>();
+  readonly taskNotFound = output();
 
   readonly task = this.taskStore.task;
+  readonly isLoading = this.taskStore.isLoading;
   readonly taskType = TaskType;
   readonly linkLabels = LINK_LABELS;
 
   constructor() {
-    this.taskStore.loadTask(this.loadParams);
+    effect(() => {
+      const key = this.taskKey();
+
+      if (key) {
+        this.taskStore.loadTask(key);
+      }
+    });
+
+    effect(() => {
+      if (this.taskStore.isNotFound()) {
+        this.taskNotFound.emit();
+      }
+    });
   }
 }

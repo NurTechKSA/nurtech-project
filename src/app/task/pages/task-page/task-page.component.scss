@@ -7,9 +7,3 @@
   max-inline-size: 76rem;
   margin-inline: auto;
 }
-
-@media (width <= 48rem) {
-  :host {
-    padding: 0.75rem;
-  }
-}

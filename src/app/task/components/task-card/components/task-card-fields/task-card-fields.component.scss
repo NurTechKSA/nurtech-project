@@ -4,11 +4,11 @@
   gap: 1rem;
   margin: 0;
 
-  dt {
+  &__label {
     color: var(--tui-text-secondary);
   }
 
-  dd {
+  &__value {
     margin: 0;
   }
 

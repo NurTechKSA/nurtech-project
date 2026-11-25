@@ -5,21 +5,21 @@
 </tui-tabs>
 
 @switch (activeTab()) {
-  @case (0) {
+  @case (tab.COMMENTS) {
     <section aria-label="Комментарии">
       <p>Всего комментариев: {{ task().commentCount }}.</p>
       <p>Лента комментариев будет доступна здесь.</p>
     </section>
   }
 
-  @case (1) {
+  @case (tab.WORKLOGS) {
     <section aria-label="Время">
       <p>Всего затрачено: {{ task().spentMinutes | duration }}.</p>
       <p>Списания времени будут доступны здесь.</p>
     </section>
   }
 
-  @case (2) {
+  @case (tab.HISTORY) {
     <section aria-label="История">
       <p>История изменений будет доступна здесь.</p>
     </section>

@@ -4,8 +4,9 @@ import {
   inject,
   input,
 } from '@angular/core';
+import { Router } from '@angular/router';
 
-import { ProjectStore } from '@core/project/+store/project.store';
+import { AppPath } from '@core/enums/app-path.enum';
 
 import { TaskCardComponent } from '../../components/task-card/task-card.component';
 import { TaskDetail } from '../../interfaces/task-detail.interface';
@@ -17,8 +18,11 @@ import { TaskDetail } from '../../interfaces/task-detail.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaskPageComponent {
-  private readonly projectStore = inject(ProjectStore);
+  private readonly router = inject(Router);
 
-  readonly taskKey = input.required<TaskDetail['key']>();
-  readonly project = this.projectStore.currentProject;
+  readonly taskKey = input<TaskDetail['key']>();
+
+  onTaskNotFound(): void {
+    void this.router.navigate(['/', AppPath.NOT_FOUND], { replaceUrl: true });
+  }
 }
