@@ -15,6 +15,7 @@ import { Project } from '../../interfaces/project.interface';
 @Component({
   imports: [RouterOutlet],
   templateUrl: './project-shell.component.html',
+  styleUrl: './project-shell.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProjectShellComponent implements OnDestroy {

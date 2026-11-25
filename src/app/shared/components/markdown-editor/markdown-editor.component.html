@@ -1,0 +1,31 @@
+<div class="markdown-editor">
+  <tui-segmented
+    class="markdown-editor__segmented"
+    size="s"
+    [activeItemIndex]="activeTab()"
+    [disabled]="isDisabled()"
+    (activeItemIndexChange)="onTabChange($event)">
+    <button type="button">Редактор</button>
+    <button type="button">Просмотр</button>
+  </tui-segmented>
+
+  <div class="markdown-editor__body" [hidden]="activeTab() !== 0">
+    <tui-editor
+      [disabled]="isDisabled()"
+      [ngModel]="value()"
+      [placeholder]="placeholder()"
+      [readonly]="readOnly()"
+      (focusOut)="onEditorBlur()"
+      (ngModelChange)="onInput($event)" />
+  </div>
+
+  @if (activeTab() === 1) {
+    <div class="markdown-editor__preview">
+      @if (value().trim()) {
+        <app-markdown-viewer [markdown]="value()" />
+      } @else {
+        <p class="markdown-editor__empty">Нет содержимого для просмотра</p>
+      }
+    </div>
+  }
+</div>

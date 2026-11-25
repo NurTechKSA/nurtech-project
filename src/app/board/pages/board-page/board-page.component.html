@@ -1,18 +1,22 @@
-<h1>Доска</h1>
+<!-- TODO: заменить временный список карточек компонентом карточки в #315 -->
+<tui-loader
+  class="board-loader"
+  size="xxl"
+  [overlay]="true"
+  [loading]="isLoading()">
+  <div class="board-viewport" tuiScrollRef>
+    <tui-scroll-controls />
 
-<!-- TODO: заменить временный список полноценной версткой колонок и карточек -->
-@for (column of columns(); track column.statusId) {
-  <section>
-    <h2>{{ column.name }}</h2>
-
-    <ul>
-      @for (card of column.cards; track card.id) {
-        <li>{{ card.title }}</li>
-      } @empty {
-        <li>Нет карточек</li>
+    <div class="board">
+      @for (column of columns(); track column.statusId) {
+        <app-board-column
+          [column]="column"
+          [completedDays]="board()?.doneWindowDays">
+          @for (card of column.cards; track card.id) {
+            <p>{{ card.title }}</p>
+          }
+        </app-board-column>
       }
-    </ul>
-  </section>
-} @empty {
-  <p>Колонки не найдены</p>
-}
+    </div>
+  </div>
+</tui-loader>
