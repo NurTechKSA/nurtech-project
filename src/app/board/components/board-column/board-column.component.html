@@ -1,0 +1,26 @@
+<div class="board-column" [style.--column-accent]="accentColor()">
+  <div class="board-column__accent"></div>
+
+  <div class="board-column__header">
+    <h2 class="board-column__title">
+      {{ column().name }}
+    </h2>
+
+    <div class="board-column__count">
+      {{ column().count }}
+    </div>
+  </div>
+
+  <tui-scrollbar class="board-column__scrollbar">
+    <div class="board-column__content">
+      @if (column().cards.length) {
+        <ng-content />
+      } @else {
+        <p class="board-column__empty">Перетащите сюда</p>
+      }
+      @if (column().category === statusCategory.DONE && completedDaysLabel()) {
+        <p class="board-column__text">{{ completedDaysLabel() }}</p>
+      }
+    </div>
+  </tui-scrollbar>
+</div>
