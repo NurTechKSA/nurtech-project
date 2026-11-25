@@ -44,6 +44,9 @@ export const BoardCardsStore = signalStore(
   })),
 
   withComputed(({ boardId, boardStore, columns }) => ({
+    currentBoard: computed(() => {
+      return boardStore.boards().find(({ id }) => id === boardId());
+    }),
     // TODO: заменить временное объединение данных при реализации колонок доски.
     columnsWithDetails: computed<BoardColumnViewModel[]>(() => {
       const board = boardStore.boards().find(({ id }) => id === boardId());

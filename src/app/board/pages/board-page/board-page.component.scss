@@ -1,0 +1,33 @@
+:host {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-block-size: 0;
+}
+
+.board-loader {
+  flex: 1;
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
+  min-block-size: 0;
+}
+
+.board-viewport {
+  position: relative;
+  display: flex;
+  inline-size: 100%;
+  block-size: 100%;
+  min-block-size: 0;
+  overflow: auto;
+}
+
+.board {
+  display: flex;
+  flex: 1 0 auto;
+  gap: 12px;
+  inline-size: min-content;
+  min-inline-size: 100%;
+  block-size: 100%;
+  min-block-size: 0;
+  padding: 16px 24px 20px;
+}
