@@ -1,0 +1,31 @@
+<section class="board-toolbar" aria-label="Панель доски">
+  <div class="board-toolbar__primary">
+    <span class="board-toolbar__switcher board-toolbar__field">
+      Разработка <span aria-hidden="true">▾</span>
+    </span>
+
+    <span class="board-toolbar__search board-toolbar__field">
+      <tui-icon icon="@tui.search" aria-hidden="true" />
+      <!-- Отдельный элемент позволяет обрезать текст, сохраняя иконку. -->
+      <span class="board-toolbar__search-label">
+        Поиск по названию или ключу
+      </span>
+    </span>
+
+    <span class="board-toolbar__create">+ Задача</span>
+  </div>
+
+  <div class="board-toolbar__filters">
+    <span class="board-toolbar__filter">Исполнитель ▾</span>
+    <span class="board-toolbar__filter">Ревьюер ▾</span>
+    <span class="board-toolbar__filter">Приоритет ▾</span>
+    <span class="board-toolbar__filter">Тип ▾</span>
+    <span class="board-toolbar__filter">Направление ▾</span>
+    <span class="board-toolbar__filter">Теги ▾</span>
+
+    <!-- Кнопка отключена до подключения сброса в задаче #144. -->
+    <button class="board-toolbar__reset" type="button" disabled>
+      Сбросить
+    </button>
+  </div>
+</section>

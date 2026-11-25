@@ -1,27 +1,5 @@
-<section class="board-toolbar" aria-label="Панель доски">
-  <div class="board-toolbar__primary">
-    <span class="board-toolbar__switcher board-toolbar__field">
-      Разработка <span aria-hidden="true">▾</span>
-    </span>
-
-    <span class="board-toolbar__search board-toolbar__field">
-      <tui-icon icon="@tui.search" aria-hidden="true" />
-      Поиск по названию или ключу
-    </span>
-
-    <span class="board-toolbar__create">+ Задача</span>
-  </div>
-
-  <div class="board-toolbar__filters">
-    <span class="board-toolbar__filter">Исполнитель ▾</span>
-    <span class="board-toolbar__filter">Ревьюер ▾</span>
-    <span class="board-toolbar__filter">Приоритет ▾</span>
-    <span class="board-toolbar__filter">Тип ▾</span>
-    <span class="board-toolbar__filter">Направление ▾</span>
-    <span class="board-toolbar__filter">Теги ▾</span>
-    <span class="board-toolbar__reset">Сбросить</span>
-  </div>
-</section>
+<!-- Панель подключена отдельным компонентом над списком колонок. -->
+<app-board-toolbar />
 
 <!-- TODO: заменить временный список полноценной версткой колонок и карточек -->
 @for (column of columns(); track column.statusId) {
