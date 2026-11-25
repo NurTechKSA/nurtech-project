@@ -1,0 +1,32 @@
+@let priority = value();
+@let label = priority | titlecase;
+
+@if (viewOnly()) {
+  <span class="task-priority-select__readonly">
+    <app-priority-badge aria-hidden="true" [priority]="priority" />
+    {{ label }}
+  </span>
+} @else {
+  <button
+    tuiButton
+    tuiButtonSelect
+    tuiChevron
+    type="button"
+    appearance="outline-grayscale"
+    size="s"
+    [attr.aria-label]="'Приоритет: ' + label"
+    [ngModelOptions]="{ standalone: true }"
+    [(ngModel)]="value">
+    <app-priority-badge aria-hidden="true" [priority]="priority" />
+    {{ label }}
+
+    <tui-data-list size="s" *tuiDropdown>
+      @for (option of priorities; track option) {
+        <button tuiOption type="button" [value]="option">
+          <app-priority-badge aria-hidden="true" [priority]="option" />
+          {{ option | titlecase }}
+        </button>
+      }
+    </tui-data-list>
+  </button>
+}

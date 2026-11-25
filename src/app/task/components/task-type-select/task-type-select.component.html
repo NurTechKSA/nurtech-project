@@ -1,0 +1,16 @@
+<tui-segmented
+  class="type-select__segmented"
+  size="l"
+  [activeItemIndex]="activeIndex()"
+  (activeItemIndexChange)="onActiveIndexChange($event)">
+  @for (type of options(); track type) {
+    <button
+      class="type-select__segment"
+      type="button"
+      [class.type-select__segment--selected]="type === value()"
+      [disabled]="viewOnly()">
+      <app-task-type-icon [type]="type" />
+      {{ type | titlecase }}
+    </button>
+  }
+</tui-segmented>

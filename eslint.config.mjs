@@ -107,6 +107,13 @@ export default tseslint.config(
                 'Слой core может импортировать только из shared и самого core (зависимости от доменов запрещены).',
             },
             {
+              target: './src/app/dictionary',
+              from: './src/app',
+              except: ['./dictionary', './core', './shared'],
+              message:
+                'Справочники (dictionary) могут импортировать только core и shared: ими пользуются домены, а не наоборот.',
+            },
+            {
               target: './src/app/status',
               from: './src/app',
               except: ['./status', './core', './shared'],
@@ -116,16 +123,29 @@ export default tseslint.config(
             {
               target: './src/app/task',
               from: './src/app',
-              except: ['./task', './status', './core', './shared'],
+              except: [
+                './task',
+                './status',
+                './dictionary',
+                './core',
+                './shared',
+              ],
               message:
-                'Домен task может импортировать только status, core и shared (импорт других доменов, включая board, запрещён).',
+                'Домен task может импортировать только status, dictionary, core и shared (импорт других доменов, включая board, запрещён).',
             },
             {
               target: './src/app/board',
               from: './src/app',
-              except: ['./task', './board', './status', './core', './shared'],
+              except: [
+                './task',
+                './board',
+                './status',
+                './dictionary',
+                './core',
+                './shared',
+              ],
               message:
-                'Домен board может импортировать только task, status, core и shared (импорт других доменов запрещён).',
+                'Домен board может импортировать только task, status, dictionary, core и shared (импорт других доменов запрещён).',
             },
             {
               target: './src/app/profile',

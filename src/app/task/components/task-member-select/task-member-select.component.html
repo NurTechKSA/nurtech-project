@@ -1,0 +1,47 @@
+<tui-textfield
+  tuiChevron
+  class="task-member-select"
+  [class.task-member-select--view-only]="viewOnly()"
+  [identityMatcher]="identityMatcher"
+  [stringify]="stringify">
+  <input
+    tuiComboBox
+    placeholder="Выберите участника"
+    [matcher]="null"
+    [readonly]="viewOnly()"
+    [ngModel]="query()"
+    (ngModelChange)="onQueryChange($event)"
+    (keydown.escape)="onSearchCancel()" />
+
+  <tui-data-list *tuiDropdown>
+    @for (
+      option of options() | tuiFilterByInput: optionFilter;
+      track option?.userId ?? 'none'
+    ) {
+      <button
+        tuiOption
+        type="button"
+        class="task-member-select__row"
+        [value]="option"
+        (click)="select(option)">
+        @if (option; as user) {
+          <app-user-avatar size="s" [name]="user.name" />
+          <span class="task-member-select__name">
+            {{
+              isSameUser(user, currentUser())
+                ? 'Я (' + user.name + ')'
+                : user.name
+            }}
+          </span>
+        } @else {
+          <span class="task-member-select__name task-member-select__name--muted"
+            >Не назначен</span
+          >
+          @if (value() === null) {
+            <tui-icon class="task-member-select__check" icon="@tui.check" />
+          }
+        }
+      </button>
+    }
+  </tui-data-list>
+</tui-textfield>
