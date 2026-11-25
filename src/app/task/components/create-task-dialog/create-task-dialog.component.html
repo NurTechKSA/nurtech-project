@@ -15,15 +15,14 @@
           </tui-segmented>
 
           <div class="create-task-form__field">
-            <tui-textfield class="create-task-form__title-field">
+            <tui-textfield>
               <label tuiLabel for="task-title">Название *</label>
               <input
                 id="task-title"
                 formControlName="title"
                 placeholder="Что нужно сделать"
                 tuiAutoFocus
-                tuiInput
-                #titleInput />
+                tuiInput />
             </tui-textfield>
             <tui-error formControlName="title" />
           </div>
@@ -68,43 +67,75 @@
           <div class="create-task-form__meta-field">
             <tui-textfield
               tuiChevron
+              [content]="statusContent"
               [identityMatcher]="matchById"
               [stringify]="stringifyName"
               [tuiTextfieldCleaner]="false">
               <label tuiLabel for="task-status">Статус</label>
               <input id="task-status" formControlName="status" tuiSelect />
-              <tui-data-list-wrapper
-                *tuiDropdown
-                [items]="availableStatuses()" />
+              <tui-data-list *tuiDropdown>
+                @for (status of availableStatuses(); track status.id) {
+                  <button tuiOption type="button" [value]="status">
+                    <app-task-status-badge [status]="status" />
+                  </button>
+                }
+              </tui-data-list>
             </tui-textfield>
             <tui-error formControlName="status" />
+            <ng-template #statusContent>
+              @if (formValue().status; as selectedStatus) {
+                <app-task-status-badge [status]="selectedStatus" />
+              }
+            </ng-template>
           </div>
 
           <div class="create-task-form__meta-field">
             <tui-textfield
               tuiChevron
+              [content]="priorityContent"
               [stringify]="stringifyTitleCase"
               [tuiTextfieldCleaner]="false">
               <label tuiLabel for="task-priority">Приоритет</label>
               <input id="task-priority" formControlName="priority" tuiSelect />
-              <tui-data-list-wrapper *tuiDropdown [items]="priorities" />
+              <tui-data-list *tuiDropdown>
+                @for (priority of priorities; track priority) {
+                  <button
+                    class="create-task-form__option-row"
+                    tuiOption
+                    type="button"
+                    [value]="priority">
+                    <app-priority-badge
+                      aria-hidden="true"
+                      [priority]="priority" />
+                    {{ priority | titlecase }}
+                  </button>
+                }
+              </tui-data-list>
             </tui-textfield>
+            <tui-error formControlName="priority" />
+            <ng-template #priorityContent>
+              <span class="create-task-form__option-row">
+                <app-priority-badge
+                  aria-hidden="true"
+                  [priority]="formValue().priority" />
+                {{ formValue().priority | titlecase }}
+              </span>
+            </ng-template>
           </div>
 
-          @for (field of memberFields; track field.controlName) {
-            @if (currentUserRef(); as currentUser) {
+          @if (currentUserRef(); as currentUser) {
+            @for (field of memberFields; track field.controlName) {
               <div class="create-task-form__meta-field">
                 <span class="create-task-form__meta-label">{{
                   field.label
                 }}</span>
                 <app-task-member-select
+                  [class.ng-invalid]="form.controls[field.controlName].invalid"
                   [currentUser]="currentUser"
                   [members]="members()"
                   [value]="formValue()[field.controlName]"
                   [viewOnly]="isLoading()"
-                  (valueChange)="
-                    form.controls[field.controlName].setValue($event)
-                  " />
+                  (valueChange)="onMemberChange(field.controlName, $event)" />
                 <tui-error [formControl]="form.controls[field.controlName]" />
               </div>
             }
@@ -165,7 +196,7 @@
                 placeholder="+ Тег"
                 separator=""
                 tuiInputChip
-                (input)="form.controls.tags.setErrors(null)"
+                (input)="onTagsInput()"
                 (keydown.enter.prevent)="
                   onCreateTag(tagsField.value(), tagsField)
                 " />
@@ -179,10 +210,11 @@
                     {{ tag.name }}
                   </button>
                 } @empty {
-                  @if (canCreateTag() && tagsField.value().trim(); as tagName) {
+                  @if (getCreatableTagName(tagsField.value()); as tagName) {
                     <button
                       tuiOption
                       type="button"
+                      [disabled]="isCreatingTag()"
                       (click)="onCreateTag(tagName, tagsField)">
                       Создать «{{ tagName }}»
                     </button>

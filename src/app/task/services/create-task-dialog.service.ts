@@ -25,15 +25,16 @@ export class CreateTaskDialogService {
 
   open(data: CreateTaskDialogData = {}): Observable<TaskDetail | null> {
     const isDirty = signal(false);
+    const isLoading = signal(false);
     const isConfirming = signal(false);
 
     const canClose$ = defer(() => {
-      if (!isDirty()) {
-        return of(true);
+      if (isLoading() || isConfirming()) {
+        return of(false);
       }
 
-      if (isConfirming()) {
-        return of(false);
+      if (!isDirty()) {
+        return of(true);
       }
 
       isConfirming.set(true);
@@ -48,6 +49,7 @@ export class CreateTaskDialogService {
     const contextData: CreateTaskDialogContextData = {
       ...data,
       isDirty,
+      isLoading,
       canClose$,
     };
 

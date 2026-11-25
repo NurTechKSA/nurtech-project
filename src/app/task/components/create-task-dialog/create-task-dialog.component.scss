@@ -1,8 +1,8 @@
 :host {
   display: block;
   inline-size: 56.25rem;
-  max-inline-size: 92vw;
-  margin-block-start: 1.25rem;
+  max-inline-size: 100%;
+  padding-block-start: 1.25rem;
 }
 
 .create-task-form {
@@ -67,6 +67,12 @@
     margin-block-end: 0.25rem;
     font: var(--tui-typography-body-s);
     color: var(--tui-text-secondary);
+  }
+
+  &__option-row {
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
   }
 
   &__dropdown-empty {

@@ -1,18 +1,27 @@
 import { DOCUMENT, TitleCasePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
   DestroyRef,
-  effect,
   ElementRef,
   inject,
+  Injector,
   signal,
-  viewChild,
 } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
+import {
+  takeUntilDestroyed,
+  toObservable,
+  toSignal,
+} from '@angular/core/rxjs-interop';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import {
   TuiAutoFocus,
   TuiDay,
@@ -45,6 +54,7 @@ import { injectContext } from '@taiga-ui/polymorpheus';
 import {
   catchError,
   debounceTime,
+  EMPTY,
   filter,
   finalize,
   map,
@@ -88,6 +98,10 @@ import { TaskDetail } from '../../interfaces/task-detail.interface';
 import { TaskParentRef } from '../../interfaces/task-parent-ref.interface';
 import { ApiTaskService } from '../../services/api-task.service';
 import { TaskMemberSelectComponent } from '../task-member-select/task-member-select.component';
+import { TaskPriorityBadgeComponent } from '../task-priority-badge/task-priority-badge.component';
+import { TaskStatusBadgeComponent } from '../task-status-badge/task-status-badge.component';
+
+type CreateTaskFormValue = ReturnType<FormGroup<CreateTaskForm>['getRawValue']>;
 
 const MAX_TITLE_LENGTH = 100;
 const MAX_DESCRIPTION_LENGTH = 5000;
@@ -125,6 +139,8 @@ const SERVER_ERROR_FIELD_MAP: Readonly<Record<string, string>> = {
     MarkdownEditorComponent,
     ReactiveFormsModule,
     TaskMemberSelectComponent,
+    TaskPriorityBadgeComponent,
+    TaskStatusBadgeComponent,
     TitleCasePipe,
     TuiAutoFocus,
     TuiButton,
@@ -155,6 +171,8 @@ export class CreateTaskDialogComponent {
       TuiDialogContext<TaskDetail | null, CreateTaskDialogContextData>
     >();
   private readonly document = inject(DOCUMENT);
+  private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly injector = inject(Injector);
   private readonly apiTaskService = inject(ApiTaskService);
   private readonly apiTagService = inject(ApiTagService);
   private readonly projectStore = inject(ProjectStore);
@@ -167,19 +185,17 @@ export class CreateTaskDialogComponent {
   private readonly notificationService = inject(NotificationService);
   private readonly destroyRef = inject(DestroyRef);
 
-  private readonly titleInput =
-    viewChild<ElementRef<HTMLInputElement>>('titleInput');
-  private readonly parentInput =
-    viewChild<ElementRef<HTMLInputElement>>('parentInput');
-
   private readonly parentSearch$$ = new Subject<string>();
-  private initialSnapshot = '';
+  private readonly canCreateTag = computed(() =>
+    this.permissionStore.hasPermission(ProjectPermission.TAG_CREATE)
+  );
+  private initialValue: CreateTaskFormValue;
 
   protected readonly taskTypes = TASK_TYPES;
   protected readonly priorities = PRIORITIES;
   protected readonly memberFields = MEMBER_FIELDS;
 
-  protected readonly isLoading = signal(false);
+  protected readonly isLoading = this.context.data.isLoading;
   protected readonly isCreatingTag = signal(false);
 
   protected readonly members = this.memberStore.entities;
@@ -281,33 +297,41 @@ export class CreateTaskDialogComponent {
       ? { userId: user.id, name: user.name, username: user.username }
       : null;
   });
-  protected readonly canCreateTag = computed(() =>
-    this.permissionStore.hasPermission(ProjectPermission.TAG_CREATE)
-  );
 
   constructor() {
-    this.initialSnapshot = JSON.stringify(this.form.getRawValue());
+    this.initialValue = this.form.getRawValue();
 
-    effect(() => {
-      const defaultStatus = this.resolveDefaultStatus();
+    toObservable(this.availableStatuses)
+      .pipe(
+        filter((statuses) => statuses.length > 0),
+        take(1),
+        tap(() => {
+          const defaultStatus = this.resolveDefaultStatus();
 
-      if (this.form.controls.status.value || !defaultStatus) {
-        return;
-      }
+          if (!defaultStatus || this.initialValue.status !== null) {
+            return;
+          }
 
-      this.form.controls.status.setValue(defaultStatus, { emitEvent: false });
+          this.initialValue = { ...this.initialValue, status: defaultStatus };
 
-      if (!this.context.data.isDirty()) {
-        this.initialSnapshot = JSON.stringify(this.form.getRawValue());
-      }
-    });
+          if (this.form.controls.status.value === null) {
+            this.form.controls.status.setValue(defaultStatus);
+          } else {
+            this.context.data.isDirty.set(this.isFormDirty());
+          }
+        }),
+        takeUntilDestroyed()
+      )
+      .subscribe();
 
-    effect(() => {
-      this.formValue();
-      this.context.data.isDirty.set(
-        JSON.stringify(this.form.getRawValue()) !== this.initialSnapshot
-      );
-    });
+    this.form.valueChanges
+      .pipe(
+        tap(() => {
+          this.context.data.isDirty.set(this.isFormDirty());
+        }),
+        takeUntilDestroyed()
+      )
+      .subscribe();
   }
 
   protected readonly matchById: TuiIdentityMatcher<{ id: string }> = (
@@ -331,6 +355,7 @@ export class CreateTaskDialogComponent {
     // dismissible: false блокирует и клик вне окна, и Esc — обрабатываем Esc сами
     if (
       event.defaultPrevented ||
+      this.isLoading() ||
       this.document.querySelector('tui-dropdown, tui-dialog ~ tui-dialog')
     ) {
       return;
@@ -341,6 +366,10 @@ export class CreateTaskDialogComponent {
   }
 
   protected onTypeIndexChange(index: number): void {
+    if (this.isLoading()) {
+      return;
+    }
+
     const nextType = TASK_TYPES[index] ?? TaskType.TASK;
 
     if (this.form.controls.type.value === nextType) {
@@ -392,6 +421,37 @@ export class CreateTaskDialogComponent {
     this.parentSearch$$.next(query);
   }
 
+  protected onMemberChange(
+    controlName: 'assignee' | 'reviewer',
+    user: UserRef | null
+  ): void {
+    this.form.controls[controlName].setValue(user);
+  }
+
+  protected onTagsInput(): void {
+    if (this.form.controls.tags.errors) {
+      this.form.controls.tags.setErrors(null);
+    }
+  }
+
+  protected getCreatableTagName(rawName: string): string | null {
+    if (!this.canCreateTag()) {
+      return null;
+    }
+
+    const name = rawName.trim();
+
+    if (!name) {
+      return null;
+    }
+
+    const hasTag = this.tags().some(
+      (tag) => tag.name.toLowerCase() === name.toLowerCase()
+    );
+
+    return hasTag ? null : name;
+  }
+
   protected onCreateTag(
     rawName: string,
     tagsField: TuiTextfieldMultiComponent<Tag>
@@ -431,9 +491,6 @@ export class CreateTaskDialogComponent {
     this.apiTagService
       .createTag(projectId, { name })
       .pipe(
-        finalize(() => {
-          this.isCreatingTag.set(false);
-        }),
         tap({
           next: (createdTag) => {
             this.tagStore.addTag(createdTag);
@@ -452,12 +509,20 @@ export class CreateTaskDialogComponent {
             this.showFallbackError(error);
           },
         }),
+        catchError(() => EMPTY),
+        finalize(() => {
+          this.isCreatingTag.set(false);
+        }),
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe();
   }
 
   protected onCancelClick(): void {
+    if (this.isLoading()) {
+      return;
+    }
+
     this.context.data.canClose$
       .pipe(
         take(1),
@@ -492,13 +557,6 @@ export class CreateTaskDialogComponent {
     this.apiTaskService
       .createTask(projectId, payload)
       .pipe(
-        finalize(() => {
-          this.isLoading.set(false);
-
-          if (this.form.disabled) {
-            this.form.enable({ emitEvent: false });
-          }
-        }),
         tap({
           next: (createdTask) => {
             this.context.data.isDirty.set(false);
@@ -508,6 +566,7 @@ export class CreateTaskDialogComponent {
             this.context.completeWith(createdTask);
           },
           error: (error: unknown) => {
+            this.isLoading.set(false);
             this.form.enable({ emitEvent: false });
 
             const isApplied = applyFormServerError(this.form, error, {
@@ -515,6 +574,13 @@ export class CreateTaskDialogComponent {
             });
 
             if (isApplied) {
+              afterNextRender(
+                () => {
+                  this.focusFirstInvalidField();
+                },
+                { injector: this.injector }
+              );
+
               return;
             }
 
@@ -526,9 +592,44 @@ export class CreateTaskDialogComponent {
             }
           },
         }),
+        catchError(() => EMPTY),
+        finalize(() => {
+          this.isLoading.set(false);
+
+          if (this.form.disabled) {
+            this.form.enable({ emitEvent: false });
+          }
+        }),
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe();
+  }
+
+  private isFormDirty(): boolean {
+    const current = this.form.getRawValue();
+    const initial = this.initialValue;
+
+    return (
+      current.type !== initial.type ||
+      current.title !== initial.title ||
+      current.description !== initial.description ||
+      current.parent?.id !== initial.parent?.id ||
+      current.status?.id !== initial.status?.id ||
+      current.priority !== initial.priority ||
+      current.assignee?.userId !== initial.assignee?.userId ||
+      current.reviewer?.userId !== initial.reviewer?.userId ||
+      current.subsystem?.id !== initial.subsystem?.id ||
+      current.dueDate?.toJSON() !== initial.dueDate?.toJSON() ||
+      current.estimate !== initial.estimate ||
+      !this.hasSameTags(current.tags, initial.tags)
+    );
+  }
+
+  private hasSameTags(first: readonly Tag[], second: readonly Tag[]): boolean {
+    return (
+      first.length === second.length &&
+      first.every((tag, index) => tag.id === second[index]?.id)
+    );
   }
 
   private resolveDefaultStatus(): Status | null {
@@ -566,15 +667,23 @@ export class CreateTaskDialogComponent {
   }
 
   private focusFirstInvalidField(): void {
-    if (this.form.controls.title.invalid) {
-      this.titleInput()?.nativeElement.focus();
+    const invalidControl =
+      this.elementRef.nativeElement.querySelector<HTMLElement>(
+        'input.ng-invalid, app-markdown-editor.ng-invalid, app-task-member-select.ng-invalid input'
+      );
 
+    if (!invalidControl) {
       return;
     }
 
-    if (this.form.controls.parent.invalid) {
-      this.parentInput()?.nativeElement.focus();
-    }
+    const focusTarget =
+      invalidControl.tagName === 'INPUT'
+        ? invalidControl
+        : (invalidControl.querySelector<HTMLElement>(
+            ':not([hidden]) > tui-editor [contenteditable="true"]'
+          ) ?? invalidControl.querySelector<HTMLElement>('button'));
+
+    focusTarget?.focus();
   }
 
   private clearTagInput(tagsField: TuiTextfieldMultiComponent<Tag>): void {
