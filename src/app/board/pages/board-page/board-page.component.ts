@@ -7,13 +7,20 @@ import {
 import { TuiLoader, TuiScrollControls, TuiScrollRef } from '@taiga-ui/core';
 
 import { BoardCardsStore } from '../../+store/board-cards.store';
+import { BoardCardComponent } from '../../components/board-card/board-card.component';
 import { BoardColumnComponent } from '../../components/board-column/board-column.component';
 import { Board } from '../../interfaces/board.interface';
 
 @Component({
   templateUrl: './board-page.component.html',
   styleUrl: './board-page.component.scss',
-  imports: [BoardColumnComponent, TuiLoader, TuiScrollControls, TuiScrollRef],
+  imports: [
+    BoardCardComponent,
+    BoardColumnComponent,
+    TuiLoader,
+    TuiScrollControls,
+    TuiScrollRef,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [BoardCardsStore],
 })
