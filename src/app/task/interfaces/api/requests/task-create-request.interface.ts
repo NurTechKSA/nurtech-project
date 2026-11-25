@@ -1,6 +1,6 @@
 import { UserRef } from '@core/user/interfaces/user-ref.interface';
-import { Status } from '@status/interfaces/status.interface';
 
+import { Status } from '../../../../dictionary/interfaces/status.interface';
 import { Priority } from '../../../enums/priority.enum';
 import { TaskType } from '../../../enums/task-type.enum';
 import { IdName } from '../../id-name.interface';

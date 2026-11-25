@@ -15,7 +15,7 @@ import {
   withEntities,
 } from '@ngrx/signals/entities';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { filter, pipe, switchMap, tap } from 'rxjs';
+import { filter, map, pipe, switchMap, tap } from 'rxjs';
 
 import { Project } from '@core/project/interfaces/project.interface';
 import { UserStore } from '@core/user/+store/user.store';
@@ -29,10 +29,12 @@ import { ApiStatusService } from '../services/api-status.service';
 
 interface StatusState {
   projectId: Project['id'] | null;
+  resetCount: number;
 }
 
 const initialState: StatusState = {
   projectId: null,
+  resetCount: 0,
 };
 
 const statusConfig = entityConfig({
@@ -65,8 +67,20 @@ export const StatusStore = signalStore(
             setLoading()
           );
         }),
-        switchMap((projectId) => apiStatusService.getStatuses(projectId)),
-        tap((statuses) => {
+        map((projectId) => ({
+          projectId,
+          resetCount: store.resetCount(),
+        })),
+        switchMap(({ projectId, resetCount }) =>
+          apiStatusService.getStatuses(projectId).pipe(
+            map((statuses) => ({ statuses, resetCount }))
+          )
+        ),
+        tap(({ statuses, resetCount }) => {
+          if (resetCount !== store.resetCount()) {
+            return;
+          }
+
           updateState(
             store,
             '[StatusStore] loadStatusesSuccess',
@@ -81,7 +95,10 @@ export const StatusStore = signalStore(
       updateState(
         store,
         '[StatusStore] reset',
-        initialState,
+        {
+          projectId: null,
+          resetCount: store.resetCount() + 1,
+        },
         removeAllEntities(),
         { status: LoadingStatus.INIT }
       );

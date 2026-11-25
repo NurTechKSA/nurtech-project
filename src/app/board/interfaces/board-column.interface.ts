@@ -1,6 +1,5 @@
-import { Status } from '@status/interfaces/status.interface';
-
 import { BoardCard } from './board-card.interface';
+import { Status } from '../../dictionary/interfaces/status.interface';
 
 export interface BoardColumn {
   statusId: Status['id'];
