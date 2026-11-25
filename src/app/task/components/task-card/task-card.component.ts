@@ -4,7 +4,6 @@ import {
   effect,
   inject,
   input,
-  output,
 } from '@angular/core';
 import { TuiLoader, TuiTitle } from '@taiga-ui/core';
 import { TuiCardLarge } from '@taiga-ui/layout';
@@ -48,10 +47,10 @@ export class TaskCardComponent {
   private readonly taskStore = inject(TaskStore);
 
   readonly taskKey = input<TaskDetail['key']>();
-  readonly taskNotFound = output();
 
   readonly task = this.taskStore.task;
   readonly isLoading = this.taskStore.isLoading;
+
   readonly taskType = TaskType;
   readonly linkLabels = LINK_LABELS;
 
@@ -61,12 +60,6 @@ export class TaskCardComponent {
 
       if (key) {
         this.taskStore.loadTask(key);
-      }
-    });
-
-    effect(() => {
-      if (this.taskStore.isNotFound()) {
-        this.taskNotFound.emit();
       }
     });
   }

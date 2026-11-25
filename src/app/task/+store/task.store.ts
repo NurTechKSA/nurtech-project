@@ -1,10 +1,12 @@
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { updateState, withDevtools } from '@angular-architects/ngrx-toolkit';
 import { signalStore, withMethods, withProps, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { catchError, EMPTY, pipe, switchMap, tap, throwError } from 'rxjs';
+import { catchError, filter, pipe, switchMap, tap, throwError } from 'rxjs';
 
+import { AppPath } from '@core/enums/app-path.enum';
 import { ProjectStore } from '@core/project/+store/project.store';
 import { catchEffectError } from '@shared/store/catch-effect-error.operator';
 import { setLoaded, setLoading } from '@shared/store/status-update.util';
@@ -15,14 +17,10 @@ import { ApiTaskService } from '../services/api-task.service';
 
 interface TaskState {
   task: TaskDetail | null;
-  isNotFound: boolean;
 }
-
-const NOT_FOUND_STATUS = 404;
 
 const initialState: TaskState = {
   task: null,
-  isNotFound: false,
 };
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -31,12 +29,14 @@ export const TaskStore = signalStore(
   withLoadingStatus(),
   withState(initialState),
   withProps(() => ({
+    router: inject(Router),
     apiTaskService: inject(ApiTaskService),
     projectStore: inject(ProjectStore),
   })),
-  withMethods(({ apiTaskService, projectStore, ...store }) => ({
+  withMethods(({ apiTaskService, projectStore, router, ...store }) => ({
     loadTask: rxMethod<TaskDetail['key']>(
       pipe(
+        filter(() => Boolean(projectStore.currentProjectId())),
         tap(() => {
           updateState(
             store,
@@ -45,28 +45,23 @@ export const TaskStore = signalStore(
             setLoading()
           );
         }),
-        switchMap((key) => {
-          const projectId = projectStore.currentProjectId();
+        switchMap((key) =>
+          apiTaskService
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            .getTaskByKey(projectStore.currentProjectId()!, key)
+            .pipe(
+              catchError((error: HttpErrorResponse) => {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+                if (error.status === HttpStatusCode.NotFound) {
+                  void router.navigate(['/', AppPath.NOT_FOUND], {
+                    replaceUrl: true,
+                  });
+                }
 
-          if (!projectId) {
-            return EMPTY;
-          }
-
-          return apiTaskService.getTaskByKey(projectId, key).pipe(
-            catchError((error: unknown) => {
-              if (
-                error instanceof HttpErrorResponse &&
-                error.status === NOT_FOUND_STATUS
-              ) {
-                updateState(store, '[TaskStore] loadTaskNotFound', {
-                  isNotFound: true,
-                });
-              }
-
-              return throwError(() => error);
-            })
-          );
-        }),
+                return throwError(() => error);
+              })
+            )
+        ),
         tap((task) => {
           updateState(
             store,
@@ -78,12 +73,5 @@ export const TaskStore = signalStore(
         catchEffectError({ store, methodName: '[TaskStore] loadTask' })
       )
     ),
-    setTask: (task: TaskDetail): void => {
-      if (store.task()?.id !== task.id) {
-        return;
-      }
-
-      updateState(store, '[TaskStore] setTask', { task });
-    },
   }))
 );
