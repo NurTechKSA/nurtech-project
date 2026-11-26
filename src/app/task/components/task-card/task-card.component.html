@@ -41,7 +41,9 @@
             <h2 class="task-card__section-title" tuiTitle>Описание</h2>
 
             @if (task.description?.trim()) {
-              <app-markdown-viewer [markdown]="task.description!" />
+              <app-markdown-viewer
+                class="task-card__description-text"
+                [markdown]="task.description!" />
             } @else {
               <button
                 type="button"
