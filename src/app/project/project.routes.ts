@@ -12,6 +12,7 @@ import { BoardStore } from '../board/+store/board.store';
 import { boardRoutes } from '../board/board.routes';
 import { MemberStore } from '../dictionary/+store/member.store';
 import { ProjectStatusesStore } from '../status/+store/project-statuses.store';
+import { taskRoutes } from '../task/task.routes';
 
 const loadProjectData: ResolveFn<void> = (route) => {
   const projectKey = route.paramMap.get(RouteParam.PROJECT_KEY) ?? '';
@@ -53,12 +54,12 @@ export const projectRoutes: Routes = [
           ),
         children: [
           ...boardRoutes,
+          ...taskRoutes,
           {
             path: '',
             pathMatch: 'full',
             redirectTo: AppPath.PROJECT_DATA,
           },
-          // TODO: задача `tasks/:taskKey`
           {
             // TODO: временные данные
             path: AppPath.PROJECT_DATA,
