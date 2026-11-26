@@ -8,8 +8,13 @@ import { TuiTabs } from '@taiga-ui/kit';
 
 import { DurationPipe } from '@shared/pipes/duration.pipe';
 
-import { TaskCardTab } from './enums/task-card-tab.enum';
 import { TaskDetail } from '../../../../interfaces/task-detail.interface';
+
+enum TaskCardTab {
+  COMMENTS = 0,
+  WORKLOGS = 1,
+  HISTORY = 2,
+}
 
 @Component({
   selector: 'app-task-card-activity',
@@ -19,6 +24,6 @@ import { TaskDetail } from '../../../../interfaces/task-detail.interface';
 })
 export class TaskCardActivityComponent {
   readonly task = input.required<TaskDetail>();
-  readonly activeTab = signal<TaskCardTab>(TaskCardTab.COMMENTS);
+  readonly activeTab = signal(TaskCardTab.COMMENTS);
   readonly tab = TaskCardTab;
 }
