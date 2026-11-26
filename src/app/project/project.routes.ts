@@ -10,6 +10,7 @@ import { projectsGuard } from '@core/project/guards/projects.guard';
 
 import { BoardStore } from '../board/+store/board.store';
 import { boardRoutes } from '../board/board.routes';
+import { lastBoardGuard } from '../board/guards/last-board.guard';
 import { MemberStore } from '../dictionary/+store/member.store';
 import { ProjectStatusesStore } from '../status/+store/project-statuses.store';
 import { taskRoutes } from '../task/task.routes';
@@ -58,17 +59,8 @@ export const projectRoutes: Routes = [
           {
             path: '',
             pathMatch: 'full',
-            redirectTo: AppPath.PROJECT_DATA,
-          },
-          {
-            // TODO: временные данные
-            path: AppPath.PROJECT_DATA,
-            title: 'Данные API',
-            loadComponent: () =>
-              // eslint-disable-next-line import-x/no-restricted-paths
-              import('../../temp/project-data/pages/project-data-page/project-data-page.component').then(
-                (m) => m.ProjectDataPageComponent
-              ),
+            canActivate: [lastBoardGuard],
+            children: [],
           },
         ],
       },
