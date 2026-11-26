@@ -1,0 +1,80 @@
+:host {
+  display: block;
+  min-inline-size: 0;
+}
+
+.board-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.5rem;
+  padding: 0.625rem 0.75rem;
+  color: var(--tui-text-primary);
+  background: var(--tui-background-base);
+  border: 1px solid var(--tui-border-normal);
+  border-radius: var(--tui-radius-l);
+
+  &__header,
+  &__footer {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  &__header {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+
+  &__identity {
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
+    min-inline-size: 0;
+  }
+
+  &__key {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font: var(--tui-typography-body-xs);
+    font-weight: 600;
+    color: var(--tui-text-secondary);
+    white-space: nowrap;
+  }
+
+  &__title {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 3;
+    font: var(--tui-typography-body-s);
+    font-weight: 700;
+    overflow-wrap: anywhere;
+    -webkit-box-orient: vertical;
+  }
+
+  &__details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-inline-size: 0;
+  }
+
+  &__badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    align-items: center;
+  }
+
+  &__footer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--tui-height-s);
+    gap: 0.5rem;
+    align-items: center;
+    min-block-size: var(--tui-height-s);
+    overflow-wrap: anywhere;
+  }
+
+  &__due-date {
+    min-inline-size: 0;
+  }
+}

@@ -1,0 +1,52 @@
+@let value = task();
+
+<dl class="fields">
+  <dt class="fields__label">Статус</dt>
+  <dd class="fields__value">
+    <app-task-status-badge [status]="value.status" />
+  </dd>
+
+  <dt class="fields__label">Приоритет</dt>
+  <dd class="fields__value fields__priority">
+    <app-priority-badge [priority]="value.priority" />
+    <span>{{ value.priority | titlecase }}</span>
+  </dd>
+
+  <dt class="fields__label">Тип</dt>
+  <dd class="fields__value">{{ value.type | titlecase }}</dd>
+
+  <dt class="fields__label">Направление</dt>
+  <dd class="fields__value">{{ value.subsystem?.name || 'Не задано' }}</dd>
+
+  <dt class="fields__label">Исполнитель</dt>
+  <dd class="fields__value">{{ value.assignee?.name || 'Не назначен' }}</dd>
+
+  <dt class="fields__label">Ревьюер</dt>
+  <dd class="fields__value">{{ value.reviewer?.name || 'Не назначен' }}</dd>
+
+  <dt class="fields__label">К дате</dt>
+  <dd class="fields__value">
+    {{ (value.dueDate | date: 'dd.MM.yyyy') || 'Не задана' }}
+  </dd>
+
+  <dt class="fields__label">Оценка</dt>
+  <dd class="fields__value">{{ value.estimateMinutes | duration }}</dd>
+
+  <dt class="fields__label">Затрачено</dt>
+  <dd class="fields__value">{{ value.spentMinutes | duration }}</dd>
+
+  @if (value.subtasks.length) {
+    <dt class="fields__label">Оценка подзадач</dt>
+    <dd class="fields__value">
+      {{ value.subtasksEstimateMinutes | duration }}
+    </dd>
+
+    <dt class="fields__label">Время подзадач</dt>
+    <dd class="fields__value">{{ value.subtasksSpentMinutes | duration }}</dd>
+  }
+
+  @if (value.parent; as parent) {
+    <dt class="fields__label">Родитель</dt>
+    <dd class="fields__value"><app-task-key [key]="parent.key" /></dd>
+  }
+</dl>

@@ -1,0 +1,83 @@
+:host {
+  display: block;
+}
+
+.task-card__loader {
+  min-block-size: 16rem;
+}
+
+.task-card {
+  gap: 1.5rem;
+  overflow-wrap: anywhere;
+}
+
+.task-card__heading {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.task-card__actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-inline-start: auto;
+}
+
+.task-card__meta {
+  color: var(--tui-text-secondary);
+}
+
+.task-card__title {
+  font: var(--tui-typography-heading-h4);
+}
+
+.task-card__section-title {
+  font: var(--tui-typography-body-l);
+  font-weight: bold;
+}
+
+.task-card__columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(16rem, 20rem);
+  gap: 2rem;
+}
+
+.task-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  min-inline-size: 0;
+}
+
+.task-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-block-start: 0.75rem;
+}
+
+.task-card__description-text {
+  white-space: pre-wrap;
+}
+
+.task-card__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0;
+  list-style: none;
+}
+
+.task-card__list-item {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: baseline;
+}
+
+.task-card__fields {
+  padding: 1.25rem;
+  background: var(--tui-background-base-alt);
+  border-radius: var(--tui-radius-l);
+}
