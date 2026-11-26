@@ -15,7 +15,11 @@
 <ng-template #dropdownContent>
   <tui-data-list size="s">
     @for (status of statuses(); track status.id) {
-      <button tuiOption type="button" (click)="selectStatus(status)">
+      <button
+        tuiOption
+        type="button"
+        [attr.aria-selected]="status.id === value().id"
+        (click)="selectStatus(status)">
         <app-task-status-badge [status]="status" />
         @if (status.id === value().id) {
           <tui-icon class="check-icon" icon="@tui.check" />
