@@ -57,8 +57,20 @@
   margin-block-start: 0.75rem;
 }
 
-.task-card__description-text {
-  white-space: pre-wrap;
+.task-card__description-placeholder {
+  color: var(--tui-text-secondary);
+}
+
+.task-card__description-placeholder_editable {
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  background: none;
+  border: none;
+
+  &:hover {
+    color: var(--tui-text-primary);
+  }
 }
 
 .task-card__list {

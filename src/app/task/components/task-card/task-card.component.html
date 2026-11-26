@@ -39,9 +39,26 @@
 
           <section class="task-card__description">
             <h2 class="task-card__section-title" tuiTitle>Описание</h2>
-            <p class="task-card__description-text">
-              {{ task.description || 'Описание не задано' }}
-            </p>
+
+            @if (task.description?.trim()) {
+              <app-markdown-viewer [markdown]="task.description!" />
+            } @else {
+              <button
+                type="button"
+                class="task-card__description-placeholder task-card__description-placeholder_editable"
+                *appRestrictByPermission="
+                  permission.TASK_UPDATE;
+                  else readonlyDescription
+                ">
+                Добавьте описание
+              </button>
+
+              <ng-template #readonlyDescription>
+                <p class="task-card__description-placeholder">
+                  Добавьте описание
+                </p>
+              </ng-template>
+            }
           </section>
 
           @if (task.type !== taskType.SUBTASK) {
