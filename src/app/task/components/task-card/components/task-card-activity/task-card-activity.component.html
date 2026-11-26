@@ -1,0 +1,27 @@
+<tui-tabs aria-label="Активность задачи" [(activeItemIndex)]="activeTab">
+  <button tuiTab type="button">Комментарии · {{ task().commentCount }}</button>
+  <button tuiTab type="button">Время</button>
+  <button tuiTab type="button">История</button>
+</tui-tabs>
+
+@switch (activeTab()) {
+  @case (tab.COMMENTS) {
+    <section aria-label="Комментарии">
+      <p>Всего комментариев: {{ task().commentCount }}.</p>
+      <p>Лента комментариев будет доступна здесь.</p>
+    </section>
+  }
+
+  @case (tab.WORKLOGS) {
+    <section aria-label="Время">
+      <p>Всего затрачено: {{ task().spentMinutes | duration }}.</p>
+      <p>Списания времени будут доступны здесь.</p>
+    </section>
+  }
+
+  @case (tab.HISTORY) {
+    <section aria-label="История">
+      <p>История изменений будет доступна здесь.</p>
+    </section>
+  }
+}
