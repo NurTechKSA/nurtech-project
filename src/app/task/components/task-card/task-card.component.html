@@ -44,28 +44,11 @@
             </p>
           </section>
 
-          @if (task.type !== taskType.SUBTASK) {
-            <section class="task-card__subtasks">
-              <h2 class="task-card__section-title" tuiTitle>
-                Подзадачи · {{ task.subtasks.length }}
-              </h2>
-
-              <ul class="task-card__list">
-                @for (subtask of task.subtasks; track subtask.id) {
-                  <li class="task-card__list-item">
-                    <app-task-key [key]="subtask.key" />
-                    <span>{{ subtask.title }}</span>
-                    <span class="task-card__meta">{{
-                      subtask.status.name
-                    }}</span>
-                  </li>
-                } @empty {
-                  <li class="task-card__list-item task-card__meta">
-                    Подзадач нет
-                  </li>
-                }
-              </ul>
-            </section>
+          @if (
+            task.type !== taskType.SUBTASK &&
+            (task.subtasks.length || canCreateSubtask())
+          ) {
+            <app-task-subtask-list [subtasks]="task.subtasks" />
           }
 
           <section class="task-card__links">

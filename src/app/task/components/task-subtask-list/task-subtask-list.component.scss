@@ -1,0 +1,59 @@
+:host {
+  display: block;
+}
+
+.subtasks-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.subtasks-title {
+  font: var(--tui-typography-body-l);
+  font-weight: bold;
+}
+
+.subtasks-counter {
+  font: var(--tui-typography-body-s);
+  color: var(--tui-text-secondary);
+}
+
+.subtasks-progress {
+  inline-size: 96px;
+  margin-inline-start: auto;
+}
+
+.subtasks-list {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 12px 0 0;
+  list-style: none;
+}
+
+.subtasks-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto minmax(96px, auto);
+  gap: 12px;
+  align-items: center;
+  padding-block: 10px;
+  border-block-start: 1px solid var(--tui-border-normal);
+}
+
+.subtasks-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.subtasks-assignee {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.subtasks-unassigned {
+  font: var(--tui-typography-body-s);
+  color: var(--tui-text-secondary);
+  white-space: nowrap;
+}
