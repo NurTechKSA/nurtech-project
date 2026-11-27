@@ -1,8 +1,5 @@
 <button
-  tuiIconButton
   type="button"
-  iconStart="@tui.copy"
+  [attr.aria-label]="label()"
   [tuiButtonCopy]="text()"
-  [tuiHint]="label()">
-  {{ label() }}
-</button>
+  [tuiHint]="label()"></button>
