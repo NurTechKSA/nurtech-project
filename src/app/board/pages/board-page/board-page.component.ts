@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   input,
 } from '@angular/core';
@@ -37,6 +38,6 @@ export class BoardPageComponent {
 
   constructor() {
     this.boardCardsStore.loadBoardCards(this.boardId);
-    this.projectStore.rememberBoard(this.boardId);
+    this.projectStore.rememberBoard(computed(() => this.board()?.id));
   }
 }

@@ -109,10 +109,10 @@ export const ProjectStore = signalStore(
         permissionStore.loadPermissions(projectId);
       }
     }),
-    rememberBoard: signalMethod<string>((boardId) => {
+    rememberBoard: signalMethod<string | undefined>((boardId) => {
       const projectKey = store.currentProjectKey();
 
-      if (projectKey) {
+      if (projectKey && boardId) {
         updateState(store, '[ProjectStore] rememberBoard', {
           lastBoardIds: { ...store.lastBoardIds(), [projectKey]: boardId },
         });
