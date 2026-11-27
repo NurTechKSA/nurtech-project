@@ -37,7 +37,9 @@
 
   <footer class="board-card__footer">
     <div class="board-card__due-date">
-      <!-- TODO: подключить компонент срока из #300 -->
+      <app-task-due-date
+        [dueDate]="value.dueDate"
+        [isOverdue]="value.isOverdue" />
     </div>
 
     @if (value.assignee; as assignee) {

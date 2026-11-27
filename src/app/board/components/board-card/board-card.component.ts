@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { UserAvatarComponent } from '@shared/components/user-avatar/user-avatar.component';
 
 import { BlockedTaskBadgeComponent } from '../../../task/components/task-blocked-badge/blocked-task-badge.component';
+import { TaskDueDateComponent } from '../../../task/components/task-due-date/task-due-date.component';
 import { TaskKeyComponent } from '../../../task/components/task-key/task-key.component';
 import { ParentTaskKeyBadgeComponent } from '../../../task/components/task-parent-key-badge/parent-task-key-badge.component';
 import { TaskPriorityBadgeComponent } from '../../../task/components/task-priority-badge/task-priority-badge.component';
@@ -17,6 +18,7 @@ const MAX_VISIBLE_TAGS = 2;
   imports: [
     BlockedTaskBadgeComponent,
     ParentTaskKeyBadgeComponent,
+    TaskDueDateComponent,
     TaskKeyComponent,
     TaskPriorityBadgeComponent,
     TaskTagsComponent,
