@@ -1,0 +1,111 @@
+:host {
+  display: block;
+  flex: none;
+  min-inline-size: 0;
+}
+
+.board-toolbar {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem 1.25rem;
+  background: var(--tui-background-base-alt);
+}
+
+.board-toolbar__main {
+  display: grid;
+  grid-template-columns: minmax(0, 12rem) minmax(0, 19rem) minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.board-toolbar__board-placeholder,
+.board-toolbar__search-placeholder,
+.board-toolbar__filter-placeholder {
+  display: flex;
+  align-items: center;
+  background: var(--tui-background-base);
+  border: 1px solid var(--tui-border-normal);
+}
+
+.board-toolbar__board-placeholder,
+.board-toolbar__search-placeholder {
+  gap: 0.5rem;
+  min-block-size: 2.75rem;
+  padding-inline: 1rem;
+  border-radius: 0.75rem;
+}
+
+.board-toolbar__board-placeholder {
+  justify-content: space-between;
+  font-weight: 700;
+}
+
+.board-toolbar__board-placeholder tui-icon,
+.board-toolbar__search-placeholder tui-icon {
+  flex: none;
+  font-size: 1rem;
+}
+
+.board-toolbar__search-placeholder {
+  color: var(--tui-text-secondary);
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.board-toolbar__create-placeholder {
+  justify-self: end;
+  padding: 0.625rem 1.125rem;
+  font-weight: 700;
+  color: var(--tui-text-primary-on-accent-1);
+  white-space: nowrap;
+  background: var(--tui-background-accent-1);
+  border-radius: 1.25rem;
+}
+
+.board-toolbar__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.board-toolbar__filter-placeholder {
+  gap: 0.75rem;
+  justify-content: space-between;
+  min-block-size: 2.25rem;
+  padding-inline: 0.875rem;
+  border-radius: 1.125rem;
+
+  &::after {
+    inline-size: 0.375rem;
+    block-size: 0.375rem;
+    content: '';
+    border-block-end: 1px solid currentcolor;
+    border-inline-end: 1px solid currentcolor;
+    transform: translateY(-0.125rem) rotate(45deg);
+  }
+}
+
+.board-toolbar__reset-placeholder {
+  padding-inline: 0.5rem;
+  color: var(--tui-text-secondary);
+}
+
+@media (width <= 40rem) {
+  .board-toolbar {
+    padding-inline: 0.75rem;
+  }
+
+  .board-toolbar__main {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .board-toolbar__search-placeholder {
+    grid-row: 2;
+    grid-column: 1 / -1;
+  }
+}
