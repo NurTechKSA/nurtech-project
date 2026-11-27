@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { TuiIcon } from '@taiga-ui/core';
+
+import { Board } from '../../interfaces/board.interface';
 
 @Component({
   selector: 'app-board-toolbar',
@@ -8,5 +10,6 @@ import { TuiIcon } from '@taiga-ui/core';
   styleUrl: './board-toolbar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-// eslint-disable-next-line @typescript-eslint/no-extraneous-class
-export class BoardToolbarComponent {}
+export class BoardToolbarComponent {
+  readonly boardName = input<Board['name'] | null>();
+}

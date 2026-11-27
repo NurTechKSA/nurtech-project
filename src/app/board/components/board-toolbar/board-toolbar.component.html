@@ -1,7 +1,7 @@
 <section class="board-toolbar" aria-label="Панель доски">
   <div class="board-toolbar__main">
     <div class="board-toolbar__board-placeholder">
-      <span>Разработка</span>
+      <span>{{ boardName() ?? 'Доска' }}</span>
       <tui-icon icon="@tui.chevron-down" aria-hidden="true" />
     </div>
 
