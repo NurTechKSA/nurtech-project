@@ -1,0 +1,25 @@
+<section class="board-toolbar" aria-label="Панель доски">
+  <div class="board-toolbar__main">
+    <div class="board-toolbar__board-placeholder">
+      <span>{{ boardName() ?? 'Доска' }}</span>
+      <tui-icon icon="@tui.chevron-down" aria-hidden="true" />
+    </div>
+
+    <div class="board-toolbar__search-placeholder">
+      <tui-icon icon="@tui.search" aria-hidden="true" />
+      <span>Поиск по названию или ключу</span>
+    </div>
+
+    <span class="board-toolbar__create-placeholder">+ Задача</span>
+  </div>
+
+  <div class="board-toolbar__filters" aria-label="Место для фильтров доски">
+    <span class="board-toolbar__filter-placeholder">Исполнитель</span>
+    <span class="board-toolbar__filter-placeholder">Ревьюер</span>
+    <span class="board-toolbar__filter-placeholder">Приоритет</span>
+    <span class="board-toolbar__filter-placeholder">Тип</span>
+    <span class="board-toolbar__filter-placeholder">Направление</span>
+    <span class="board-toolbar__filter-placeholder">Теги</span>
+    <span class="board-toolbar__reset-placeholder" aria-hidden="true"></span>
+  </div>
+</section>

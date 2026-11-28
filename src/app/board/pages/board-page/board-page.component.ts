@@ -9,6 +9,7 @@ import { TuiLoader, TuiScrollControls, TuiScrollRef } from '@taiga-ui/core';
 import { BoardCardsStore } from '../../+store/board-cards.store';
 import { BoardCardComponent } from '../../components/board-card/board-card.component';
 import { BoardColumnComponent } from '../../components/board-column/board-column.component';
+import { BoardToolbarComponent } from '../../components/board-toolbar/board-toolbar.component';
 import { Board } from '../../interfaces/board.interface';
 
 @Component({
@@ -17,6 +18,7 @@ import { Board } from '../../interfaces/board.interface';
   imports: [
     BoardCardComponent,
     BoardColumnComponent,
+    BoardToolbarComponent,
     TuiLoader,
     TuiScrollControls,
     TuiScrollRef,
