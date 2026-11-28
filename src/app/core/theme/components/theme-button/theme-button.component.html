@@ -1,0 +1,10 @@
+<button
+  class="theme-button"
+  type="button"
+  tuiIconButton
+  size="s"
+  appearance="secondary"
+  [iconStart]="darkMode() ? 'sun' : 'moon'"
+  (click)="onThemeButtonClick()">
+  {{ darkMode() ? 'Включить светлую тему' : 'Включить тёмную тему' }}
+</button>
