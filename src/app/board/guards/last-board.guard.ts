@@ -32,6 +32,6 @@ export const lastBoardGuard: CanActivateFn = (route) => {
             ])
           : true;
       }),
-      catchError(() => of(true))
+      catchError(() => of(false))
     );
 };
