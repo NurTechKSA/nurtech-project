@@ -1,10 +1,13 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   input,
 } from '@angular/core';
 import { TuiLoader, TuiScrollControls, TuiScrollRef } from '@taiga-ui/core';
+
+import { ProjectStore } from '@core/project/+store/project.store';
 
 import { BoardCardsStore } from '../../+store/board-cards.store';
 import { BoardCardComponent } from '../../components/board-card/board-card.component';
@@ -26,6 +29,7 @@ import { Board } from '../../interfaces/board.interface';
 })
 export class BoardPageComponent {
   private readonly boardCardsStore = inject(BoardCardsStore);
+  private readonly projectStore = inject(ProjectStore);
 
   readonly boardId = input.required<Board['id']>();
   readonly board = this.boardCardsStore.currentBoard;
@@ -34,5 +38,6 @@ export class BoardPageComponent {
 
   constructor() {
     this.boardCardsStore.loadBoardCards(this.boardId);
+    this.projectStore.rememberBoard(computed(() => this.board()?.id));
   }
 }

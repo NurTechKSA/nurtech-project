@@ -34,13 +34,14 @@ import { ApiProjectService } from '../services/api-project.service';
 
 interface ProjectState {
   currentProjectKey: Project['key'] | null;
+  lastBoardIds: Record<Project['key'], string>;
 }
 
 const initialState: ProjectState = {
   currentProjectKey: null,
+  lastBoardIds: {},
 };
 
-// Ключ проекта стоит в адресе, поэтому проекты храним по ключу, а не по id
 const projectConfig = entityConfig({
   entity: type<Project>(),
   selectId: (project) => project.key,
@@ -56,7 +57,10 @@ export const ProjectStore = signalStore(
   withState(initialState),
   withStorageSync({
     key: StorageKey.PROJECT,
-    select: ({ currentProjectKey }) => ({ currentProjectKey }),
+    select: ({ currentProjectKey, lastBoardIds }) => ({
+      currentProjectKey,
+      lastBoardIds,
+    }),
   }),
   withEntities(projectConfig),
 
@@ -103,6 +107,15 @@ export const ProjectStore = signalStore(
 
       if (projectId) {
         permissionStore.loadPermissions(projectId);
+      }
+    }),
+    rememberBoard: signalMethod<string | undefined>((boardId) => {
+      const projectKey = store.currentProjectKey();
+
+      if (projectKey && boardId) {
+        updateState(store, '[ProjectStore] rememberBoard', {
+          lastBoardIds: { ...store.lastBoardIds(), [projectKey]: boardId },
+        });
       }
     }),
     closeProject: (): void => {
