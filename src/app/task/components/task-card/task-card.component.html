@@ -40,10 +40,10 @@
           <section class="task-card__description">
             <h2 class="task-card__section-title" tuiTitle>Описание</h2>
 
-            @if (task.description?.trim()) {
+            @if (task.description?.trim(); as description) {
               <app-markdown-viewer
                 class="task-card__description-text"
-                [markdown]="task.description!" />
+                [markdown]="description" />
             } @else {
               <!-- Отключена, пока редактор описания не подключён (задача #154) -->
               <button
@@ -59,7 +59,7 @@
 
               <ng-template #readonlyDescription>
                 <p class="task-card__description-placeholder">
-                  Добавьте описание
+                  Описание не задано
                 </p>
               </ng-template>
             }
