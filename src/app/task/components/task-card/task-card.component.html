@@ -45,9 +45,11 @@
                 class="task-card__description-text"
                 [markdown]="task.description!" />
             } @else {
+              <!-- Отключена, пока редактор описания не подключён (задача #154) -->
               <button
                 type="button"
                 class="task-card__description-placeholder task-card__description-placeholder_editable"
+                disabled
                 *appRestrictByPermission="
                   permission.TASK_UPDATE;
                   else readonlyDescription
