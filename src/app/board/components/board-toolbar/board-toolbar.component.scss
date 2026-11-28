@@ -7,13 +7,13 @@
 .board-toolbar {
   display: grid;
   gap: 0.75rem;
-  padding: 1rem 1.5rem 1.25rem;
+  padding: 1rem 1.5rem 0.5rem;
   background: var(--tui-background-base-alt);
 }
 
 .board-toolbar__main {
-  display: grid;
-  grid-template-columns: minmax(0, 12rem) minmax(0, 19rem) minmax(0, 1fr);
+  display: flex;
+  flex-wrap: wrap;
   gap: 0.75rem;
   align-items: center;
 }
@@ -36,8 +36,16 @@
 }
 
 .board-toolbar__board-placeholder {
+  flex: 0 1 12rem;
   justify-content: space-between;
+  min-inline-size: 0;
   font-weight: 700;
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .board-toolbar__board-placeholder tui-icon,
@@ -47,6 +55,9 @@
 }
 
 .board-toolbar__search-placeholder {
+  flex: 1 1 19rem;
+  min-inline-size: 0;
+  max-inline-size: 19rem;
   color: var(--tui-text-secondary);
 
   span {
@@ -57,8 +68,8 @@
 }
 
 .board-toolbar__create-placeholder {
-  justify-self: end;
   padding: 0.625rem 1.125rem;
+  margin-inline-start: auto;
   font-weight: 700;
   color: var(--tui-text-primary-on-accent-1);
   white-space: nowrap;
@@ -92,19 +103,4 @@
 
 .board-toolbar__reset-placeholder {
   display: none;
-}
-
-@media (width <= 40rem) {
-  .board-toolbar {
-    padding-inline: 0.75rem;
-  }
-
-  .board-toolbar__main {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-
-  .board-toolbar__search-placeholder {
-    grid-row: 2;
-    grid-column: 1 / -1;
-  }
 }
