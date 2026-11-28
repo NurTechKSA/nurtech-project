@@ -1,0 +1,37 @@
+<section>
+  <header class="subtasks-header">
+    <h2 class="subtasks-title" tuiTitle>Подзадачи</h2>
+
+    @if (subtasks().length) {
+      <span class="subtasks-counter">
+        {{ doneCount() }} из {{ subtasks().length }}
+      </span>
+      <progress
+        tuiProgressBar
+        size="s"
+        class="subtasks-progress"
+        [value]="doneCount()"
+        [max]="subtasks().length"></progress>
+    }
+  </header>
+
+  @if (subtasks().length) {
+    <ul class="subtasks-list">
+      @for (subtask of subtasks(); track subtask.id) {
+        <li class="subtasks-item">
+          <app-task-key [key]="subtask.key" />
+          <span class="subtasks-name">{{ subtask.title }}</span>
+          <app-task-status-badge [status]="subtask.status" />
+
+          <div class="subtasks-assignee">
+            @if (subtask.assignee; as assignee) {
+              <app-user-avatar size="s" [name]="assignee.name" />
+            } @else {
+              <span class="subtasks-unassigned">не назначен</span>
+            }
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</section>
