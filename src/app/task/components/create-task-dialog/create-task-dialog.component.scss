@@ -1,0 +1,15 @@
+.create-task-dialog__description {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.create-task-dialog__description-label {
+  font: var(--tui-typography-body-m);
+  font-weight: 600;
+}
+
+// По ТЗ «Отмена» и «Создать» одной ширины
+.create-task-dialog__button {
+  min-inline-size: 8.5rem;
+}
