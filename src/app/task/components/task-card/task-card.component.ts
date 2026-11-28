@@ -8,6 +8,9 @@ import {
 import { TuiLoader, TuiTitle } from '@taiga-ui/core';
 import { TuiCardLarge } from '@taiga-ui/layout';
 
+import { RestrictByPermissionDirective } from '@core/permissions/directives/restrict-by-permission.directive';
+import { ProjectPermission } from '@core/permissions/enums/project-permission.enum';
+import { MarkdownViewerComponent } from '@shared/components/markdown-viewer/markdown-viewer.component';
 import { RelativeDatePipe } from '@shared/pipes/relative-date.pipe';
 
 import { TaskStore } from '../../+store/task.store';
@@ -28,7 +31,9 @@ const LINK_LABELS: Record<LinkType, string> = {
 @Component({
   selector: 'app-task-card',
   imports: [
+    MarkdownViewerComponent,
     RelativeDatePipe,
+    RestrictByPermissionDirective,
     TaskCardActivityComponent,
     TaskCardFieldsComponent,
     TaskKeyComponent,
@@ -52,6 +57,7 @@ export class TaskCardComponent {
   readonly isLoading = this.taskStore.isLoading;
 
   readonly taskType = TaskType;
+  readonly permission = ProjectPermission;
   readonly linkLabels = LINK_LABELS;
 
   constructor() {

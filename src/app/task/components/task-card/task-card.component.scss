@@ -58,7 +58,26 @@
 }
 
 .task-card__description-text {
-  white-space: pre-wrap;
+  display: block;
+  padding: 0.75rem 1rem;
+  background: var(--tui-background-base-alt);
+  border-radius: var(--tui-radius-l);
+}
+
+.task-card__description-placeholder {
+  color: var(--tui-text-secondary);
+}
+
+.task-card__description-placeholder_editable {
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  background: none;
+  border: none;
+
+  &:hover {
+    color: var(--tui-text-primary);
+  }
 }
 
 .task-card__list {
