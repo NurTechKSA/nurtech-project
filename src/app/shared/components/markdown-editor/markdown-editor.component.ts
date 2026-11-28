@@ -1,16 +1,21 @@
 import {
+  afterNextRender,
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   forwardRef,
+  inject,
+  Injector,
   input,
   signal,
   viewChild,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   ControlValueAccessor,
-  FormsModule,
+  FormControl,
   NG_VALUE_ACCESSOR,
+  ReactiveFormsModule,
 } from '@angular/forms';
 import { TuiValueTransformer } from '@taiga-ui/cdk';
 import {
@@ -22,12 +27,18 @@ import {
   TuiMarkdown,
 } from '@taiga-ui/editor';
 import { TuiSegmented } from '@taiga-ui/kit';
+import { filter, tap } from 'rxjs';
 
 import { MarkdownViewerComponent } from '../markdown-viewer/markdown-viewer.component';
 
 @Component({
   selector: 'app-markdown-editor',
-  imports: [FormsModule, MarkdownViewerComponent, TuiEditor, TuiSegmented],
+  imports: [
+    MarkdownViewerComponent,
+    ReactiveFormsModule,
+    TuiEditor,
+    TuiSegmented,
+  ],
   templateUrl: './markdown-editor.component.html',
   styleUrl: './markdown-editor.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -60,15 +71,36 @@ export class MarkdownEditorComponent
   implements ControlValueAccessor
 {
   private readonly editor = viewChild(TuiEditor);
+  private readonly injector = inject(Injector);
+  private isEditorLoaded = false;
+  private isSyncingFromForm = false;
   private onChange?: (value: string) => void;
   private onTouched?: () => void;
 
   readonly placeholder = input<string>('');
   readonly readOnly = input(false, { transform: booleanAttribute });
 
+  protected readonly editorControl = new FormControl('', { nonNullable: true });
   protected readonly activeTab = signal(0);
   protected readonly isDisabled = signal(false);
   protected readonly value = signal('');
+
+  constructor() {
+    super();
+
+    // При загрузке и записи значения TuiEditor отдаёт нормализованный
+    // markdown — это не ввод пользователя, форму помечать изменённой нельзя
+    this.editorControl.valueChanges
+      .pipe(
+        filter(() => this.isEditorLoaded && !this.isSyncingFromForm),
+        tap((value) => {
+          this.value.set(value);
+          this.onChange?.(value);
+        }),
+        takeUntilDestroyed()
+      )
+      .subscribe();
+  }
 
   // Markdown из формы разбирает расширение TuiMarkdown
   override fromControlValue(markdown: string | null): string | null {
@@ -85,7 +117,16 @@ export class MarkdownEditorComponent
   }
 
   writeValue(value: string | null): void {
-    this.value.set(value ?? '');
+    const nextValue = value ?? '';
+
+    this.value.set(nextValue);
+    this.isSyncingFromForm = true;
+
+    try {
+      this.editorControl.setValue(nextValue, { emitEvent: false });
+    } finally {
+      this.isSyncingFromForm = false;
+    }
   }
 
   registerOnChange(fn: (value: string) => void): void {
@@ -98,11 +139,26 @@ export class MarkdownEditorComponent
 
   setDisabledState(isDisabled: boolean): void {
     this.isDisabled.set(isDisabled);
+
+    if (isDisabled) {
+      this.editorControl.disable({ emitEvent: false });
+    } else {
+      this.editorControl.enable({ emitEvent: false });
+    }
   }
 
-  protected onInput(value: string): void {
-    this.value.set(value);
-    this.onChange?.(value);
+  focus(): void {
+    this.activeTab.set(0);
+    afterNextRender(
+      () => {
+        this.editor()?.editorService.focus();
+      },
+      { injector: this.injector }
+    );
+  }
+
+  protected onEditorLoaded(isLoaded: boolean): void {
+    this.isEditorLoaded = isLoaded;
   }
 
   protected onTabChange(index: number): void {
