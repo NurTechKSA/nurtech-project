@@ -11,12 +11,11 @@
 
   <div class="markdown-editor__body" [hidden]="activeTab() !== 0">
     <tui-editor
-      [disabled]="isDisabled()"
-      [ngModel]="value()"
+      [formControl]="editorControl"
       [placeholder]="placeholder()"
       [readonly]="readOnly()"
       (focusOut)="onEditorBlur()"
-      (ngModelChange)="onInput($event)" />
+      (loaded)="onEditorLoaded($event)" />
   </div>
 
   @if (activeTab() === 1) {

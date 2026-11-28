@@ -12,6 +12,7 @@ import { BoardStore } from '../board/+store/board.store';
 import { boardRoutes } from '../board/board.routes';
 import { MemberStore } from '../dictionary/+store/member.store';
 import { ProjectStatusesStore } from '../status/+store/project-statuses.store';
+import { CreateTaskDialogService } from '../task/services/create-task-dialog.service';
 import { taskRoutes } from '../task/task.routes';
 
 const loadProjectData: ResolveFn<void> = (route) => {
@@ -46,7 +47,12 @@ export const projectRoutes: Routes = [
       {
         path: `${AppPath.PROJECT}/:${RouteParam.PROJECT_KEY}`,
         canActivate: [projectGuard],
-        providers: [BoardStore, ProjectStatusesStore, MemberStore],
+        providers: [
+          BoardStore,
+          ProjectStatusesStore,
+          MemberStore,
+          CreateTaskDialogService,
+        ],
         resolve: { projectData: loadProjectData },
         loadComponent: () =>
           import('@core/project/components/project-shell/project-shell.component').then(

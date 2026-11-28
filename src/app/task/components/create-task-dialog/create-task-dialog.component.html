@@ -1,0 +1,43 @@
+<tui-loader size="l" [loading]="isLoading()" [overlay]="true">
+  <form tuiForm [formGroup]="form" (ngSubmit)="onFormSubmit()">
+    <app-task-type-select
+      [options]="typeOptions"
+      [value]="selectedType()"
+      (valueChange)="onTaskTypeChange($event)" />
+    <tui-error formControlName="type" />
+
+    <tui-textfield>
+      <label tuiLabel for="create-task-title">Название *</label>
+      <input
+        id="create-task-title"
+        formControlName="title"
+        placeholder="Что нужно сделать"
+        tuiAutoFocus
+        tuiInput
+        #titleInput />
+    </tui-textfield>
+    <tui-error formControlName="title" />
+
+    <div class="create-task-dialog__description">
+      <span class="create-task-dialog__description-label">Описание</span>
+      <app-markdown-editor
+        formControlName="description"
+        placeholder="Описание в формате markdown" />
+    </div>
+    <tui-error formControlName="description" />
+
+    <footer>
+      <button
+        appearance="secondary"
+        class="create-task-dialog__button"
+        tuiButton
+        type="button"
+        (click)="onCancelButtonClick()">
+        Отмена
+      </button>
+      <button class="create-task-dialog__button" tuiButton type="submit">
+        Создать
+      </button>
+    </footer>
+  </form>
+</tui-loader>
