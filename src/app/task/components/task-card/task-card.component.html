@@ -10,6 +10,10 @@
           <ng-content select="[taskCardLeadingActions]" />
           <app-task-type-icon [type]="task.type" />
           <strong>{{ task.key }}</strong>
+          <app-copy-button
+            label="Копировать ссылку"
+            [text]="taskUrl()"
+            (click)="onCopyLinkClick()" />
 
           <div class="task-card__actions">
             <ng-content select="[taskCardTrailingActions]" />
